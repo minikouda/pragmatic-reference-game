@@ -1,0 +1,73 @@
+\begin{thebibliography}{10}
+
+\bibitem{berant2025steerable}
+Jonathan Berant, Maximillian Chen, Adam Fisch, Reza Aghajani, Fantine Huot,
+  Mirella Lapata, and Jacob Eisenstein.
+\newblock Learning steerable clarification policies with collaborative
+  self-play.
+\newblock {\em arXiv preprint arXiv:2512.04068}, 2025.
+
+\bibitem{carlsson2023structured}
+Emil Carlsson and Devdatt Dubhashi.
+\newblock Pragmatic reasoning in structured signaling games.
+\newblock {\em arXiv preprint arXiv:2305.10167}, 2023.
+
+\bibitem{chan2023clair}
+David Chan, Suzanne Petryk, Joseph Gonzalez, Trevor Darrell, and John Canny.
+\newblock Clair: Evaluating image captions with large language models.
+\newblock In {\em Proceedings of the 2023 Conference on Empirical Methods in
+  Natural Language Processing}, 2023.
+
+\bibitem{cohn2018pragmatically}
+Reuben Cohn-Gordon, Noah Goodman, and Christopher Potts.
+\newblock Pragmatically informative image captioning with character-level
+  inference.
+\newblock In {\em Proceedings of the 2018 Conference of the North American
+  Chapter of the Association for Computational Linguistics}, 2018.
+
+\bibitem{fried2017pragmatic}
+Daniel Fried, Jacob Andreas, and Dan Klein.
+\newblock Unified pragmatic models for generating and following instructions.
+\newblock In {\em Proceedings of the 2018 Conference of the North American
+  Chapter of the Association for Computational Linguistics: Human Language
+  Technologies}, 2018.
+
+\bibitem{gul2024cogen}
+Mustafa~Omer Gul and Yoav Artzi.
+\newblock Cogen: Learning from feedback with coupled comprehension and
+  generation.
+\newblock {\em arXiv preprint arXiv:2408.15992}, 2024.
+
+\bibitem{jian2024llmpragmatic}
+Mingyue Jian and N.~Siddharth.
+\newblock Are llms good pragmatic speakers?
+\newblock {\em arXiv preprint arXiv:2411.01562}, 2024.
+
+\bibitem{kapur2026when}
+Rhea Kapur, Robert Hawkins, and Elisa Kreiss.
+\newblock When more words say less: Decoupling length and specificity in image
+  description evaluation.
+\newblock {\em arXiv preprint arXiv:2601.04609}, 2026.
+
+\bibitem{ma2025vision}
+Ziqiao Ma, Jing Ding, Xuejun Zhang, Dezhi Luo, Jiahe Ding, Sihan Xu, Yuchen
+  Huang, Run Peng, and Joyce Chai.
+\newblock Vision-language models are not pragmatically competent in referring
+  expression generation.
+\newblock {\em arXiv preprint arXiv:2504.16060}, 2025.
+
+\bibitem{ou2023clip}
+Jiefu Ou, Benno Krojer, and Daniel Fried.
+\newblock Pragmatic inference with a {CLIP} listener for contrastive
+  captioning.
+\newblock In {\em Findings of the Association for Computational Linguistics:
+  ACL 2023}, pages 1904--1917, 2023.
+
+\bibitem{wu2025generate}
+Tsung-Han Wu, Heekyung Lee, Jiaxin Ge, Joseph~E Gonzalez, Trevor Darrell, and
+  David~M Chan.
+\newblock Generate, but verify: Reducing hallucination in vision-language
+  models with retrospective resampling.
+\newblock {\em arXiv preprint arXiv:2504.13169}, 2025.
+
+\end{thebibliography}

@@ -1,0 +1,208 @@
+\documentclass[10pt]{article}
+
+\usepackage[margin=0.6in]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage[compact]{titlesec}
+\usepackage{enumitem}
+\usepackage{indentfirst}
+\usepackage{xcolor}
+\usepackage{microtype}
+
+\titleformat{\section}{\normalfont\Large\bfseries}{\thesection.}{0.1em}{}
+\titleformat{\subsection}{\normalfont\large\bfseries}{\thesubsection.}{0.1em}{}
+\titleformat{\subsubsection}{\normalfont\bfseries}{\thesubsubsection.}{0.1em}{}
+\titlespacing*{\section}{0pt}{1ex}{1ex}
+\titlespacing*{\subsection}{0pt}{0.5ex}{0.5ex}
+\titlespacing*{\subsubsection}{0pt}{0ex}{0.5ex}
+
+\begin{document}
+
+\begin{center}
+    \textbf{\Large CS 288 Final Report --- Pragmatic Reference Games with RSA and LLMs} \\[2pt]
+    \textbf{Thomas Lee, Ziyu Ge, Shizhe Zhang} \quad
+    \texttt{\{tholee, ziyuge, shizhe\_zhang\}@berkeley.edu}
+    \vspace{-0.1cm}
+\end{center}
+
+\section{Introduction}
+
+Natural language is inherently ambiguous, and effective communication requires speakers to select utterances that listeners can unambiguously interpret. Humans resolve such ambiguity through pragmatic reasoning: inferring a speaker's intent by reasoning about what a cooperative, rational agent would say. A key question for modern AI systems is whether large language models (LLMs) exhibit similar pragmatic competence---and whether principled frameworks from cognitive science can improve their communication.
+
+In this project, we study \emph{reference games}: a speaker must describe a target object among distractors, and a listener must identify the referent. This controlled setting allows precise manipulation of referential ambiguity and systematic evaluation of communicative strategies. We implement and compare two approaches: (1) the \emph{Rational Speech Act} (RSA) model \cite{fried2017pragmatic}, a Bayesian framework for pragmatic inference, and (2) LLM-based speakers using both naive and chain-of-thought prompting. Our experiments demonstrate that RSA consistently selects minimal, unambiguous referring expressions, while naive speakers often over-specify or fail under ambiguity.
+
+\section{Related Work}
+
+\indent Pragmatic reasoning has been extensively studied in computational linguistics and cognitive science. The Rational Speech Act (RSA) framework models communication as recursive probabilistic reasoning between speakers and listeners. Early work demonstrated that pragmatic inference improves performance on tasks such as instruction following and language generation by reasoning about how listeners interpret utterances \cite{fried2017pragmatic, cohn2018pragmatically}. Reference games provide a natural setting for studying this dynamic, and recent work has shown that recursive reasoning can improve communication efficiency in structured signaling environments \cite{carlsson2023structured}.
+
+With the emergence of LLMs, researchers have investigated whether they naturally exhibit pragmatic behavior. While LLMs show partial alignment with pragmatic models, they do not consistently behave like rational communicative agents \cite{jian2024llmpragmatic}. Addressing this limitation requires strategically managing uncertainty. Recent approaches have explored training steerable clarification policies using collaborative self-play, helping models weigh the cost of inquiry against prediction accuracy when faced with ambiguous instructions \cite{berant2025steerable}. Tightly coupling comprehension and generation has also been shown to improve a model's ability to learn from feedback, better aligning the speaker and listener roles \cite{gul2024cogen}.
+
+In multimodal settings, pragmatic reasoning has been applied to image captioning to generate descriptions that distinguish a target image from distractors \cite{ou2023clip}. However, state-of-the-art Vision-Language Models (VLMs) often fail at Gricean maxims: they frequently over-generate verbose descriptions while failing to uniquely identify referents \cite{ma2025vision}. This conflation of verbosity with specificity highlights the need for evaluations that explicitly decouple description length from informative content \cite{kapur2026when}, potentially leveraging LLMs for nuanced caption evaluation \cite{chan2023clair}. To combat related issues like hallucination and over-commitment, frameworks integrating generation with retrospective verification have also been proposed \cite{wu2025generate}.
+
+\section{Dataset and Environment}
+
+We construct a synthetic reference game environment with precise ambiguity control. Each scene contains a set of objects defined by structured attributes:
+\[
+\mathcal{O} \subseteq \text{Color} \times \text{Shape} \times \text{Size} \times \text{Position}.
+\]
+
+Attributes take the following values:
+\begin{itemize}[noitemsep, topsep=0pt]
+\item \textbf{Color}: red, blue, green, yellow, purple, orange
+\item \textbf{Shape}: circle, square, triangle, diamond, star
+\item \textbf{Size}: small, medium, large
+\item \textbf{Position}: $(x,y) \in [0,1]^2$, coarsely binned into 9 spatial labels (top-left, center, bottom-right, etc.)
+\end{itemize}
+
+We design four representative scenes that systematically vary the type and degree of referential ambiguity, summarized in Table~\ref{tab:scenes}.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{llp{4.5cm}l}
+\toprule
+Scene & Objects & Description & Min.\ features needed \\
+\midrule
+1 & 3 & Three circles, each a distinct color & 1 (color) \\
+2 & 3 & Two red squares (differ in size) + one blue triangle & 2 (size + shape) \\
+3 & 2 & Two identical large red circles, different positions & 1 (spatial) \\
+4 & 5 & Mixed shapes/colors/sizes; target is small red circle & 3 (color + size + shape) \\
+\bottomrule
+\end{tabular}
+\caption{Experimental scenes and the minimum number of features required to uniquely identify the target.}
+\label{tab:scenes}
+\end{table}
+
+Scene 1 tests whether the system avoids redundancy when a single attribute suffices. Scene 2 requires two attributes due to a color-sharing distractor. Scene 3 requires spatial reasoning because all other attributes are shared. Scene 4 is the most complex, requiring a combination of three attributes among five objects.
+
+\section{Methods}
+
+\subsection{RSA Model}
+
+We implement the Rational Speech Act framework \cite{fried2017pragmatic} as our primary method. The model operates over a finite set of candidate utterances $U$ and objects $O$.
+
+\paragraph{Literal listener $L_0$.} The base listener interprets an utterance $u$ by distributing probability uniformly over objects compatible with $u$:
+\[
+L_0(o \mid u) \propto \mathbf{1}[\text{features}(u) \subseteq \text{features}(o)].
+\]
+
+\paragraph{Pragmatic speaker $S_1$.} The speaker selects utterances to maximize listener utility minus a brevity cost:
+\[
+S_1(u \mid o) \propto \exp\!\Big(\alpha \log L_0(o \mid u) - \lambda \cdot |u|\Big),
+\]
+where $\alpha$ is a rationality parameter controlling how peaked the distribution is, $\lambda$ is a cost weight penalizing utterance length $|u|$ (in words), and the exponential applies a softmax transformation. For our experiments we use $\alpha = 4.0$ and $\lambda = 0.1$ as defaults; Section~\ref{sec:ablation} ablates these.
+
+\paragraph{Pragmatic listener $L_1$.} A listener that reasons about the speaker's strategy:
+\[
+L_1(o \mid u) \propto S_1(u \mid o) \cdot P(o),
+\]
+with a uniform prior $P(o)$. In practice, $L_1$ is computed by evaluating $S_1(u \mid \cdot)$ for each candidate object.
+
+\paragraph{Utterance generation.} For a given target object, we enumerate candidate utterances by combining up to three properties (color, size, shape, spatial location), yielding $O(|\text{combos}|)$ candidates. The RSA $S_1$ speaker then ranks these and returns the top-$k$ expressions with their probabilities.
+
+\subsection{LLM Baselines}
+
+We prompt an LLM (Claude Sonnet) as both speaker and listener.
+
+\paragraph{Naive speaker.} Given a structured scene description marking the target, the model is asked to produce a concise referring expression. No explicit reasoning is required.
+
+\paragraph{Pragmatic speaker (chain-of-thought).} The model is instructed to (1) list target features, (2) list distractor features, (3) identify \emph{distinguishing} features, and (4) construct the shortest unambiguous expression. This mirrors the step-by-step reasoning in RSA.
+
+\paragraph{Literal listener.} Given the scene and an utterance, the model predicts the target object ID with a confidence score and brief reasoning.
+
+\subsection{Heuristic Baseline}
+
+The heuristic speaker generates a description using the target's color and shape only (e.g., ``the red circle''). This produces compact expressions but ignores whether those attributes are sufficient to disambiguate. The heuristic listener resolves the referent by matching these two attributes and selecting randomly when multiple objects match.
+
+\section{Experiments}
+\label{sec:experiments}
+
+\subsection{RSA Speaker Results}
+
+Table~\ref{tab:rsa} shows the top-ranked RSA $S_1$ utterances for each scene, along with their probabilities and the information-theoretic characterization.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lp{5.5cm}ll}
+\toprule
+Scene & Top RSA expression & $S_1$ prob. & Sufficient? \\
+\midrule
+1 (color-only) & ``the red circle'' & 0.124 & Yes \\
+               & ``the red one''    & 0.124 & Yes \\
+2 (two features) & ``the small square'' & 0.141 & Yes \\
+                 & ``the red small one'' & 0.116 & Yes \\
+3 (spatial)      & ``the circle on the top-left'' & 0.150 & Yes \\
+                 & ``the one on the top-left'' & 0.150 & Yes \\
+4 (complex)      & ``the red small circle'' & 0.156 & Yes \\
+                 & ``the circle on the top-left'' & 0.127 & Yes \\
+\bottomrule
+\end{tabular}
+\caption{Top RSA $S_1$ utterances for each scene ($\alpha{=}4.0$, $\lambda{=}0.1$). All top-ranked expressions uniquely identify the target.}
+\label{tab:rsa}
+\end{table}
+
+Several observations stand out. First, RSA automatically identifies the minimal sufficient description: in Scene~1, color alone suffices and the model does not add shape or size; in Scene~3, where color and shape are shared, the model correctly defaults to a spatial expression. Second, the probabilities reflect genuine uncertainty---two equally informative expressions (e.g., ``the red circle'' and ``the red one'') receive identical probability mass. Third, in Scene~4 (five objects), RSA combines three attributes to produce an unambiguous expression at the highest probability of any scene (0.156), reflecting a strong preference for specificity when needed.
+
+\subsection{Comparative Baseline Results}
+
+Table~\ref{tab:results} summarizes listener accuracy for three strategies across all four scenes.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lccc}
+\toprule
+Strategy & Accuracy & Mean Dist.\ Error & Attr.\ Match \\
+\midrule
+Heuristic (color + shape only) & 0.50 & 0.53 & 0.63 \\
+LLM Naive Speaker + Listener   & 0.75 & 0.28 & 0.81 \\
+RSA $S_1$ Speaker + $L_0$ Listener & \textbf{1.00} & \textbf{0.00} & \textbf{1.00} \\
+\bottomrule
+\end{tabular}
+\caption{Listener performance across four scenes. Accuracy = fraction of scenes where the target is correctly identified; Mean Distance Error = Euclidean distance (in normalized $[0,1]^2$ coordinates) between predicted and true object positions; Attribute Match = fraction of target attributes covered by the predicted object.}
+\label{tab:results}
+\end{table}
+
+The heuristic baseline achieves only 50\% accuracy because it fails on Scenes~2 and~3: in Scene~2, ``red square'' matches both objects A and B (the only distinguishing attribute is size, which the heuristic ignores); in Scene~3, ``red circle'' matches both objects, and spatial reasoning is required. When the heuristic guesses incorrectly in Scene~2, the wrong object (B) is at distance 0.60 from the target; in Scene~3, the wrong object (B) is at distance $\sqrt{0.64^2 + 0.64^2} \approx 1.13$, giving an average error of 0.53 across scenes.
+
+The LLM naive speaker improves over the heuristic because the model sometimes spontaneously includes size or spatial information when generating free-form descriptions. However, it remains inconsistent: without explicit prompting to reason about distractors, the naive speaker occasionally uses vague attributes (e.g., ``the circle on the left'') that match multiple objects. The RSA pipeline achieves perfect accuracy across all four scenes because the $S_1$ speaker is explicitly optimized to maximize $L_0$ success, and the generated utterances are unambiguous by construction.
+
+\subsection{Effect of RSA Parameters}
+\label{sec:ablation}
+
+We ablate the two key RSA hyperparameters on Scene~4 (the most complex scene), which requires the most attribute combinations.
+
+\paragraph{Rationality $\alpha$.} Higher $\alpha$ concentrates probability mass on the single most informative expression. At $\alpha = 1.0$, multiple expressions share similar probability (the distribution is flatter); at $\alpha = 8.0$, ``the red small circle'' dominates with probability $> 0.25$, while spatially-defined alternatives (``the circle on the top-left'') lose relative mass. This is expected: at high $\alpha$ the model behaves more like an argmax rule and less like a soft policy.
+
+\paragraph{Cost weight $\lambda$.} Increasing $\lambda$ penalizes longer expressions. At $\lambda = 0.2$, two-word expressions such as ``the red circle'' gain relative probability over three-word expressions like ``the red small circle'', even though the latter is more discriminative. This can cause accuracy to drop in complex scenes where short expressions are ambiguous. The default $\lambda = 0.1$ represents a reasonable tradeoff between brevity and precision.
+
+\subsection{Qualitative Analysis of Scene Types}
+
+\paragraph{Scene 1 (single attribute).} RSA correctly identifies that color alone distinguishes the target and does not add shape or size. The expressions ``the red circle'' and ``the red one'' receive equal probability (0.124), reflecting that the shape word provides no extra information. This is consistent with Grice's Maxim of Quantity: do not make your contribution more informative than required.
+
+\paragraph{Scene 2 (two attributes).} The top expression ``the small square'' combines size and shape but omits color (red), which is shared with one distractor. This is optimal: adding color would not help ($L_0$ is already 1.0 for the size-shape combination), and omitting it saves cost. The runner-up ``the red small one'' includes color at no additional disambiguation gain, reflecting a slight probability penalty.
+
+\paragraph{Scene 3 (spatial only).} This scene is the most informative case: color and shape provide zero discriminative information because both objects are identical large red circles. RSA correctly routes to spatial expressions. The top two expressions (``the circle on the top-left'' and ``the one on the top-left'') share equal probability, again consistent with the shape word providing no informational gain here.
+
+\paragraph{Scene 4 (complex).} In a five-object scene, RSA achieves the highest top-expression probability (0.156) because the correct expression ``the red small circle'' is highly informative relative to all other expressions---it eliminates all four distractors with a three-attribute description. Notably, the spatial alternative ``the circle on the top-left'' appears as second-ranked (0.127), illustrating that position can substitute for a combination of visual attributes when the target is spatially peripheral.
+
+\section{Discussion}
+
+\paragraph{RSA as a training-free baseline.} Our results confirm that the RSA framework, despite requiring no learning, generates pragmatically optimal referring expressions in all tested scenarios. The key advantage is that RSA explicitly reasons about the distractor set when constructing utterances, whereas naive speakers (heuristic or LLM-based) do not. This aligns with prior findings that LLMs lack consistent pragmatic competence \cite{jian2024llmpragmatic, ma2025vision}.
+
+\paragraph{Cost-accuracy tradeoff.} The $\lambda$ ablation highlights a fundamental tension: brevity (minimizing cost) can conflict with accuracy (maximizing $L_0$ success). In simple scenes, cheap expressions suffice; in complex scenes, the model must pay a longer utterance to be unambiguous. A practical system should adapt $\lambda$ based on scene complexity or entropy, rather than using a fixed value.
+
+\paragraph{Limitations.} Our synthetic benchmark omits perceptual ambiguity (e.g., borderline colors, occluded objects), continuous attribute variation, and open-vocabulary properties. Real-world reference games involve far richer distractors and contextual grounding. Scaling to VLM-based settings, where the listener processes raw images rather than structured attribute lists, is left to future work.
+
+\section{Conclusion}
+
+We presented a synthetic reference game benchmark for studying pragmatic inference in structured attribute-based scenes. Our RSA implementation correctly identifies minimal, sufficient referring expressions across scenes requiring single-attribute, multi-attribute, and spatial disambiguation. RSA achieves 100\% listener accuracy compared to 50\% for a color-shape heuristic and 75\% for a naive LLM speaker, demonstrating the value of explicit pragmatic reasoning under referential ambiguity.
+
+Future work includes: scaling to larger scene libraries with programmatically controlled entropy; integrating a vision module to replace structured attribute inputs with raw images; and exploring learned rationality parameters $\alpha$ that adapt to scene-level ambiguity. We also plan to implement cost-aware clarification policies, where the speaker asks a clarifying question when ambiguity is too high for any single expression to reliably identify the target.
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

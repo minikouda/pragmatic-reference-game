@@ -1,0 +1,214 @@
+[
+  {
+    "scene": [
+      {
+        "id": "A",
+        "x": 0.2,
+        "y": 0.5,
+        "shape": "circle",
+        "color": "red",
+        "size": "large"
+      },
+      {
+        "id": "B",
+        "x": 0.5,
+        "y": 0.5,
+        "shape": "circle",
+        "color": "blue",
+        "size": "large"
+      },
+      {
+        "id": "C",
+        "x": 0.8,
+        "y": 0.5,
+        "shape": "circle",
+        "color": "green",
+        "size": "large"
+      }
+    ],
+    "target_id": "A",
+    "rsa_top": [
+      [
+        "the red circle",
+        0.12387740647479324
+      ],
+      [
+        "the red one",
+        0.12387740647479324
+      ],
+      [
+        "the red large circle",
+        0.10142224229245475
+      ],
+      [
+        "the red large one",
+        0.10142224229245475
+      ],
+      [
+        "the circle on the left",
+        0.08303750881095902
+      ]
+    ]
+  },
+  {
+    "scene": [
+      {
+        "id": "A",
+        "x": 0.2,
+        "y": 0.2,
+        "shape": "square",
+        "color": "red",
+        "size": "small"
+      },
+      {
+        "id": "B",
+        "x": 0.8,
+        "y": 0.2,
+        "shape": "square",
+        "color": "red",
+        "size": "large"
+      },
+      {
+        "id": "C",
+        "x": 0.5,
+        "y": 0.8,
+        "shape": "triangle",
+        "color": "blue",
+        "size": "small"
+      }
+    ],
+    "target_id": "A",
+    "rsa_top": [
+      [
+        "the small square",
+        0.14107365095890786
+      ],
+      [
+        "the red small one",
+        0.11550133648904701
+      ],
+      [
+        "the red small square",
+        0.11550133648904701
+      ],
+      [
+        "the one on the top-left",
+        0.09456449620519083
+      ],
+      [
+        "the square on the top-left",
+        0.09456449620519083
+      ]
+    ]
+  },
+  {
+    "scene": [
+      {
+        "id": "A",
+        "x": 0.1,
+        "y": 0.1,
+        "shape": "circle",
+        "color": "red",
+        "size": "large"
+      },
+      {
+        "id": "B",
+        "x": 0.9,
+        "y": 0.9,
+        "shape": "circle",
+        "color": "red",
+        "size": "large"
+      }
+    ],
+    "target_id": "A",
+    "rsa_top": [
+      [
+        "the circle on the top-left",
+        0.15025093274717094
+      ],
+      [
+        "the one on the top-left",
+        0.15025093274717094
+      ],
+      [
+        "the large circle on the top-left",
+        0.12301505931876046
+      ],
+      [
+        "the large one on the top-left",
+        0.12301505931876046
+      ],
+      [
+        "the red circle on the top-left",
+        0.12301505931876046
+      ]
+    ]
+  },
+  {
+    "scene": [
+      {
+        "id": "A",
+        "x": 0.1,
+        "y": 0.1,
+        "shape": "circle",
+        "color": "red",
+        "size": "small"
+      },
+      {
+        "id": "B",
+        "x": 0.5,
+        "y": 0.1,
+        "shape": "circle",
+        "color": "red",
+        "size": "large"
+      },
+      {
+        "id": "C",
+        "x": 0.9,
+        "y": 0.1,
+        "shape": "square",
+        "color": "red",
+        "size": "small"
+      },
+      {
+        "id": "D",
+        "x": 0.1,
+        "y": 0.9,
+        "shape": "circle",
+        "color": "blue",
+        "size": "small"
+      },
+      {
+        "id": "E",
+        "x": 0.9,
+        "y": 0.9,
+        "shape": "triangle",
+        "color": "green",
+        "size": "large"
+      }
+    ],
+    "target_id": "A",
+    "rsa_top": [
+      [
+        "the red small circle",
+        0.155511003901836
+      ],
+      [
+        "the circle on the top-left",
+        0.12732164133646318
+      ],
+      [
+        "the one on the top-left",
+        0.12732164133646318
+      ],
+      [
+        "the red circle on the top-left",
+        0.10424214329452719
+      ],
+      [
+        "the red one on the top-left",
+        0.10424214329452719
+      ]
+    ]
+  }
+]
