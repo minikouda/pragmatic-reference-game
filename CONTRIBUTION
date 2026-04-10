@@ -1,0 +1,19 @@
+Phase 1 — Address Feedback (do first, ~2–3 days)
+Ziyu: Define and document referential entropy computation. Write out exactly how H(T | u) is calculated — specify the probability model over candidate objects, whether it's uniform or derived from LLM likelihoods, and how utterances map to object distributions. Produce a short write-up (1 page) with a worked example on a sample scene.
+Shizhe: Clarify Brier score and ECE definitions for this task. Specify what the predicted probability distribution is over (candidate objects? binary correct/incorrect?), how bins are constructed for ECE, and how Brier score is adapted to the multi-object setting. Document in the same format as Ziyu's write-up.
+Thomas: Read the suggested paper (arXiv 2512.04068), summarize its relevance to your framework in ~1 page, and identify any methodological adjustments it motivates. Share findings with the group before environment design is finalized.
+
+Phase 2 — Dataset/Environment + Literature Review (parallel, ~1 week)
+Ziyu: Build the synthetic scene generator. Implement the attribute space (color × shape × size × position), scene sampling with controllable attribute overlap, and referential entropy calculation per scene. Output scenes as structured JSON. Deliver a dataset of ~500–1000 instances across three ambiguity regimes (low/medium/high entropy). Depends on: Phase 1 entropy definition being finalized.
+Thomas: Write the literature review covering RSA models, LLM pragmatics, clarification in dialogue systems, and calibration evaluation. Incorporate the suggested reading. Target ~2 pages.
+Shizhe: Implement the evaluation suite — functions for accuracy, Brier score, ECE, expected utility (parameterized by cost c), and clarification frequency. Write unit tests on toy predictions to verify correctness. Depends on: Phase 1 metric definitions.
+
+Phase 3 — Baselines (~1 week, after dataset exists)
+Thomas: Implement Baseline 1 — zero-shot prompting. Given a scene description and utterance, prompt the LLM to select the target object with no pragmatic reasoning. Record predictions and confidence estimates.
+Shizhe: Implement Baseline 2 — LLM-RSA (pragmatic inference). Approximate P_{S_0}(u | t) via LLM log-likelihoods, compute posterior over objects, select argmax. Depends on: Ziyu's dataset and evaluation suite.
+Ziyu: Implement Baseline 3 (stretch) — clarification-augmented strategy. Add the decision rule comparing E[U_ask] vs E[U_commit], generate one binary question when asking is preferred, simulate the answer from the ground truth, then predict. Depends on: RSA baseline working first.
+
+Phase 4 — Run experiments and compile results (~3–4 days)
+All three: Run baselines across ambiguity regimes, collect metrics, produce result tables/plots, and write up findings for the checkpoint submission.
+
+Key dependencies in order: Phase 1 definitions → Ziyu's dataset + Shizhe's eval suite → baselines → experiments. The literature review and suggested-paper summary can proceed in parallel with everything.

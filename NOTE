@@ -1,0 +1,54 @@
+1. Pragmatic, how to differentiate ourselves from the current paper,
+We use an agent for describing the object, any possible experiments?
+
+2. For classification, some bayesian method could help agent quantify the post prob, will that help us do the inference?
+
+3. Should we use fine tuning? 
+
+4. If we want to upload the image to LLMs, would it be unstable to the quality of image?
+And how to upload the data the LLMs? Base64?
+
+5. Hallucination?
+
+
+Prompting
+https://arxiv.org/pdf/2601.04609
+https://arxiv.org/pdf/2504.16060
+
+
+vision language model
+https://florian.github.io/base64/
+
+https://scholar.google.com/citations?view_op=view_citation&hl=en&user=qa4M89wAAAAJ&sortby=pubdate&citation_for_view=qa4M89wAAAAJ:NaGl4SEjCO4C
+https://scholar.google.com/citations?view_op=view_citation&hl=en&user=qa4M89wAAAAJ&cstart=20&pagesize=80&sortby=pubdate&citation_for_view=qa4M89wAAAAJ:hC7cP41nSMkC
+
+https://yoavartzi.com/pub/slya-acl.2017.pdf
+https://lil.nlp.cornell.edu/nlvr/examples.html
+
+
+https://arxiv.org/abs/2408.15992
+
+iterative generative
+search problem
+
+Rational speech acts / speaker/listener
+Jacob Andreas, Daniel Fried
+
+
+https://lil.nlp.cornell.edu/nlvr/examples.html
+
+https://scholar.google.com/citations?view_op=view_citation&hl=en&user=AG4_QecAAAAJ&citation_for_view=AG4_QecAAAAJ:UeHWp8X0CEIC
+
+prompting martin
+application of rsa and listener : reranking 
+iterative approach: keep genrating, until the listener can be sure
+tinker??
+
+**When More Words Say Less:
+Decoupling Length and Specificity in Image Description Evaluation**
+
+Error Analysis
+Easy Model first
+
+Molmo, LLaVA, Paligemma
+GPT, QWen
