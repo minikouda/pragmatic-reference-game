@@ -1,0 +1,75 @@
+\documentclass[10pt]{article}
+
+\usepackage[margin=0.8in]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage{hyperref}
+
+\title{Ambiguity Resolution in Large Language Models:\\
+A Decision-Theoretic Study of Pragmatic Inference and Clarification}
+
+\author{
+Thomas Lee, Ziyu Ge, Shizhe Zhang \\
+\texttt{\{tholee, ziyuge, shizhe\_zhang\}@berkeley.edu}
+}
+
+\date{}
+
+\begin{document}
+\maketitle
+
+\noindent
+\textbf{Problem.}
+Large language models (LLMs) frequently encounter ambiguous instructions, yet it remains unclear how they balance implicit inference against explicit clarification. We study ambiguity resolution in a controlled synthetic reference game.
+
+Each instance consists of:
+\begin{itemize}
+    \item \textbf{Input:} A scene containing $N$ objects defined by structured attributes (color, shape, size, position), and a natural language description referring to a target object.
+    \item \textbf{Output:} A predicted target object. The model may optionally ask at most one binary clarification question before committing.
+\end{itemize}
+
+Ambiguity is systematically controlled via attribute overlap and referential entropy $H(T \mid u)$, where $T$ denotes the target and $u$ the utterance.
+
+Primary success metric is accuracy:
+\[
+\text{Accuracy} = \frac{\text{Correct Predictions}}{\text{Total Instances}}.
+\]
+Secondary metrics include expected utility under clarification cost $c$, Brier score, Expected Calibration Error (ECE), and clarification frequency.
+
+\vspace{0.5em}
+\noindent
+\textbf{Method.}
+We compare two decision mechanisms:
+
+\textit{(1) Pragmatic Inference (LLM-RSA).}  
+We approximate recursive reasoning inspired by Rational Speech Act (RSA) modeling:
+\[
+P_{L_1}(t \mid u) \propto P_{S_0}(u \mid t) P(t),
+\]
+where $P_{S_0}(u \mid t)$ is estimated using LLM likelihoods. The model selects the object with maximal posterior probability.
+
+\textit{(2) Clarification-Augmented Strategy.}  
+The model may ask one binary question before predicting. A decision rule compares expected utilities:
+\[
+\text{Ask if } \mathbb{E}[U_{\text{ask}}] > \mathbb{E}[U_{\text{commit}}],
+\]
+where utility incorporates both prediction accuracy and clarification cost $c$.
+
+All experiments use fully synthetic scenes and prompt-based inference without fine-tuning, isolating reasoning behavior from memorized knowledge.
+
+\vspace{0.5em}
+\noindent
+\textbf{Anticipated Results.}
+We expect that:
+\begin{itemize}
+    \item Pure pragmatic inference performs well under low ambiguity but degrades as distractors increase.
+    \item Clarification improves accuracy in high-entropy regimes when $c$ is moderate.
+    \item LLMs may under- or over-ask relative to the decision-theoretic optimum, revealing miscalibration.
+    \item Calibration metrics will expose whether confidence tracks ambiguity.
+\end{itemize}
+
+\vspace{0.5em}
+\noindent
+\textbf{Why It Matters.}
+Ambiguity is central to real-world human--AI interaction. Systems that overcommit risk errors; systems that over-ask harm usability. Our framework provides a principled, decision-theoretic lens for analyzing when LLMs infer versus inquire. By isolating ambiguity under controlled conditions, this work contributes to understanding uncertainty handling, communicative rationality, and robustness in modern language models.
+
+\end{document}
