@@ -1,0 +1,4702 @@
+[
+  {
+    "image": "reference_game_dataset/scene_0.png",
+    "objects": [
+      {
+        "x_loc": 77,
+        "y_loc": 51,
+        "color": "blue",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 72,
+        "y_loc": 74,
+        "color": "green",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 90,
+        "y_loc": 81,
+        "color": "blue",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 70,
+        "y_loc": 36,
+        "color": "blue",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 60,
+        "y_loc": 49,
+        "color": "blue",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 31,
+        "y_loc": 29,
+        "color": "blue",
+        "type": "circle",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_1.png",
+    "objects": [
+      {
+        "x_loc": 37,
+        "y_loc": 69,
+        "color": "yellow",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 17,
+        "y_loc": 35,
+        "color": "green",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 50,
+        "y_loc": 15,
+        "color": "yellow",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 75,
+        "y_loc": 28,
+        "color": "yellow",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 11,
+        "y_loc": 53,
+        "color": "green",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 71,
+        "y_loc": 87,
+        "color": "black",
+        "type": "square",
+        "size": 12
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_2.png",
+    "objects": [
+      {
+        "x_loc": 35,
+        "y_loc": 12,
+        "color": "green",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 17,
+        "y_loc": 65,
+        "color": "red",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 67,
+        "y_loc": 11,
+        "color": "green",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 34,
+        "y_loc": 33,
+        "color": "green",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 50,
+        "y_loc": 88,
+        "color": "green",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 90,
+        "y_loc": 30,
+        "color": "green",
+        "type": "square",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_3.png",
+    "objects": [
+      {
+        "x_loc": 75,
+        "y_loc": 81,
+        "color": "black",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 58,
+        "y_loc": 10,
+        "color": "blue",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 21,
+        "y_loc": 30,
+        "color": "black",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 16,
+        "y_loc": 57,
+        "color": "black",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 86,
+        "y_loc": 27,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 25,
+        "y_loc": 82,
+        "color": "black",
+        "type": "triangle",
+        "size": 12
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_4.png",
+    "objects": [
+      {
+        "x_loc": 78,
+        "y_loc": 81,
+        "color": "black",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 26,
+        "y_loc": 86,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 50,
+        "y_loc": 49,
+        "color": "black",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 56,
+        "y_loc": 20,
+        "color": "black",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 87,
+        "y_loc": 59,
+        "color": "green",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 63,
+        "y_loc": 87,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_5.png",
+    "objects": [
+      {
+        "x_loc": 89,
+        "y_loc": 67,
+        "color": "blue",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 37,
+        "y_loc": 17,
+        "color": "red",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 32,
+        "y_loc": 52,
+        "color": "blue",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 49,
+        "y_loc": 70,
+        "color": "blue",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 65,
+        "y_loc": 67,
+        "color": "green",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 87,
+        "y_loc": 14,
+        "color": "black",
+        "type": "square",
+        "size": 12
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_6.png",
+    "objects": [
+      {
+        "x_loc": 18,
+        "y_loc": 23,
+        "color": "green",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 73,
+        "y_loc": 43,
+        "color": "red",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 64,
+        "y_loc": 22,
+        "color": "green",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 39,
+        "y_loc": 15,
+        "color": "green",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 63,
+        "y_loc": 87,
+        "color": "black",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 32,
+        "y_loc": 82,
+        "color": "blue",
+        "type": "circle",
+        "size": 12
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_7.png",
+    "objects": [
+      {
+        "x_loc": 73,
+        "y_loc": 26,
+        "color": "green",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 84,
+        "y_loc": 42,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 45,
+        "y_loc": 39,
+        "color": "green",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 78,
+        "y_loc": 86,
+        "color": "green",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 50,
+        "y_loc": 18,
+        "color": "blue",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 36,
+        "y_loc": 53,
+        "color": "black",
+        "type": "circle",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_8.png",
+    "objects": [
+      {
+        "x_loc": 78,
+        "y_loc": 11,
+        "color": "green",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 43,
+        "y_loc": 23,
+        "color": "blue",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 21,
+        "y_loc": 59,
+        "color": "green",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 52,
+        "y_loc": 68,
+        "color": "green",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 75,
+        "y_loc": 77,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 58,
+        "y_loc": 21,
+        "color": "black",
+        "type": "triangle",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_9.png",
+    "objects": [
+      {
+        "x_loc": 55,
+        "y_loc": 12,
+        "color": "yellow",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 87,
+        "y_loc": 63,
+        "color": "red",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 85,
+        "y_loc": 14,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 73,
+        "y_loc": 49,
+        "color": "yellow",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 50,
+        "y_loc": 63,
+        "color": "black",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 27,
+        "y_loc": 13,
+        "color": "blue",
+        "type": "square",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_10.png",
+    "objects": [
+      {
+        "x_loc": 90,
+        "y_loc": 24,
+        "color": "black",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 24,
+        "y_loc": 64,
+        "color": "red",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 57,
+        "y_loc": 57,
+        "color": "black",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 12,
+        "y_loc": 17,
+        "color": "black",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 86,
+        "y_loc": 79,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 52,
+        "y_loc": 23,
+        "color": "green",
+        "type": "triangle",
+        "size": 12
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_11.png",
+    "objects": [
+      {
+        "x_loc": 40,
+        "y_loc": 31,
+        "color": "green",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 36,
+        "y_loc": 65,
+        "color": "black",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 48,
+        "y_loc": 87,
+        "color": "green",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 21,
+        "y_loc": 17,
+        "color": "green",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 70,
+        "y_loc": 81,
+        "color": "red",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 61,
+        "y_loc": 19,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_12.png",
+    "objects": [
+      {
+        "x_loc": 80,
+        "y_loc": 50,
+        "color": "yellow",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 59,
+        "y_loc": 43,
+        "color": "green",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 34,
+        "y_loc": 56,
+        "color": "yellow",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 48,
+        "y_loc": 26,
+        "color": "yellow",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 18,
+        "y_loc": 59,
+        "color": "black",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 54,
+        "y_loc": 69,
+        "color": "black",
+        "type": "circle",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_13.png",
+    "objects": [
+      {
+        "x_loc": 47,
+        "y_loc": 38,
+        "color": "green",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 26,
+        "y_loc": 84,
+        "color": "blue",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 86,
+        "y_loc": 89,
+        "color": "green",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 59,
+        "y_loc": 19,
+        "color": "green",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 38,
+        "y_loc": 10,
+        "color": "red",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 21,
+        "y_loc": 25,
+        "color": "green",
+        "type": "circle",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_14.png",
+    "objects": [
+      {
+        "x_loc": 39,
+        "y_loc": 63,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 54,
+        "y_loc": 25,
+        "color": "green",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 88,
+        "y_loc": 42,
+        "color": "yellow",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 18,
+        "y_loc": 74,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 72,
+        "y_loc": 75,
+        "color": "blue",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 85,
+        "y_loc": 20,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 12
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_15.png",
+    "objects": [
+      {
+        "x_loc": 23,
+        "y_loc": 47,
+        "color": "yellow",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 31,
+        "y_loc": 61,
+        "color": "black",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 48,
+        "y_loc": 23,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 61,
+        "y_loc": 60,
+        "color": "yellow",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 42,
+        "y_loc": 48,
+        "color": "yellow",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 73,
+        "y_loc": 43,
+        "color": "blue",
+        "type": "square",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_16.png",
+    "objects": [
+      {
+        "x_loc": 69,
+        "y_loc": 47,
+        "color": "yellow",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 23,
+        "y_loc": 13,
+        "color": "red",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 41,
+        "y_loc": 58,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 89,
+        "y_loc": 31,
+        "color": "yellow",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 87,
+        "y_loc": 64,
+        "color": "red",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 11,
+        "y_loc": 30,
+        "color": "green",
+        "type": "circle",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_17.png",
+    "objects": [
+      {
+        "x_loc": 21,
+        "y_loc": 40,
+        "color": "red",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 39,
+        "y_loc": 27,
+        "color": "yellow",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 21,
+        "y_loc": 20,
+        "color": "red",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 80,
+        "y_loc": 70,
+        "color": "red",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 62,
+        "y_loc": 49,
+        "color": "blue",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 13,
+        "y_loc": 73,
+        "color": "red",
+        "type": "square",
+        "size": 12
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_18.png",
+    "objects": [
+      {
+        "x_loc": 79,
+        "y_loc": 20,
+        "color": "black",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 72,
+        "y_loc": 40,
+        "color": "green",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 35,
+        "y_loc": 76,
+        "color": "black",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 53,
+        "y_loc": 52,
+        "color": "black",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 78,
+        "y_loc": 71,
+        "color": "yellow",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 50,
+        "y_loc": 70,
+        "color": "black",
+        "type": "square",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_19.png",
+    "objects": [
+      {
+        "x_loc": 11,
+        "y_loc": 69,
+        "color": "black",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 76,
+        "y_loc": 32,
+        "color": "blue",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 20,
+        "y_loc": 47,
+        "color": "black",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 75,
+        "y_loc": 52,
+        "color": "black",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 48,
+        "y_loc": 60,
+        "color": "yellow",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 47,
+        "y_loc": 31,
+        "color": "red",
+        "type": "circle",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_20.png",
+    "objects": [
+      {
+        "x_loc": 68,
+        "y_loc": 49,
+        "color": "black",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 46,
+        "y_loc": 65,
+        "color": "blue",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 48,
+        "y_loc": 27,
+        "color": "black",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 68,
+        "y_loc": 86,
+        "color": "black",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 73,
+        "y_loc": 29,
+        "color": "green",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 54,
+        "y_loc": 80,
+        "color": "yellow",
+        "type": "square",
+        "size": 12
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_21.png",
+    "objects": [
+      {
+        "x_loc": 54,
+        "y_loc": 88,
+        "color": "black",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 21,
+        "y_loc": 63,
+        "color": "green",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 10,
+        "y_loc": 13,
+        "color": "black",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 20,
+        "y_loc": 43,
+        "color": "black",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 25,
+        "y_loc": 86,
+        "color": "black",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 52,
+        "y_loc": 44,
+        "color": "black",
+        "type": "square",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_22.png",
+    "objects": [
+      {
+        "x_loc": 47,
+        "y_loc": 88,
+        "color": "blue",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 84,
+        "y_loc": 64,
+        "color": "black",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 55,
+        "y_loc": 29,
+        "color": "blue",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 29,
+        "y_loc": 79,
+        "color": "blue",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 21,
+        "y_loc": 48,
+        "color": "red",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 12,
+        "y_loc": 72,
+        "color": "blue",
+        "type": "square",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_23.png",
+    "objects": [
+      {
+        "x_loc": 32,
+        "y_loc": 55,
+        "color": "yellow",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 28,
+        "y_loc": 73,
+        "color": "blue",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 82,
+        "y_loc": 42,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 12,
+        "y_loc": 52,
+        "color": "yellow",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 70,
+        "y_loc": 63,
+        "color": "blue",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 16,
+        "y_loc": 19,
+        "color": "green",
+        "type": "triangle",
+        "size": 12
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_24.png",
+    "objects": [
+      {
+        "x_loc": 65,
+        "y_loc": 18,
+        "color": "red",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 52,
+        "y_loc": 86,
+        "color": "green",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 27,
+        "y_loc": 45,
+        "color": "red",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 88,
+        "y_loc": 10,
+        "color": "red",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 40,
+        "y_loc": 12,
+        "color": "red",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 21,
+        "y_loc": 67,
+        "color": "blue",
+        "type": "square",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_25.png",
+    "objects": [
+      {
+        "x_loc": 71,
+        "y_loc": 17,
+        "color": "black",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 46,
+        "y_loc": 61,
+        "color": "yellow",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 20,
+        "y_loc": 49,
+        "color": "black",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 16,
+        "y_loc": 89,
+        "color": "black",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 66,
+        "y_loc": 58,
+        "color": "black",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 34,
+        "y_loc": 35,
+        "color": "red",
+        "type": "triangle",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_26.png",
+    "objects": [
+      {
+        "x_loc": 88,
+        "y_loc": 74,
+        "color": "green",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 33,
+        "y_loc": 66,
+        "color": "yellow",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 49,
+        "y_loc": 10,
+        "color": "green",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 17,
+        "y_loc": 73,
+        "color": "green",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 45,
+        "y_loc": 78,
+        "color": "blue",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 26,
+        "y_loc": 51,
+        "color": "black",
+        "type": "circle",
+        "size": 12
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_27.png",
+    "objects": [
+      {
+        "x_loc": 65,
+        "y_loc": 52,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 46,
+        "y_loc": 31,
+        "color": "black",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 82,
+        "y_loc": 11,
+        "color": "yellow",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 84,
+        "y_loc": 67,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 64,
+        "y_loc": 10,
+        "color": "blue",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 23,
+        "y_loc": 33,
+        "color": "blue",
+        "type": "triangle",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_28.png",
+    "objects": [
+      {
+        "x_loc": 50,
+        "y_loc": 79,
+        "color": "black",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 83,
+        "y_loc": 77,
+        "color": "green",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 33,
+        "y_loc": 79,
+        "color": "black",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 89,
+        "y_loc": 11,
+        "color": "black",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 51,
+        "y_loc": 56,
+        "color": "green",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 44,
+        "y_loc": 19,
+        "color": "green",
+        "type": "triangle",
+        "size": 12
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_29.png",
+    "objects": [
+      {
+        "x_loc": 62,
+        "y_loc": 55,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 44,
+        "y_loc": 41,
+        "color": "red",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 41,
+        "y_loc": 17,
+        "color": "yellow",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 51,
+        "y_loc": 88,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 71,
+        "y_loc": 10,
+        "color": "red",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 86,
+        "y_loc": 90,
+        "color": "black",
+        "type": "circle",
+        "size": 12
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_30.png",
+    "objects": [
+      {
+        "x_loc": 67,
+        "y_loc": 72,
+        "color": "red",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 90,
+        "y_loc": 36,
+        "color": "black",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 10,
+        "y_loc": 34,
+        "color": "red",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 17,
+        "y_loc": 10,
+        "color": "red",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 56,
+        "y_loc": 52,
+        "color": "blue",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 87,
+        "y_loc": 16,
+        "color": "black",
+        "type": "square",
+        "size": 12
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_31.png",
+    "objects": [
+      {
+        "x_loc": 68,
+        "y_loc": 78,
+        "color": "red",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 37,
+        "y_loc": 69,
+        "color": "yellow",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 86,
+        "y_loc": 12,
+        "color": "red",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 88,
+        "y_loc": 67,
+        "color": "red",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 50,
+        "y_loc": 90,
+        "color": "red",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 64,
+        "y_loc": 60,
+        "color": "red",
+        "type": "square",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_32.png",
+    "objects": [
+      {
+        "x_loc": 89,
+        "y_loc": 20,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 78,
+        "y_loc": 88,
+        "color": "red",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 67,
+        "y_loc": 38,
+        "color": "yellow",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 42,
+        "y_loc": 22,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 61,
+        "y_loc": 73,
+        "color": "red",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 49,
+        "y_loc": 41,
+        "color": "red",
+        "type": "triangle",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_33.png",
+    "objects": [
+      {
+        "x_loc": 43,
+        "y_loc": 41,
+        "color": "blue",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 29,
+        "y_loc": 79,
+        "color": "green",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 61,
+        "y_loc": 18,
+        "color": "blue",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 23,
+        "y_loc": 16,
+        "color": "blue",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 74,
+        "y_loc": 71,
+        "color": "yellow",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 81,
+        "y_loc": 89,
+        "color": "blue",
+        "type": "circle",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_34.png",
+    "objects": [
+      {
+        "x_loc": 82,
+        "y_loc": 63,
+        "color": "red",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 55,
+        "y_loc": 54,
+        "color": "black",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 38,
+        "y_loc": 54,
+        "color": "red",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 61,
+        "y_loc": 22,
+        "color": "red",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 33,
+        "y_loc": 81,
+        "color": "blue",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 53,
+        "y_loc": 35,
+        "color": "blue",
+        "type": "triangle",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_35.png",
+    "objects": [
+      {
+        "x_loc": 88,
+        "y_loc": 77,
+        "color": "red",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 79,
+        "y_loc": 90,
+        "color": "black",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 14,
+        "y_loc": 70,
+        "color": "red",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 27,
+        "y_loc": 42,
+        "color": "red",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 89,
+        "y_loc": 39,
+        "color": "blue",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 51,
+        "y_loc": 17,
+        "color": "red",
+        "type": "triangle",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_36.png",
+    "objects": [
+      {
+        "x_loc": 18,
+        "y_loc": 28,
+        "color": "blue",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 89,
+        "y_loc": 74,
+        "color": "green",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 44,
+        "y_loc": 32,
+        "color": "blue",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 33,
+        "y_loc": 18,
+        "color": "blue",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 59,
+        "y_loc": 90,
+        "color": "yellow",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 28,
+        "y_loc": 65,
+        "color": "black",
+        "type": "square",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_37.png",
+    "objects": [
+      {
+        "x_loc": 73,
+        "y_loc": 43,
+        "color": "blue",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 10,
+        "y_loc": 17,
+        "color": "black",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 28,
+        "y_loc": 51,
+        "color": "blue",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 75,
+        "y_loc": 22,
+        "color": "blue",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 53,
+        "y_loc": 70,
+        "color": "blue",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 61,
+        "y_loc": 83,
+        "color": "green",
+        "type": "triangle",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_38.png",
+    "objects": [
+      {
+        "x_loc": 19,
+        "y_loc": 89,
+        "color": "green",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 42,
+        "y_loc": 42,
+        "color": "red",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 19,
+        "y_loc": 56,
+        "color": "green",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 81,
+        "y_loc": 29,
+        "color": "green",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 62,
+        "y_loc": 73,
+        "color": "yellow",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 81,
+        "y_loc": 89,
+        "color": "red",
+        "type": "triangle",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_39.png",
+    "objects": [
+      {
+        "x_loc": 41,
+        "y_loc": 20,
+        "color": "black",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 40,
+        "y_loc": 44,
+        "color": "green",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 78,
+        "y_loc": 67,
+        "color": "black",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 28,
+        "y_loc": 81,
+        "color": "black",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 77,
+        "y_loc": 31,
+        "color": "yellow",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 86,
+        "y_loc": 82,
+        "color": "yellow",
+        "type": "circle",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_40.png",
+    "objects": [
+      {
+        "x_loc": 59,
+        "y_loc": 61,
+        "color": "black",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 69,
+        "y_loc": 83,
+        "color": "red",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 72,
+        "y_loc": 38,
+        "color": "black",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 55,
+        "y_loc": 16,
+        "color": "black",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 20,
+        "y_loc": 12,
+        "color": "black",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 18,
+        "y_loc": 60,
+        "color": "red",
+        "type": "circle",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_41.png",
+    "objects": [
+      {
+        "x_loc": 48,
+        "y_loc": 12,
+        "color": "yellow",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 82,
+        "y_loc": 85,
+        "color": "blue",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 37,
+        "y_loc": 84,
+        "color": "yellow",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 15,
+        "y_loc": 49,
+        "color": "yellow",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 61,
+        "y_loc": 68,
+        "color": "black",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 69,
+        "y_loc": 17,
+        "color": "blue",
+        "type": "square",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_42.png",
+    "objects": [
+      {
+        "x_loc": 54,
+        "y_loc": 72,
+        "color": "green",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 34,
+        "y_loc": 47,
+        "color": "yellow",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 55,
+        "y_loc": 29,
+        "color": "green",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 73,
+        "y_loc": 11,
+        "color": "green",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 42,
+        "y_loc": 82,
+        "color": "red",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 29,
+        "y_loc": 22,
+        "color": "green",
+        "type": "triangle",
+        "size": 12
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_43.png",
+    "objects": [
+      {
+        "x_loc": 44,
+        "y_loc": 19,
+        "color": "black",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 62,
+        "y_loc": 84,
+        "color": "yellow",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 71,
+        "y_loc": 56,
+        "color": "black",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 12,
+        "y_loc": 44,
+        "color": "black",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 22,
+        "y_loc": 10,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 18,
+        "y_loc": 26,
+        "color": "black",
+        "type": "circle",
+        "size": 12
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_44.png",
+    "objects": [
+      {
+        "x_loc": 15,
+        "y_loc": 21,
+        "color": "green",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 14,
+        "y_loc": 61,
+        "color": "black",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 84,
+        "y_loc": 35,
+        "color": "green",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 43,
+        "y_loc": 38,
+        "color": "green",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 12,
+        "y_loc": 40,
+        "color": "green",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 22,
+        "y_loc": 85,
+        "color": "green",
+        "type": "square",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_45.png",
+    "objects": [
+      {
+        "x_loc": 36,
+        "y_loc": 31,
+        "color": "blue",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 25,
+        "y_loc": 77,
+        "color": "red",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 11,
+        "y_loc": 19,
+        "color": "blue",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 67,
+        "y_loc": 15,
+        "color": "blue",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 87,
+        "y_loc": 21,
+        "color": "black",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 69,
+        "y_loc": 33,
+        "color": "black",
+        "type": "circle",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_46.png",
+    "objects": [
+      {
+        "x_loc": 45,
+        "y_loc": 83,
+        "color": "black",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 65,
+        "y_loc": 17,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 37,
+        "y_loc": 59,
+        "color": "black",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 79,
+        "y_loc": 55,
+        "color": "black",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 61,
+        "y_loc": 68,
+        "color": "green",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 14,
+        "y_loc": 35,
+        "color": "blue",
+        "type": "circle",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_47.png",
+    "objects": [
+      {
+        "x_loc": 20,
+        "y_loc": 80,
+        "color": "blue",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 34,
+        "y_loc": 52,
+        "color": "black",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 64,
+        "y_loc": 10,
+        "color": "blue",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 86,
+        "y_loc": 84,
+        "color": "blue",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 70,
+        "y_loc": 81,
+        "color": "green",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 19,
+        "y_loc": 17,
+        "color": "yellow",
+        "type": "square",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_48.png",
+    "objects": [
+      {
+        "x_loc": 58,
+        "y_loc": 20,
+        "color": "green",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 35,
+        "y_loc": 86,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 46,
+        "y_loc": 57,
+        "color": "green",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 73,
+        "y_loc": 64,
+        "color": "green",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 12,
+        "y_loc": 46,
+        "color": "black",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 50,
+        "y_loc": 83,
+        "color": "black",
+        "type": "square",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_49.png",
+    "objects": [
+      {
+        "x_loc": 86,
+        "y_loc": 29,
+        "color": "blue",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 83,
+        "y_loc": 73,
+        "color": "black",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 28,
+        "y_loc": 74,
+        "color": "blue",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 50,
+        "y_loc": 87,
+        "color": "blue",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 26,
+        "y_loc": 38,
+        "color": "blue",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 73,
+        "y_loc": 51,
+        "color": "black",
+        "type": "circle",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_50.png",
+    "objects": [
+      {
+        "x_loc": 80,
+        "y_loc": 18,
+        "color": "black",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 47,
+        "y_loc": 26,
+        "color": "green",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 74,
+        "y_loc": 51,
+        "color": "black",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 47,
+        "y_loc": 88,
+        "color": "black",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 13,
+        "y_loc": 33,
+        "color": "black",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 60,
+        "y_loc": 79,
+        "color": "black",
+        "type": "triangle",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_51.png",
+    "objects": [
+      {
+        "x_loc": 84,
+        "y_loc": 51,
+        "color": "yellow",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 43,
+        "y_loc": 11,
+        "color": "red",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 14,
+        "y_loc": 69,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 90,
+        "y_loc": 12,
+        "color": "yellow",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 72,
+        "y_loc": 14,
+        "color": "red",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 11,
+        "y_loc": 34,
+        "color": "red",
+        "type": "triangle",
+        "size": 12
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_52.png",
+    "objects": [
+      {
+        "x_loc": 55,
+        "y_loc": 20,
+        "color": "red",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 40,
+        "y_loc": 60,
+        "color": "green",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 88,
+        "y_loc": 44,
+        "color": "red",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 11,
+        "y_loc": 24,
+        "color": "red",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 57,
+        "y_loc": 88,
+        "color": "red",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 27,
+        "y_loc": 68,
+        "color": "green",
+        "type": "triangle",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_53.png",
+    "objects": [
+      {
+        "x_loc": 84,
+        "y_loc": 33,
+        "color": "yellow",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 42,
+        "y_loc": 16,
+        "color": "blue",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 87,
+        "y_loc": 57,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 61,
+        "y_loc": 71,
+        "color": "yellow",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 15,
+        "y_loc": 45,
+        "color": "blue",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 47,
+        "y_loc": 37,
+        "color": "red",
+        "type": "circle",
+        "size": 12
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_54.png",
+    "objects": [
+      {
+        "x_loc": 44,
+        "y_loc": 13,
+        "color": "blue",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 87,
+        "y_loc": 10,
+        "color": "green",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 72,
+        "y_loc": 25,
+        "color": "blue",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 64,
+        "y_loc": 76,
+        "color": "blue",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 42,
+        "y_loc": 45,
+        "color": "green",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 25,
+        "y_loc": 26,
+        "color": "blue",
+        "type": "square",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_55.png",
+    "objects": [
+      {
+        "x_loc": 24,
+        "y_loc": 60,
+        "color": "yellow",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 10,
+        "y_loc": 30,
+        "color": "black",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 11,
+        "y_loc": 48,
+        "color": "yellow",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 10,
+        "y_loc": 85,
+        "color": "yellow",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 82,
+        "y_loc": 79,
+        "color": "red",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 58,
+        "y_loc": 39,
+        "color": "red",
+        "type": "circle",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_56.png",
+    "objects": [
+      {
+        "x_loc": 81,
+        "y_loc": 39,
+        "color": "red",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 61,
+        "y_loc": 75,
+        "color": "black",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 10,
+        "y_loc": 35,
+        "color": "red",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 56,
+        "y_loc": 48,
+        "color": "red",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 37,
+        "y_loc": 38,
+        "color": "blue",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 20,
+        "y_loc": 67,
+        "color": "black",
+        "type": "circle",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_57.png",
+    "objects": [
+      {
+        "x_loc": 21,
+        "y_loc": 51,
+        "color": "black",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 90,
+        "y_loc": 43,
+        "color": "blue",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 10,
+        "y_loc": 32,
+        "color": "black",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 36,
+        "y_loc": 76,
+        "color": "black",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 61,
+        "y_loc": 63,
+        "color": "red",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 47,
+        "y_loc": 54,
+        "color": "yellow",
+        "type": "circle",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_58.png",
+    "objects": [
+      {
+        "x_loc": 20,
+        "y_loc": 36,
+        "color": "blue",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 51,
+        "y_loc": 19,
+        "color": "yellow",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 83,
+        "y_loc": 35,
+        "color": "blue",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 63,
+        "y_loc": 79,
+        "color": "blue",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 57,
+        "y_loc": 60,
+        "color": "blue",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 12,
+        "y_loc": 50,
+        "color": "yellow",
+        "type": "circle",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_59.png",
+    "objects": [
+      {
+        "x_loc": 47,
+        "y_loc": 53,
+        "color": "red",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 28,
+        "y_loc": 32,
+        "color": "blue",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 10,
+        "y_loc": 88,
+        "color": "red",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 89,
+        "y_loc": 59,
+        "color": "red",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 72,
+        "y_loc": 19,
+        "color": "red",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 28,
+        "y_loc": 72,
+        "color": "black",
+        "type": "triangle",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_60.png",
+    "objects": [
+      {
+        "x_loc": 74,
+        "y_loc": 70,
+        "color": "blue",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 35,
+        "y_loc": 44,
+        "color": "green",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 11,
+        "y_loc": 50,
+        "color": "blue",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 53,
+        "y_loc": 28,
+        "color": "blue",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 59,
+        "y_loc": 59,
+        "color": "green",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 35,
+        "y_loc": 19,
+        "color": "green",
+        "type": "circle",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_61.png",
+    "objects": [
+      {
+        "x_loc": 37,
+        "y_loc": 55,
+        "color": "yellow",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 71,
+        "y_loc": 50,
+        "color": "green",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 90,
+        "y_loc": 35,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 56,
+        "y_loc": 82,
+        "color": "yellow",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 39,
+        "y_loc": 36,
+        "color": "black",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 14,
+        "y_loc": 25,
+        "color": "red",
+        "type": "square",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_62.png",
+    "objects": [
+      {
+        "x_loc": 90,
+        "y_loc": 64,
+        "color": "black",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 32,
+        "y_loc": 20,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 61,
+        "y_loc": 22,
+        "color": "black",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 18,
+        "y_loc": 46,
+        "color": "black",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 57,
+        "y_loc": 52,
+        "color": "red",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 83,
+        "y_loc": 43,
+        "color": "blue",
+        "type": "square",
+        "size": 12
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_63.png",
+    "objects": [
+      {
+        "x_loc": 51,
+        "y_loc": 60,
+        "color": "red",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 54,
+        "y_loc": 75,
+        "color": "blue",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 38,
+        "y_loc": 41,
+        "color": "red",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 41,
+        "y_loc": 25,
+        "color": "red",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 84,
+        "y_loc": 81,
+        "color": "red",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 11,
+        "y_loc": 21,
+        "color": "yellow",
+        "type": "square",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_64.png",
+    "objects": [
+      {
+        "x_loc": 42,
+        "y_loc": 42,
+        "color": "green",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 46,
+        "y_loc": 66,
+        "color": "yellow",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 64,
+        "y_loc": 60,
+        "color": "green",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 28,
+        "y_loc": 54,
+        "color": "green",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 84,
+        "y_loc": 83,
+        "color": "blue",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 11,
+        "y_loc": 13,
+        "color": "blue",
+        "type": "triangle",
+        "size": 12
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_65.png",
+    "objects": [
+      {
+        "x_loc": 58,
+        "y_loc": 60,
+        "color": "green",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 15,
+        "y_loc": 52,
+        "color": "black",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 35,
+        "y_loc": 41,
+        "color": "green",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 31,
+        "y_loc": 13,
+        "color": "green",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 43,
+        "y_loc": 88,
+        "color": "blue",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 76,
+        "y_loc": 81,
+        "color": "yellow",
+        "type": "square",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_66.png",
+    "objects": [
+      {
+        "x_loc": 16,
+        "y_loc": 88,
+        "color": "green",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 30,
+        "y_loc": 33,
+        "color": "black",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 38,
+        "y_loc": 47,
+        "color": "green",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 87,
+        "y_loc": 83,
+        "color": "green",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 62,
+        "y_loc": 37,
+        "color": "yellow",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 45,
+        "y_loc": 81,
+        "color": "blue",
+        "type": "circle",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_67.png",
+    "objects": [
+      {
+        "x_loc": 48,
+        "y_loc": 82,
+        "color": "green",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 23,
+        "y_loc": 71,
+        "color": "yellow",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 48,
+        "y_loc": 10,
+        "color": "green",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 73,
+        "y_loc": 12,
+        "color": "green",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 46,
+        "y_loc": 49,
+        "color": "red",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 90,
+        "y_loc": 28,
+        "color": "green",
+        "type": "circle",
+        "size": 12
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_68.png",
+    "objects": [
+      {
+        "x_loc": 17,
+        "y_loc": 46,
+        "color": "red",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 77,
+        "y_loc": 43,
+        "color": "green",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 67,
+        "y_loc": 20,
+        "color": "red",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 73,
+        "y_loc": 87,
+        "color": "red",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 48,
+        "y_loc": 49,
+        "color": "black",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 45,
+        "y_loc": 25,
+        "color": "red",
+        "type": "triangle",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_69.png",
+    "objects": [
+      {
+        "x_loc": 71,
+        "y_loc": 63,
+        "color": "green",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 57,
+        "y_loc": 73,
+        "color": "red",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 24,
+        "y_loc": 11,
+        "color": "green",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 32,
+        "y_loc": 69,
+        "color": "green",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 84,
+        "y_loc": 44,
+        "color": "red",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 17,
+        "y_loc": 46,
+        "color": "black",
+        "type": "triangle",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_70.png",
+    "objects": [
+      {
+        "x_loc": 84,
+        "y_loc": 71,
+        "color": "blue",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 75,
+        "y_loc": 53,
+        "color": "black",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 51,
+        "y_loc": 15,
+        "color": "blue",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 11,
+        "y_loc": 40,
+        "color": "blue",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 46,
+        "y_loc": 49,
+        "color": "black",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 81,
+        "y_loc": 35,
+        "color": "blue",
+        "type": "triangle",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_71.png",
+    "objects": [
+      {
+        "x_loc": 43,
+        "y_loc": 64,
+        "color": "blue",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 46,
+        "y_loc": 31,
+        "color": "red",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 25,
+        "y_loc": 54,
+        "color": "blue",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 19,
+        "y_loc": 38,
+        "color": "blue",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 70,
+        "y_loc": 47,
+        "color": "blue",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 88,
+        "y_loc": 49,
+        "color": "blue",
+        "type": "triangle",
+        "size": 12
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_72.png",
+    "objects": [
+      {
+        "x_loc": 43,
+        "y_loc": 52,
+        "color": "red",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 58,
+        "y_loc": 33,
+        "color": "black",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 21,
+        "y_loc": 32,
+        "color": "red",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 78,
+        "y_loc": 21,
+        "color": "red",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 11,
+        "y_loc": 68,
+        "color": "red",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 74,
+        "y_loc": 79,
+        "color": "green",
+        "type": "triangle",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_73.png",
+    "objects": [
+      {
+        "x_loc": 28,
+        "y_loc": 18,
+        "color": "green",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 14,
+        "y_loc": 70,
+        "color": "red",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 22,
+        "y_loc": 85,
+        "color": "green",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 77,
+        "y_loc": 70,
+        "color": "green",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 34,
+        "y_loc": 54,
+        "color": "black",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 59,
+        "y_loc": 68,
+        "color": "red",
+        "type": "square",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_74.png",
+    "objects": [
+      {
+        "x_loc": 59,
+        "y_loc": 42,
+        "color": "green",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 42,
+        "y_loc": 81,
+        "color": "black",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 35,
+        "y_loc": 28,
+        "color": "green",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 83,
+        "y_loc": 16,
+        "color": "green",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 67,
+        "y_loc": 67,
+        "color": "green",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 40,
+        "y_loc": 44,
+        "color": "black",
+        "type": "circle",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_75.png",
+    "objects": [
+      {
+        "x_loc": 21,
+        "y_loc": 80,
+        "color": "black",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 22,
+        "y_loc": 28,
+        "color": "green",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 12,
+        "y_loc": 55,
+        "color": "black",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 59,
+        "y_loc": 83,
+        "color": "black",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 67,
+        "y_loc": 45,
+        "color": "red",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 62,
+        "y_loc": 24,
+        "color": "black",
+        "type": "circle",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_76.png",
+    "objects": [
+      {
+        "x_loc": 76,
+        "y_loc": 73,
+        "color": "red",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 66,
+        "y_loc": 10,
+        "color": "yellow",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 21,
+        "y_loc": 44,
+        "color": "red",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 73,
+        "y_loc": 31,
+        "color": "red",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 38,
+        "y_loc": 23,
+        "color": "red",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 10,
+        "y_loc": 55,
+        "color": "black",
+        "type": "circle",
+        "size": 12
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_77.png",
+    "objects": [
+      {
+        "x_loc": 50,
+        "y_loc": 54,
+        "color": "red",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 37,
+        "y_loc": 24,
+        "color": "black",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 79,
+        "y_loc": 76,
+        "color": "red",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 74,
+        "y_loc": 32,
+        "color": "red",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 87,
+        "y_loc": 51,
+        "color": "red",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 15,
+        "y_loc": 10,
+        "color": "black",
+        "type": "square",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_78.png",
+    "objects": [
+      {
+        "x_loc": 17,
+        "y_loc": 83,
+        "color": "blue",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 65,
+        "y_loc": 11,
+        "color": "green",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 70,
+        "y_loc": 38,
+        "color": "blue",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 17,
+        "y_loc": 63,
+        "color": "blue",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 42,
+        "y_loc": 76,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 44,
+        "y_loc": 60,
+        "color": "red",
+        "type": "circle",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_79.png",
+    "objects": [
+      {
+        "x_loc": 11,
+        "y_loc": 30,
+        "color": "green",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 11,
+        "y_loc": 69,
+        "color": "blue",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 43,
+        "y_loc": 33,
+        "color": "green",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 67,
+        "y_loc": 48,
+        "color": "green",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 87,
+        "y_loc": 64,
+        "color": "black",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 77,
+        "y_loc": 11,
+        "color": "yellow",
+        "type": "circle",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_80.png",
+    "objects": [
+      {
+        "x_loc": 27,
+        "y_loc": 58,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 57,
+        "y_loc": 56,
+        "color": "blue",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 24,
+        "y_loc": 18,
+        "color": "yellow",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 71,
+        "y_loc": 28,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 58,
+        "y_loc": 12,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 78,
+        "y_loc": 42,
+        "color": "green",
+        "type": "triangle",
+        "size": 12
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_81.png",
+    "objects": [
+      {
+        "x_loc": 78,
+        "y_loc": 16,
+        "color": "red",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 78,
+        "y_loc": 59,
+        "color": "black",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 63,
+        "y_loc": 47,
+        "color": "red",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 39,
+        "y_loc": 30,
+        "color": "red",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 57,
+        "y_loc": 71,
+        "color": "red",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 52,
+        "y_loc": 22,
+        "color": "yellow",
+        "type": "circle",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_82.png",
+    "objects": [
+      {
+        "x_loc": 20,
+        "y_loc": 69,
+        "color": "green",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 80,
+        "y_loc": 77,
+        "color": "red",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 37,
+        "y_loc": 11,
+        "color": "green",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 40,
+        "y_loc": 31,
+        "color": "green",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 46,
+        "y_loc": 85,
+        "color": "black",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 44,
+        "y_loc": 68,
+        "color": "red",
+        "type": "triangle",
+        "size": 12
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_83.png",
+    "objects": [
+      {
+        "x_loc": 76,
+        "y_loc": 33,
+        "color": "red",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 86,
+        "y_loc": 12,
+        "color": "green",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 36,
+        "y_loc": 38,
+        "color": "red",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 43,
+        "y_loc": 60,
+        "color": "red",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 71,
+        "y_loc": 73,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 56,
+        "y_loc": 83,
+        "color": "red",
+        "type": "square",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_84.png",
+    "objects": [
+      {
+        "x_loc": 45,
+        "y_loc": 47,
+        "color": "red",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 79,
+        "y_loc": 17,
+        "color": "yellow",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 34,
+        "y_loc": 16,
+        "color": "red",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 54,
+        "y_loc": 78,
+        "color": "red",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 58,
+        "y_loc": 38,
+        "color": "blue",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 79,
+        "y_loc": 33,
+        "color": "blue",
+        "type": "square",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_85.png",
+    "objects": [
+      {
+        "x_loc": 23,
+        "y_loc": 39,
+        "color": "black",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 51,
+        "y_loc": 19,
+        "color": "red",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 89,
+        "y_loc": 25,
+        "color": "black",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 47,
+        "y_loc": 54,
+        "color": "black",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 51,
+        "y_loc": 73,
+        "color": "green",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 11,
+        "y_loc": 62,
+        "color": "blue",
+        "type": "square",
+        "size": 12
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_86.png",
+    "objects": [
+      {
+        "x_loc": 69,
+        "y_loc": 42,
+        "color": "black",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 16,
+        "y_loc": 58,
+        "color": "red",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 90,
+        "y_loc": 18,
+        "color": "black",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 20,
+        "y_loc": 78,
+        "color": "black",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 42,
+        "y_loc": 18,
+        "color": "green",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 90,
+        "y_loc": 43,
+        "color": "green",
+        "type": "triangle",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_87.png",
+    "objects": [
+      {
+        "x_loc": 23,
+        "y_loc": 38,
+        "color": "blue",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 56,
+        "y_loc": 54,
+        "color": "green",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 65,
+        "y_loc": 37,
+        "color": "blue",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 81,
+        "y_loc": 78,
+        "color": "blue",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 25,
+        "y_loc": 59,
+        "color": "yellow",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 23,
+        "y_loc": 79,
+        "color": "green",
+        "type": "circle",
+        "size": 12
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_88.png",
+    "objects": [
+      {
+        "x_loc": 74,
+        "y_loc": 57,
+        "color": "yellow",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 44,
+        "y_loc": 45,
+        "color": "red",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 31,
+        "y_loc": 84,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 49,
+        "y_loc": 84,
+        "color": "yellow",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 89,
+        "y_loc": 65,
+        "color": "red",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 25,
+        "y_loc": 59,
+        "color": "yellow",
+        "type": "square",
+        "size": 12
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_89.png",
+    "objects": [
+      {
+        "x_loc": 90,
+        "y_loc": 82,
+        "color": "black",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 60,
+        "y_loc": 34,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 51,
+        "y_loc": 55,
+        "color": "black",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 88,
+        "y_loc": 63,
+        "color": "black",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 46,
+        "y_loc": 76,
+        "color": "black",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 68,
+        "y_loc": 83,
+        "color": "black",
+        "type": "square",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_90.png",
+    "objects": [
+      {
+        "x_loc": 78,
+        "y_loc": 15,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 61,
+        "y_loc": 36,
+        "color": "red",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 49,
+        "y_loc": 18,
+        "color": "yellow",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 16,
+        "y_loc": 62,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 37,
+        "y_loc": 74,
+        "color": "yellow",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 58,
+        "y_loc": 75,
+        "color": "black",
+        "type": "square",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_91.png",
+    "objects": [
+      {
+        "x_loc": 60,
+        "y_loc": 57,
+        "color": "green",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 23,
+        "y_loc": 89,
+        "color": "red",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 15,
+        "y_loc": 39,
+        "color": "green",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 37,
+        "y_loc": 47,
+        "color": "green",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 88,
+        "y_loc": 35,
+        "color": "red",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 37,
+        "y_loc": 23,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_92.png",
+    "objects": [
+      {
+        "x_loc": 31,
+        "y_loc": 31,
+        "color": "black",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 88,
+        "y_loc": 49,
+        "color": "green",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 27,
+        "y_loc": 58,
+        "color": "black",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 18,
+        "y_loc": 89,
+        "color": "black",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 65,
+        "y_loc": 11,
+        "color": "yellow",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 41,
+        "y_loc": 18,
+        "color": "red",
+        "type": "square",
+        "size": 12
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_93.png",
+    "objects": [
+      {
+        "x_loc": 40,
+        "y_loc": 75,
+        "color": "yellow",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 36,
+        "y_loc": 39,
+        "color": "blue",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 44,
+        "y_loc": 90,
+        "color": "yellow",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 65,
+        "y_loc": 88,
+        "color": "yellow",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 89,
+        "y_loc": 77,
+        "color": "blue",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 90,
+        "y_loc": 59,
+        "color": "green",
+        "type": "square",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_94.png",
+    "objects": [
+      {
+        "x_loc": 62,
+        "y_loc": 18,
+        "color": "green",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 47,
+        "y_loc": 57,
+        "color": "yellow",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 88,
+        "y_loc": 65,
+        "color": "green",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 43,
+        "y_loc": 27,
+        "color": "green",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 74,
+        "y_loc": 41,
+        "color": "yellow",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 35,
+        "y_loc": 68,
+        "color": "red",
+        "type": "circle",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_95.png",
+    "objects": [
+      {
+        "x_loc": 13,
+        "y_loc": 75,
+        "color": "blue",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 54,
+        "y_loc": 75,
+        "color": "red",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 86,
+        "y_loc": 20,
+        "color": "blue",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 42,
+        "y_loc": 18,
+        "color": "blue",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 76,
+        "y_loc": 40,
+        "color": "blue",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 20,
+        "y_loc": 25,
+        "color": "blue",
+        "type": "circle",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_96.png",
+    "objects": [
+      {
+        "x_loc": 86,
+        "y_loc": 15,
+        "color": "black",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 21,
+        "y_loc": 73,
+        "color": "red",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 61,
+        "y_loc": 85,
+        "color": "black",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 70,
+        "y_loc": 69,
+        "color": "black",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 62,
+        "y_loc": 40,
+        "color": "green",
+        "type": "circle",
+        "size": 16
+      },
+      {
+        "x_loc": 23,
+        "y_loc": 16,
+        "color": "yellow",
+        "type": "square",
+        "size": 8
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_97.png",
+    "objects": [
+      {
+        "x_loc": 44,
+        "y_loc": 62,
+        "color": "red",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 66,
+        "y_loc": 80,
+        "color": "yellow",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 82,
+        "y_loc": 10,
+        "color": "red",
+        "type": "circle",
+        "size": 12
+      },
+      {
+        "x_loc": 60,
+        "y_loc": 24,
+        "color": "red",
+        "type": "triangle",
+        "size": 16
+      },
+      {
+        "x_loc": 10,
+        "y_loc": 86,
+        "color": "red",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 48,
+        "y_loc": 82,
+        "color": "green",
+        "type": "triangle",
+        "size": 12
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_98.png",
+    "objects": [
+      {
+        "x_loc": 77,
+        "y_loc": 23,
+        "color": "blue",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 26,
+        "y_loc": 11,
+        "color": "black",
+        "type": "triangle",
+        "size": 8
+      },
+      {
+        "x_loc": 17,
+        "y_loc": 76,
+        "color": "blue",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 67,
+        "y_loc": 66,
+        "color": "blue",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 13,
+        "y_loc": 28,
+        "color": "yellow",
+        "type": "circle",
+        "size": 8
+      },
+      {
+        "x_loc": 34,
+        "y_loc": 58,
+        "color": "yellow",
+        "type": "square",
+        "size": 16
+      }
+    ]
+  },
+  {
+    "image": "reference_game_dataset/scene_99.png",
+    "objects": [
+      {
+        "x_loc": 14,
+        "y_loc": 48,
+        "color": "black",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 70,
+        "y_loc": 45,
+        "color": "blue",
+        "type": "square",
+        "size": 12
+      },
+      {
+        "x_loc": 40,
+        "y_loc": 43,
+        "color": "black",
+        "type": "triangle",
+        "size": 12
+      },
+      {
+        "x_loc": 77,
+        "y_loc": 24,
+        "color": "black",
+        "type": "square",
+        "size": 8
+      },
+      {
+        "x_loc": 63,
+        "y_loc": 30,
+        "color": "green",
+        "type": "square",
+        "size": 16
+      },
+      {
+        "x_loc": 18,
+        "y_loc": 15,
+        "color": "red",
+        "type": "square",
+        "size": 16
+      }
+    ]
+  }
+]
