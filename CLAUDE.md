@@ -17,20 +17,15 @@ Core idea: model clarification as a cost-utility optimization at inference time 
 
 ## Repository Structure
 
-```
-final_project/
-  report/          # LaTeX report (note.tex / note.pdf)
-```
-
 Code (to be added) will likely include:
 - Dataset generator (synthetic JSON "Mini-World" scenes with controllable referential entropy)
-- Literal Listener baseline and heuristic string-match baseline
-- RSA + expected utility clarification policy
+which will create scenes with varying numbers of objects and attributes to manipulate ambiguity levels.
+Can generate datasets with different parameters. Like if target is overlapping with other objects, or if minimum number of features to uniquely identify the target is high, etc.
+
+- Speaker
+Three speaker: LLM Speaker (using GPT-4 to generate utterances), Literal Speaker (using a simple rule-based approach to generate literal descriptions), and RSA Speaker (using RSA to generate pragmatic utterances that consider the listener's perspective).
+
+- Listener
+Two listeners: Literal Listener (using a simple rule-based approach to interpret utterances) and RSA Listener (using RSA to interpret utterances by considering the speaker's perspective and the context). And a Cost-Aware Listener that decides whether to ask a clarifying question based on the expected utility of asking vs. guessing.
+
 - Evaluation scripts
-
-## Report
-
-Compile the report with:
-```bash
-cd report && pdflatex note.tex
-```

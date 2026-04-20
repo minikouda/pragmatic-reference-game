@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "refgame"
+version = "0.1.0"
+description = "Cost-aware clarification in reference games (CS 288 final project)"
+requires-python = ">=3.11"
+dependencies = [
+    "openai>=1.30",
+    "anthropic>=0.25",
+    "numpy>=1.26",
+    "pandas>=2.2",
+    "tqdm>=4.66",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-cov", "pyright"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pyright]
+pythonVersion = "3.11"
+typeCheckingMode = "standard"
