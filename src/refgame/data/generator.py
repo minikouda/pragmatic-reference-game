@@ -22,7 +22,7 @@ from dataclasses import dataclass, field
 from typing import Iterable, Iterator
 
 from .schema import (
-    COLORS, SHAPES, SIZES, LOCATIONS, FEATURE_KEYS,
+    COLORS, SHAPES, SIZES, LOCATIONS, FEATURE_KEYS, FEATURE_VOCAB,
     Object, Scene, EntropyAnnotation,
 )
 
@@ -51,7 +51,7 @@ class GeneratorConfig:
     max_overlap:         int | None  = None
     ambiguity_tier:      str | None  = None   # "low" | "medium" | "high"
     seed:                int | None  = 42
-    max_rejection_iters: int         = 500
+    max_rejection_iters: int         = 2000
 
     def __post_init__(self) -> None:
         # Resolve ambiguity_tier → min_desc_length
@@ -140,7 +140,9 @@ class SceneGenerator:
         mdl = self._compute_min_desc_length(target, distractors)
         max_ov = max(self._feature_overlap(target, d) for d in distractors)
 
-        if cfg.min_desc_length is not None and mdl != cfg.min_desc_length:
+        # Treat min_desc_length as a lower bound: scenes that require *more*
+        # features are at least as hard, so they belong in the same tier.
+        if cfg.min_desc_length is not None and mdl < cfg.min_desc_length:
             return False
         if cfg.max_overlap is not None and max_ov > cfg.max_overlap:
             return False
@@ -153,57 +155,120 @@ class SceneGenerator:
 
     def _sample_scene(self, scene_id: str) -> Scene:
         cfg = self.config
+        # For high ambiguity (MDL >= 3), pure rejection sampling almost never
+        # succeeds with few objects because covering all C(4,2)=6 feature-pairs
+        # requires deliberately structured overlap.  Use the constructive path.
+        if cfg.min_desc_length is not None and cfg.min_desc_length >= 3:
+            return self._sample_scene_constructive(scene_id)
+
         for _ in range(cfg.max_rejection_iters):
-            # Sample target
             target = self._sample_object("T")
-            # Sample distractors (allow attribute collisions — that's the point)
             distractors = [
                 self._sample_object(f"D{i}")
                 for i in range(cfg.n_objects - 1)
             ]
-            # Ensure no two objects are identical across all features
             all_objs = [target] + distractors
             feature_sets = [frozenset(o.features().items()) for o in all_objs]
             if len(feature_sets) != len(set(feature_sets)):
                 continue
             if not self._meets_constraints(target, distractors):
                 continue
+            return self._finalize_scene(scene_id, target, distractors)
 
-            # Assign stable IDs and shuffle order
-            combined = all_objs[:]
-            self._rng.shuffle(combined)
-            # Reassign IDs after shuffle for cleanliness
-            combined = [
-                Object(id=f"obj_{i}", color=o.color, shape=o.shape,
-                       size=o.size, location=o.location)
-                for i, o in enumerate(combined)
-            ]
-            target_idx = next(
-                i for i, o in enumerate(combined) if o.color == target.color
-                and o.shape == target.shape and o.size == target.size
-                and o.location == target.location
-            )
+        raise RuntimeError(
+            f"Could not sample a valid scene after {cfg.max_rejection_iters} attempts. "
+            f"Config: {cfg}"
+        )
 
-            target_obj = combined[target_idx]
-            distractor_objs = [o for i, o in enumerate(combined) if i != target_idx]
-            mdl     = self._compute_min_desc_length(target_obj, distractor_objs)
-            max_ov  = max(self._feature_overlap(target_obj, d) for d in distractor_objs)
-            h_max   = __import__("math").log(len(combined))
-            tier    = self._tier_label(mdl)
+    def _sample_scene_constructive(self, scene_id: str) -> Scene:
+        """
+        Build a high-ambiguity scene by design rather than rejection sampling.
 
-            ann = EntropyAnnotation(
-                n_objects=len(combined),
-                min_desc_length=mdl,
-                max_overlap=max_ov,
-                h_uniform=h_max,
-                ambiguity_tier=tier,
-            )
-            return Scene(
-                id=scene_id,
-                objects=combined,
-                target_idx=target_idx,
-                entropy_annotation=ann,
-            )
+        For MDL >= 3 we must block every one of the C(4,2)=6 feature-pairs from
+        distinguishing the target.  Each distractor that matches the target on k
+        features blocks C(k,2) pairs.  With k=3 each distractor blocks 3 pairs,
+        so three distractors with the right triples block all 6 exactly:
+
+            D0 locks {color, shape, size}     → blocks {cs, csz, ssz}
+            D1 locks {shape, size, location}  → blocks {ssz, sl, szl}
+            D2 locks {color, size, location}  → blocks {csz, cl, szl} + {cs}
+
+        All 6 pairs are covered.  Additional distractors (n_objects > 4)
+        use further triples chosen round-robin from all C(4,3)=4 triples.
+
+        For each distractor the one un-locked feature dimension is randomized
+        to a value != target's, ensuring the full description still identifies
+        the target uniquely (MDL <= 4 always).
+        """
+        from itertools import combinations as _comb
+
+        cfg = self.config
+        n_d = cfg.n_objects - 1
+
+        # All C(4,3)=4 triples of feature keys, ordered to cover all 6 pairs
+        # in the fewest distractors.  The first 3 suffice for n_d=3.
+        all_triples = list(_comb(FEATURE_KEYS, 3))   # 4 triples
+
+        for _ in range(cfg.max_rejection_iters):
+            target  = self._sample_object("T")
+            t_feats = target.features()
+
+            distractors: list[Object] = []
+            for i in range(n_d):
+                locked_keys = set(all_triples[i % len(all_triples)])
+                new_feats: dict[str, str] = {}
+                for k in FEATURE_KEYS:
+                    if k in locked_keys:
+                        new_feats[k] = t_feats[k]
+                    else:
+                        vocab   = FEATURE_VOCAB[k]
+                        choices = [v for v in vocab if v != t_feats[k]]
+                        new_feats[k] = self._rng.choice(choices) if choices else t_feats[k]
+                distractors.append(Object(id=f"D{i}", **new_feats))
+
+            all_objs = [target] + distractors
+            feature_sets = [frozenset(o.features().items()) for o in all_objs]
+            if len(feature_sets) != len(set(feature_sets)):
+                continue
+            if not self._meets_constraints(target, distractors):
+                continue
+            return self._finalize_scene(scene_id, target, distractors)
+
+        raise RuntimeError(
+            f"Could not sample a valid high-ambiguity scene after "
+            f"{cfg.max_rejection_iters} attempts. Config: {cfg}"
+        )
+
+    def _finalize_scene(
+        self, scene_id: str, target: Object, distractors: list[Object]
+    ) -> Scene:
+        """Shuffle object order, assign clean IDs, compute annotation."""
+        import math as _math
+        all_objs = [target] + distractors
+        self._rng.shuffle(all_objs)
+        combined = [
+            Object(id=f"obj_{i}", color=o.color, shape=o.shape,
+                   size=o.size, location=o.location)
+            for i, o in enumerate(all_objs)
+        ]
+        target_idx = next(
+            i for i, o in enumerate(combined)
+            if o.color == target.color and o.shape == target.shape
+            and o.size == target.size and o.location == target.location
+        )
+        target_obj      = combined[target_idx]
+        distractor_objs = [o for i, o in enumerate(combined) if i != target_idx]
+        mdl    = self._compute_min_desc_length(target_obj, distractor_objs)
+        max_ov = max(self._feature_overlap(target_obj, d) for d in distractor_objs)
+        ann = EntropyAnnotation(
+            n_objects=len(combined),
+            min_desc_length=mdl,
+            max_overlap=max_ov,
+            h_uniform=_math.log(len(combined)),
+            ambiguity_tier=self._tier_label(mdl),
+        )
+        return Scene(id=scene_id, objects=combined, target_idx=target_idx,
+                     entropy_annotation=ann)
 
         raise RuntimeError(
             f"Could not sample a valid scene after {cfg.max_rejection_iters} attempts. "
@@ -212,8 +277,9 @@ class SceneGenerator:
 
     @staticmethod
     def _tier_label(mdl: int) -> str:
+        """Map min_desc_length to a human-readable tier (lower bound semantics)."""
         if mdl <= 1:
             return "low"
         if mdl == 2:
             return "medium"
-        return "high"
+        return "high"   # mdl >= 3
