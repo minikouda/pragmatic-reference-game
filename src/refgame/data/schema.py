@@ -1,26 +1,33 @@
 """
 Core data structures for reference game scenes.
 
-All objects are symbolic: a fixed vocabulary of visual attributes
-(color, shape, size, location). This keeps the game tractable for
-both rule-based and neural listeners while allowing precise control
-over referential entropy.
+Supports both symbolic (rule-based) and visual (VLLM) pipelines:
+- Symbolic attributes (color, shape, size, location) are used by Literal/RSA models.
+- Pixel coordinates (x_loc, y_loc) and image_path are used by VLLM models.
+
+Vocabulary is aligned with the reference_game_dataset:
+  shapes : circle, square, triangle
+  colors : black, blue, green, red, yellow
+  sizes  : small (8px), medium (12px), large (16px)
 """
 
 from __future__ import annotations
 
 import math
 from dataclasses import dataclass, field
-from typing import FrozenSet, Sequence
+from typing import FrozenSet
 
 
-# ── Vocabulary ─────────────────────────────────────────────────────────────
+# ── Vocabulary (aligned with reference_game_dataset) ───────────────────────
 
-COLORS    = ("red", "blue", "green", "yellow", "purple", "orange", "pink", "brown")
-SHAPES    = ("circle", "square", "triangle", "diamond", "star", "pentagon", "cross")
+COLORS    = ("black", "blue", "green", "red", "yellow")
+SHAPES    = ("circle", "square", "triangle")
 SIZES     = ("small", "medium", "large")
 LOCATIONS = ("top-left", "top-right", "bottom-left", "bottom-right",
              "top", "bottom", "left", "right", "center")
+
+# Numeric pixel size → categorical label
+SIZE_MAP: dict[int, str] = {8: "small", 12: "medium", 16: "large"}
 
 FEATURE_VOCAB: dict[str, tuple[str, ...]] = {
     "color":    COLORS,
@@ -31,6 +38,20 @@ FEATURE_VOCAB: dict[str, tuple[str, ...]] = {
 FEATURE_KEYS = tuple(FEATURE_VOCAB.keys())
 
 
+def loc_label(x: float, y: float, canvas: int = 100) -> str:
+    """Map pixel (x, y) on a [0, canvas]² grid to a coarse spatial label."""
+    xn, yn = x / canvas, y / canvas
+    col = "left" if xn < 0.33 else ("right" if xn > 0.66 else "center")
+    row = "top"  if yn < 0.33 else ("bottom" if yn > 0.66 else "center")
+    if row == col == "center":
+        return "center"
+    if row == "center":
+        return col
+    if col == "center":
+        return row
+    return f"{row}-{col}"
+
+
 # ── Object ──────────────────────────────────────────────────────────────────
 
 @dataclass(frozen=True)
@@ -38,14 +59,17 @@ class Object:
     """
     A single object in a reference game scene.
 
-    Attributes are discrete and drawn from fixed vocabularies so that
-    feature overlap can be computed exactly (no embedding similarity needed).
+    Symbolic attributes (color, shape, size, location) are used by rule-based
+    and RSA models.  Pixel coordinates (x_loc, y_loc) are stored for
+    reference by VLLM prompts and scene rendering.
     """
     id:       str
     color:    str
-    shape:    str
-    size:     str
-    location: str
+    shape:    str        # "circle" | "square" | "triangle"
+    size:     str        # "small" | "medium" | "large"
+    location: str        # coarse spatial label derived from (x_loc, y_loc)
+    x_loc:    int = 0    # pixel x-coordinate in the rendered image
+    y_loc:    int = 0    # pixel y-coordinate in the rendered image
 
     def __post_init__(self) -> None:
         assert self.color    in COLORS,    f"Unknown color: {self.color}"
@@ -53,14 +77,13 @@ class Object:
         assert self.size     in SIZES,     f"Unknown size:  {self.size}"
         assert self.location in LOCATIONS, f"Unknown location: {self.location}"
 
-    # ── Convenience ────────────────────────────────────────────────────────
-
     def features(self) -> dict[str, str]:
+        """Symbolic feature dict used by Literal/RSA models."""
         return {"color": self.color, "shape": self.shape,
                 "size": self.size, "location": self.location}
 
     def feature_set(self) -> FrozenSet[str]:
-        """Flat set of all feature values, used for utterance matching."""
+        """Flat set of all feature values, used for utterance token matching."""
         return frozenset(self.features().values())
 
     def natural_description(self) -> str:
@@ -75,19 +98,17 @@ class Object:
 @dataclass
 class Scene:
     """
-    A reference game scene: a set of objects + a designated target.
+    A reference game scene: a rendered image + structured object list + target.
 
-    The generator fills `entropy_annotation` with ground-truth complexity
-    measures so we can stratify evaluation results by difficulty.
+    image_path         : path to the PNG rendered by the dataset generator.
+                         None for synthetically generated scenes without images.
+    entropy_annotation : complexity metadata (set by scene generator).
     """
     id:         str
     objects:    list[Object]
     target_idx: int
-
-    # Set by generator; can be None for hand-crafted scenes
+    image_path: str | None = field(default=None, repr=False)
     entropy_annotation: EntropyAnnotation | None = field(default=None, repr=False)
-
-    # ── Target access ───────────────────────────────────────────────────────
 
     @property
     def target(self) -> Object:
@@ -101,22 +122,16 @@ class Scene:
     def n_objects(self) -> int:
         return len(self.objects)
 
-    # ── Ground-truth combinatorics ───────────────────────────────────────────
-
     def min_description_length(self) -> int:
         """
-        Minimum number of features needed to uniquely identify the target.
-
-        Iterates over all subsets of FEATURE_KEYS in size order and returns
-        the size of the smallest subset that rules out every distractor.
-        Returns len(FEATURE_KEYS)+1 if no subset suffices (degenerate scene).
+        Minimum number of symbolic features needed to uniquely identify the target.
+        Returns len(FEATURE_KEYS)+1 if the target is indistinguishable (degenerate).
         """
         from itertools import combinations
         target_feats = self.target.features()
         for r in range(1, len(FEATURE_KEYS) + 1):
             for combo in combinations(FEATURE_KEYS, r):
                 target_vals = {k: target_feats[k] for k in combo}
-                # Check whether any distractor matches all features in combo
                 if not any(
                     all(d.features()[k] == v for k, v in target_vals.items())
                     for d in self.distractors
@@ -124,15 +139,15 @@ class Scene:
                     return r
         return len(FEATURE_KEYS) + 1
 
-    def uniform_referential_entropy(self) -> float:
-        """H_max = log(N): entropy if listener has no information."""
-        return math.log(self.n_objects)
-
     def to_dict(self) -> dict:
         return {
             "id": self.id,
             "target_idx": self.target_idx,
-            "objects": [o.features() | {"id": o.id, "location": o.location} for o in self.objects],
+            "image_path": self.image_path,
+            "objects": [
+                {**o.features(), "id": o.id, "x_loc": o.x_loc, "y_loc": o.y_loc}
+                for o in self.objects
+            ],
             "entropy_annotation": self.entropy_annotation.to_dict()
             if self.entropy_annotation else None,
         }
@@ -140,31 +155,25 @@ class Scene:
     @classmethod
     def from_dict(cls, d: dict) -> Scene:
         objects = [
-            Object(id=o["id"], color=o["color"], shape=o["shape"],
-                   size=o["size"], location=o["location"])
+            Object(
+                id=o["id"], color=o["color"], shape=o["shape"],
+                size=o["size"], location=o["location"],
+                x_loc=o.get("x_loc", 0), y_loc=o.get("y_loc", 0),
+            )
             for o in d["objects"]
         ]
         ann = EntropyAnnotation.from_dict(d["entropy_annotation"]) \
               if d.get("entropy_annotation") else None
-        return cls(id=d["id"], objects=objects, target_idx=d["target_idx"],
-                   entropy_annotation=ann)
+        return cls(
+            id=d["id"], objects=objects, target_idx=d["target_idx"],
+            image_path=d.get("image_path"), entropy_annotation=ann,
+        )
 
 
-# ── Entropy annotation (set by generator) ───────────────────────────────────
+# ── EntropyAnnotation ────────────────────────────────────────────────────────
 
 @dataclass
 class EntropyAnnotation:
-    """
-    Metadata attached by the generator describing the scene's difficulty.
-
-    Fields
-    ------
-    n_objects          : total objects in scene
-    min_desc_length    : min features to uniquely identify target (1–4)
-    max_overlap        : max # of features any single distractor shares with target
-    h_uniform          : log(N), upper bound on referential entropy
-    ambiguity_tier     : bucketed difficulty label ("low" / "medium" / "high")
-    """
     n_objects:       int
     min_desc_length: int
     max_overlap:     int
@@ -183,14 +192,11 @@ class EntropyAnnotation:
 
 @dataclass
 class Utterance:
-    """
-    The output of a speaker: a natural-language referring expression
-    plus optional metadata produced by the speaker model.
-    """
+    """The output of a speaker: a referring expression + metadata."""
     text:          str
-    speaker_type:  str              # "literal" | "rsa" | "llm"
-    feature_combo: tuple[str, ...] | None = None   # which features were used (rule-based)
-    speaker_meta:  dict             = field(default_factory=dict)
+    speaker_type:  str
+    feature_combo: tuple[str, ...] | None = None
+    speaker_meta:  dict = field(default_factory=dict)
 
     def __str__(self) -> str:
         return self.text
@@ -201,12 +207,12 @@ class Utterance:
 @dataclass
 class ListenerOutput:
     """
-    The output of a listener given a scene + utterance.
+    Listener posterior P(object_i | utterance) over all objects in the scene.
 
-    posterior        : P(object_i | utterance), sums to 1, length = n_objects
-    predicted_idx    : argmax of posterior
-    listener_type    : "literal" | "rsa" | "cost_aware"
-    listener_meta    : arbitrary extra information (e.g. RSA α used)
+    posterior        : probability distribution, length = n_objects, sums to 1
+    predicted_idx    : argmax index
+    listener_type    : identifier string
+    listener_meta    : model-specific metadata (e.g. raw VLM response, RSA α)
     """
     posterior:     list[float]
     predicted_idx: int
@@ -225,16 +231,7 @@ class ListenerOutput:
 
 @dataclass
 class ClarificationDecision:
-    """
-    The output of the Cost-Aware Listener layer.
-
-    action           : "commit" or "ask"
-    eu_commit        : E[U | commit] = max_i P(t_i | u)
-    eu_ask           : E[U | ask]   = 1 - c  (assumes question resolves perfectly)
-    cost_c           : clarification cost used
-    question         : suggested clarification question (if action == "ask")
-    base_output      : ListenerOutput from the underlying listener
-    """
+    """Expected-utility clarification decision from the Cost-Aware Listener."""
     action:      str       # "commit" | "ask"
     eu_commit:   float
     eu_ask:      float
@@ -253,7 +250,7 @@ class EvalRecord:
     listener_type:   str
     cost_c:          float
     utterance:       str
-    action:          str        # "commit" | "ask"
+    action:          str
     predicted_idx:   int
     target_idx:      int
     correct:         bool

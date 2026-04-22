@@ -1,24 +1,35 @@
 """
-Unified LLM client supporting OpenRouter (OpenAI-compatible) and Anthropic APIs.
+Unified LLM client supporting text and vision (multimodal) completions.
 
-Design
-------
-- `LLMClient` is a thin, stateless wrapper. All callers construct chat turns as
-  `ChatMessage` dataclasses; the client converts them to the provider's format.
-- Retry logic uses exponential back-off with jitter (essential for bulk runs).
-- The `batch_complete` method runs requests concurrently via `ThreadPoolExecutor`,
-  which is the main lever for throughput in the 500-scene evaluation loop.
+Providers
+---------
+- openrouter : OpenAI-compatible endpoint at openrouter.ai (supports vision models)
+- anthropic  : Anthropic Messages API
+- openai     : OpenAI Chat Completions API
+
+Vision support
+--------------
+Pass `image_path` to `complete()` or `complete_full()` to attach a local image
+as a base64-encoded inline data URL.  Both OpenAI-compat and Anthropic formats
+are handled transparently.
+
+Throughput
+----------
+`batch_complete` runs requests concurrently via ThreadPoolExecutor.
+For 500 scenes × 3 speakers × 3 listeners with 8 workers, wall-clock time
+is roughly total_calls / workers × avg_latency.
 """
 
 from __future__ import annotations
 
-import os
-import time
-import random
+import base64
 import logging
+import os
+import random
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
-from typing import Callable
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
@@ -31,72 +42,92 @@ class ChatMessage:
 
 @dataclass
 class CompletionResult:
-    text:           str
-    model:          str
-    input_tokens:   int
-    output_tokens:  int
-    latency_ms:     float
+    text:          str
+    model:         str
+    input_tokens:  int
+    output_tokens: int
+    latency_ms:    float
 
 
-# ── Client ───────────────────────────────────────────────────────────────────
+# ── Image encoding ────────────────────────────────────────────────────────────
+
+def _encode_image(image_path: str | Path) -> tuple[str, str]:
+    """Return (base64_data, mime_type) for a local image file."""
+    path = Path(image_path)
+    suffix = path.suffix.lower()
+    mime = {".png": "image/png", ".jpg": "image/jpeg",
+            ".jpeg": "image/jpeg", ".gif": "image/gif",
+            ".webp": "image/webp"}.get(suffix, "image/png")
+    data = base64.standard_b64encode(path.read_bytes()).decode("utf-8")
+    return data, mime
+
+
+# ── Client ────────────────────────────────────────────────────────────────────
 
 class LLMClient:
     """
-    Unified chat-completion client.
+    Unified chat-completion client with optional image input.
 
     Parameters
     ----------
-    model      : model string, e.g. "anthropic/claude-sonnet-4-5" or "gpt-4o"
-    provider   : "openrouter" | "anthropic" | "openai"
-    api_key    : defaults to env var OPENROUTER_API_KEY / ANTHROPIC_API_KEY / OPENAI_API_KEY
-    max_tokens : default generation budget
-    temperature: default sampling temperature
-    max_retries: number of retries on transient errors
+    model       : model string, e.g. "anthropic/claude-sonnet-4-5" or "gpt-4o"
+    provider    : "openrouter" | "anthropic" | "openai"
+    api_key     : defaults to env var OPENROUTER_API_KEY / ANTHROPIC_API_KEY / OPENAI_API_KEY
+    max_tokens  : default generation budget
+    temperature : default sampling temperature
+    max_retries : retries on transient errors (exponential back-off + jitter)
     """
 
     def __init__(
         self,
         model:       str,
-        provider:    str   = "openrouter",
+        provider:    str        = "openrouter",
         api_key:     str | None = None,
-        max_tokens:  int   = 512,
-        temperature: float = 0.0,
-        max_retries: int   = 3,
+        max_tokens:  int        = 512,
+        temperature: float      = 0.0,
+        max_retries: int        = 3,
     ) -> None:
         self.model       = model
         self.provider    = provider
         self.max_tokens  = max_tokens
         self.temperature = temperature
         self.max_retries = max_retries
-
-        self._client = self._build_client(provider, api_key)
+        self._client     = self._build_client(provider, api_key)
 
     # ── Public API ────────────────────────────────────────────────────────────
 
-    def complete(self, messages: list[ChatMessage], **kwargs) -> str:
-        """Synchronous single completion. Returns response text."""
-        return self._complete_with_retry(messages, **kwargs).text
+    def complete(
+        self,
+        messages:   list[ChatMessage],
+        image_path: str | Path | None = None,
+        **kwargs,
+    ) -> str:
+        return self._complete_with_retry(messages, image_path=image_path, **kwargs).text
 
-    def complete_full(self, messages: list[ChatMessage], **kwargs) -> CompletionResult:
-        """Synchronous single completion. Returns full CompletionResult."""
-        return self._complete_with_retry(messages, **kwargs)
+    def complete_full(
+        self,
+        messages:   list[ChatMessage],
+        image_path: str | Path | None = None,
+        **kwargs,
+    ) -> CompletionResult:
+        return self._complete_with_retry(messages, image_path=image_path, **kwargs)
 
     def batch_complete(
         self,
-        message_batches: list[list[ChatMessage]],
-        max_workers: int = 8,
+        message_batches:  list[list[ChatMessage]],
+        image_paths:      list[str | Path | None] | None = None,
+        max_workers:      int = 8,
         **kwargs,
     ) -> list[str]:
-        """
-        Run multiple completions concurrently.
+        """Run multiple completions concurrently. Returns results in input order."""
+        if image_paths is None:
+            image_paths = [None] * len(message_batches)
 
-        Returns responses in the same order as `message_batches`.
-        """
         results: dict[int, str] = {}
         with ThreadPoolExecutor(max_workers=max_workers) as pool:
             futs = {
-                pool.submit(self.complete, msgs, **kwargs): i
-                for i, msgs in enumerate(message_batches)
+                pool.submit(self.complete, msgs, img, **kwargs): i
+                for i, (msgs, img) in enumerate(zip(message_batches, image_paths))
             }
             for fut in as_completed(futs):
                 idx = futs[fut]
@@ -107,59 +138,106 @@ class LLMClient:
                     results[idx] = ""
         return [results[i] for i in range(len(message_batches))]
 
-    # ── Retry logic ────────────────────────────────────────────────────────────
+    # ── Retry ─────────────────────────────────────────────────────────────────
 
-    def _complete_with_retry(self, messages: list[ChatMessage], **kwargs) -> CompletionResult:
+    def _complete_with_retry(
+        self,
+        messages:   list[ChatMessage],
+        image_path: str | Path | None = None,
+        **kwargs,
+    ) -> CompletionResult:
         last_exc: Exception | None = None
         for attempt in range(self.max_retries):
             try:
-                t0 = time.monotonic()
-                result = self._call(messages, **kwargs)
+                t0     = time.monotonic()
+                result = self._call(messages, image_path=image_path, **kwargs)
                 result.latency_ms = (time.monotonic() - t0) * 1000
                 return result
             except Exception as e:
                 last_exc = e
                 wait = (2 ** attempt) + random.uniform(0, 1)
-                logger.warning(f"LLM call failed (attempt {attempt+1}): {e}. Retrying in {wait:.1f}s")
+                logger.warning(f"LLM call failed (attempt {attempt+1}): {e}. Retry in {wait:.1f}s")
                 time.sleep(wait)
         raise RuntimeError(f"LLM call failed after {self.max_retries} retries") from last_exc
 
     # ── Provider dispatch ─────────────────────────────────────────────────────
 
-    def _call(self, messages: list[ChatMessage], **kwargs) -> CompletionResult:
+    def _call(
+        self,
+        messages:   list[ChatMessage],
+        image_path: str | Path | None = None,
+        **kwargs,
+    ) -> CompletionResult:
         if self.provider in ("openrouter", "openai"):
-            return self._call_openai_compat(messages, **kwargs)
+            return self._call_openai_compat(messages, image_path=image_path, **kwargs)
         elif self.provider == "anthropic":
-            return self._call_anthropic(messages, **kwargs)
-        else:
-            raise ValueError(f"Unknown provider: {self.provider}")
+            return self._call_anthropic(messages, image_path=image_path, **kwargs)
+        raise ValueError(f"Unknown provider: {self.provider}")
 
-    def _call_openai_compat(self, messages: list[ChatMessage], **kwargs) -> CompletionResult:
-        raw = [{"role": m.role, "content": m.content} for m in messages]
-        resp = self._client.chat.completions.create(
+    def _call_openai_compat(
+        self,
+        messages:   list[ChatMessage],
+        image_path: str | Path | None = None,
+        **kwargs,
+    ) -> CompletionResult:
+        raw: list[dict] = []
+        for m in messages:
+            if m.role == "user" and image_path is not None:
+                # Attach image inline as base64 data URL in the last user turn
+                b64, mime = _encode_image(image_path)
+                raw.append({
+                    "role": "user",
+                    "content": [
+                        {"type": "image_url",
+                         "image_url": {"url": f"data:{mime};base64,{b64}"}},
+                        {"type": "text", "text": m.content},
+                    ],
+                })
+                image_path = None   # only attach once
+            else:
+                raw.append({"role": m.role, "content": m.content})
+
+        resp  = self._client.chat.completions.create(
             model=self.model,
-            messages=raw,
+            messages=raw,  # type: ignore[arg-type]
             max_tokens=kwargs.get("max_tokens", self.max_tokens),
             temperature=kwargs.get("temperature", self.temperature),
         )
         usage = resp.usage
         return CompletionResult(
-            text=resp.choices[0].message.content,
+            text=resp.choices[0].message.content or "",
             model=self.model,
             input_tokens=usage.prompt_tokens if usage else 0,
             output_tokens=usage.completion_tokens if usage else 0,
             latency_ms=0.0,
         )
 
-    def _call_anthropic(self, messages: list[ChatMessage], **kwargs) -> CompletionResult:
+    def _call_anthropic(
+        self,
+        messages:   list[ChatMessage],
+        image_path: str | Path | None = None,
+        **kwargs,
+    ) -> CompletionResult:
         system = ""
-        chat   = []
+        chat: list[dict] = []
         for m in messages:
             if m.role == "system":
                 system = m.content
+            elif m.role == "user" and image_path is not None:
+                b64, mime = _encode_image(image_path)
+                chat.append({
+                    "role": "user",
+                    "content": [
+                        {"type": "image",
+                         "source": {"type": "base64", "media_type": mime, "data": b64}},
+                        {"type": "text", "text": m.content},
+                    ],
+                })
+                image_path = None
             else:
                 chat.append({"role": m.role, "content": m.content})
-        resp = self._client.messages.create(
+
+        resp  = self._client.messages.create(
             model=self.model,
             max_tokens=kwargs.get("max_tokens", self.max_tokens),
             system=system,
@@ -190,8 +268,7 @@ class LLMClient:
             import anthropic
             key = api_key or os.environ.get("ANTHROPIC_API_KEY", "")
             return anthropic.Anthropic(api_key=key)
-        else:
-            raise ValueError(f"Unknown provider: {provider}")
+        raise ValueError(f"Unknown provider: {provider}")
 
 
 # ── Factory helpers ───────────────────────────────────────────────────────────
