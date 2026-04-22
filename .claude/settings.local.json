@@ -6,7 +6,15 @@
       "Bash(python3 -c \"import sys; print\\(sys.executable\\)\")",
       "Bash(pip3 install:*)",
       "Bash(python3 generate_figures.py)",
-      "Bash(pdflatex -interaction=nonstopmode note.tex)"
+      "Bash(pdflatex -interaction=nonstopmode note.tex)",
+      "Bash(python3 *)",
+      "Bash(git config *)",
+      "Bash(git rm *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git commit *)",
+      "Read(//Users/zhangshizhe/**)",
+      "Bash(git push *)"
     ]
   }
 }
