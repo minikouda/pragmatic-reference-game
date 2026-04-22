@@ -33,17 +33,19 @@ CPA = Accuracy − c × ClarificationRate
 │   │   ├── schema.py          # Dataclasses: Object, Scene, Utterance,
 │   │   │                      #   ListenerOutput, ClarificationDecision, EvalRecord
 │   │   ├── generator.py       # SceneGenerator — controllable referential entropy
+│   │   ├── renderer.py        # PNG renderer — generates scene images
 │   │   └── dataset.py         # JSONL I/O, stratified train/val/test split
 │   ├── speakers/
 │   │   ├── base.py            # BaseSpeaker ABC
 │   │   ├── literal.py         # LiteralSpeaker — minimal distinguishing feature subset
 │   │   ├── rsa.py             # RSASpeaker (S1) — pragmatic RSA speaker
-│   │   └── llm.py             # LLMSpeaker — naive + chain-of-thought via LLM API
+│   │   └── vllm.py            # VLLMSpeaker — naive + CoT via vision-language model
 │   ├── listeners/
 │   │   ├── base.py            # BaseListener ABC
 │   │   ├── literal.py         # LiteralListener (L0) — uniform over compatible objects
 │   │   ├── rsa.py             # RSAListener (L1) — inverts S1 via exact enumeration
-│   │   └── cost_aware.py      # CostAwareListener — EU clarification policy wrapper
+│   │   ├── cost_aware.py      # CostAwareListener — EU clarification policy wrapper
+│   │   └── vllm.py            # VLLMListener — posterior via VLM forced-choice scoring
 │   ├── metrics/
 │   │   └── core.py            # entropy, Brier score, ECE, CPA
 │   ├── eval/
@@ -51,8 +53,9 @@ CPA = Accuracy − c × ClarificationRate
 │   │   └── reporter.py        # Aggregation, LaTeX table export, JSONL/JSON save
 │   └── utils/
 │       └── llm_client.py      # Unified LLM client (OpenRouter / Anthropic / OpenAI)
+│                              #   supports text + image (base64 inline) inputs
 ├── scripts/
-│   ├── generate_data.py       # CLI: generate and save scene datasets
+│   ├── generate_data.py       # CLI: generate scenes with images
 │   └── run_eval.py            # CLI: run evaluation grid, save results
 ├── report/                    # LaTeX source (note.tex / note.pdf)
 ├── data/                      # Generated datasets (gitignored)
@@ -65,35 +68,28 @@ CPA = Accuracy − c × ClarificationRate
 ### 1. Install
 
 ```bash
-pip install -e .
+pip install -e ".[dev]"
+pip install pillow          # required for image rendering
 ```
 
-### 2. Generate a dataset
+### 2. Generate data
+
+See the **Data Generation** section below for full details.
 
 ```bash
-# 500 scenes balanced across ambiguity tiers (low / medium / high)
-python scripts/generate_data.py --n_per_tier 167 --n_objects 4 --out data/scenes.jsonl --split
-
-# Output: data/scenes_train.jsonl, data/scenes_val.jsonl, data/scenes_test.jsonl
+# Quick start: 500 scenes with PNG images, balanced across ambiguity tiers
+python scripts/generate_data.py --n_per_tier 167 --n_objects 6 --out data/scenes --split
 ```
 
-### 3. Run evaluation (rule-based only, no API key needed)
-
-```bash
-python scripts/run_eval.py \
-    --scenes data/scenes_test.jsonl \
-    --costs 0.1 0.25 0.5 \
-    --out results/
-```
-
-### 4. Run with an LLM speaker (OpenRouter)
+### 3. Run evaluation
 
 ```bash
 export OPENROUTER_API_KEY=sk-or-...
 
 python scripts/run_eval.py \
-    --scenes data/scenes_test.jsonl \
-    --llm_model anthropic/claude-haiku-4-5 \
+    --jsonl data/scenes_test.jsonl \
+    --vllm_model anthropic/claude-haiku-4-5 \
+    --symbolic_baselines \
     --workers 8 \
     --out results/
 ```
@@ -103,34 +99,97 @@ Results are saved as:
 - `results/eval_summary.json` — aggregated metrics by condition
 - `results/eval_by_tier.json` — broken down by ambiguity tier
 
+---
+
+## Data Generation
+
+All data is **synthetic**: scenes are programmatically generated and rendered to PNG images.
+No manual annotation is required.
+
+### Scene format
+
+Each scene contains:
+- **N objects** drawn on a 330×328 white canvas, each with attributes:
+  `color` ∈ {black, blue, green, red, yellow},
+  `shape` ∈ {circle, square, triangle},
+  `size` ∈ {small (8px), medium (12px), large (16px)},
+  `x_loc / y_loc` ∈ [10, 90] (canvas coordinates, y=0 at bottom)
+- A **target object** designated by `target_idx`
+- An **ambiguity annotation** recording `min_desc_length` and `ambiguity_tier`
+
+### Ambiguity control
+
+Scenes are stratified by `min_desc_length` — the minimum number of symbolic features
+needed to uniquely identify the target among distractors:
+
+| Tier | `min_desc_length` | How generated |
+|------|-------------------|---------------|
+| `low` | 1 | Rejection sampling — one feature suffices to distinguish target |
+| `medium` | 2 | Rejection sampling — two features needed |
+| `high` | ≥ 3 | Constructive: distractors are built to share 3 features each with the target, blocking all C(4,2)=6 feature-pairs |
+
+### Rendering
+
+`renderer.py` draws each scene to a PNG matching the style of the original
+`reference_game_dataset/` images:
+
+```
+Canvas : 330 × 328 px, white background, 1px black border
+Margin : 5 px inside the border
+Coords : pixel_x = 5 + x_loc/100 × 320
+         pixel_y = 323 − y_loc/100 × 318   (y-axis inverted: 0 = bottom)
+Size   : half_width/radius = raw_size × 3 px
+```
+
+### Generate commands
+
+```bash
+# 500 scenes (flat, unconstrained ambiguity) with images
+python scripts/generate_data.py --n 500 --n_objects 6 --out data/scenes --split
+
+# 500 scenes balanced across tiers (167 low + 167 medium + 167 high)
+python scripts/generate_data.py --n_per_tier 167 --n_objects 6 --out data/scenes --split
+
+# Generate from Python directly
+python3 - <<'EOF'
+from src.refgame.data.generator import GeneratorConfig, SceneGenerator
+from src.refgame.data.dataset import save_jsonl, split_dataset
+
+gen    = SceneGenerator(GeneratorConfig(n_objects=6, seed=42))
+scenes = gen.generate_with_images(n=500, out_dir="data/generated_scenes", prefix="scene")
+train, val, test = split_dataset(scenes)
+save_jsonl(train, "data/scenes_train.jsonl")
+save_jsonl(val,   "data/scenes_val.jsonl")
+save_jsonl(test,  "data/scenes_test.jsonl")
+EOF
+```
+
+Each JSONL line stores the full scene dict including `image_path` (relative path to the PNG).
+The PNG files must remain at that path relative to the working directory when running evaluation.
+
+---
+
 ## Models
 
 ### Speakers
 
 | Name | Description |
 |------|-------------|
-| `literal` | Rule-based. Emits the shortest feature subset that uniquely identifies the target among distractors. Deterministic, no API. |
-| `rsa(α,c)` | RSA S1 speaker. Ranks utterances by `α·log L0(t\|u) − cost·len`, then takes the argmax (or samples). |
-| `llm-naive(model)` | LLM prompted to produce a brief referring expression. |
-| `llm-pragmatic(model)` | LLM with chain-of-thought prompt: enumerate distinguishing features, then produce minimal expression. |
+| `literal` | Rule-based. Emits the shortest feature subset that uniquely identifies the target. No API. |
+| `rsa(α,c)` | RSA S1 speaker. Ranks utterances by `α·log L0(t\|u) − cost·len`, takes argmax. |
+| `vllm-naive(model)` | VLM sees the annotated scene image (target highlighted with red box), produces a brief expression. |
+| `vllm-pragmatic(model)` | VLM with chain-of-thought prompt: reason about distinguishing features, then produce minimal expression. |
 
 ### Listeners
 
 | Name | Description |
 |------|-------------|
-| `literal` | L0. Uniform posterior over all objects whose features contain every content token in the utterance. |
+| `literal` | L0. Uniform posterior over objects whose feature set contains every content token in the utterance. |
 | `rsa(α,c)` | L1. Inverts S1 via exact enumeration: P(t\|u) ∝ S1(u\|t). |
-| `cost_aware(base, c)` | Wraps any base listener with the EU clarification decision. Not a standalone listener — it is applied automatically by the evaluation harness for every (listener, cost_c) pair. |
+| `vllm-listener(model)` | VLM sees the image with all objects labeled 0–N−1, outputs a JSON confidence dict; softmax gives the posterior. |
+| `cost_aware(base, c)` | Wraps any listener with the EU clarification decision. Applied automatically by the harness. |
 
-### Scene ambiguity tiers
-
-Scenes are stratified by `min_desc_length` — the minimum number of features needed to uniquely identify the target:
-
-| Tier | `min_desc_length` | Meaning |
-|------|-------------------|---------|
-| `low` | 1 | One feature (e.g. color) rules out all distractors |
-| `medium` | 2 | Two features needed |
-| `high` | ≥ 3 | Three or four features needed |
+---
 
 ## Metrics
 
@@ -141,7 +200,9 @@ Scenes are stratified by `min_desc_length` — the minimum number of features ne
 | ClarificationRate | `# asks / N` | Should decrease as c increases |
 | Brier Score | `(1/N) Σ (p_i − y_i)²` | Per-instance, lower is better |
 | ECE | binned \|avg_conf − avg_acc\| | Calibration; 0 = perfect |
-| H(T\|u) | `-Σ p_i log p_i` | Referential entropy; 0 = certain |
+| H(T\|u) | `−Σ p_i log p_i` | Referential entropy; 0 = certain |
+
+---
 
 ## Extending the project
 
@@ -150,6 +211,8 @@ Scenes are stratified by `min_desc_length` — the minimum number of features ne
 **New listener:** subclass `BaseListener` in `src/refgame/listeners/`, implement `name` and `listen(scene, utterance) -> ListenerOutput`.
 
 Both are automatically picked up by `run_grid()` in the harness.
+
+---
 
 ## Compile the report
 
@@ -162,4 +225,5 @@ cd report && pdflatex note.tex
 - Python ≥ 3.11
 - `openai` ≥ 1.30 (also used for OpenRouter)
 - `anthropic` ≥ 0.25
+- `pillow` ≥ 10.0 (image rendering and annotation)
 - `numpy`, `pandas`, `tqdm`

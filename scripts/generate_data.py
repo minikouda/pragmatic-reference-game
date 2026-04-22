@@ -1,13 +1,17 @@
 """
-Script: generate a reference game dataset.
+Script: generate a synthetic reference game dataset with PNG images.
 
 Usage
 -----
-# 500 scenes, balanced across ambiguity tiers, saved to data/
-python scripts/generate_data.py --n 500 --n_objects 4 --seed 42 --out data/scenes.jsonl
+# 500 unconstrained scenes, images written to data/generated_scenes/
+python scripts/generate_data.py --n 500 --n_objects 6 --out data/scenes --split
 
-# Generate stratified: 200 per tier (low/medium/high)
-python scripts/generate_data.py --n_per_tier 200 --n_objects 5 --out data/scenes_stratified.jsonl
+# 167 scenes per ambiguity tier (low / medium / high)
+python scripts/generate_data.py --n_per_tier 167 --n_objects 6 --out data/scenes --split
+
+Output files (with --split):
+  {out}_train.jsonl, {out}_val.jsonl, {out}_test.jsonl
+  {out}_images/scene_0.png, scene_1.png, ...
 """
 
 import argparse
@@ -22,12 +26,14 @@ from src.refgame.data.dataset import save_jsonl, split_dataset, dataset_stats
 
 def parse_args():
     p = argparse.ArgumentParser()
-    p.add_argument("--n",          type=int, default=None, help="Total scenes (unconstrained)")
-    p.add_argument("--n_per_tier", type=int, default=None, help="Scenes per tier (stratified)")
-    p.add_argument("--n_objects",  type=int, default=4,    help="Objects per scene")
+    p.add_argument("--n",          type=int, default=None, help="Total scenes (flat)")
+    p.add_argument("--n_per_tier", type=int, default=None, help="Scenes per ambiguity tier")
+    p.add_argument("--n_objects",  type=int, default=6,    help="Objects per scene")
     p.add_argument("--seed",       type=int, default=42)
-    p.add_argument("--out",        type=str, default="data/scenes.jsonl")
-    p.add_argument("--split",      action="store_true",    help="Also write train/val/test splits")
+    p.add_argument("--out",        type=str, default="data/scenes",
+                   help="Output path stem (images go to {out}_images/, JSONL to {out}.jsonl)")
+    p.add_argument("--split",      action="store_true",
+                   help="Write train/val/test splits in addition to the full JSONL")
     return p.parse_args()
 
 
@@ -36,25 +42,41 @@ def main():
     cfg  = GeneratorConfig(n_objects=args.n_objects, seed=args.seed)
     gen  = SceneGenerator(cfg)
 
-    if args.n_per_tier is not None:
-        scenes = gen.generate_stratified(n_per_tier=args.n_per_tier)
-    elif args.n is not None:
-        scenes = list(gen.generate(n=args.n))
-    else:
-        raise ValueError("Specify --n or --n_per_tier")
+    img_dir = args.out + "_images"
 
-    print(f"Generated {len(scenes)} scenes")
+    if args.n_per_tier is not None:
+        # Stratified: equal scenes per tier
+        scenes = []
+        for tier in ("low", "medium", "high"):
+            tier_cfg = GeneratorConfig(
+                n_objects=args.n_objects,
+                ambiguity_tier=tier,
+                seed=args.seed + hash(tier) % 1000,
+            )
+            tier_gen = SceneGenerator(tier_cfg)
+            tier_scenes = tier_gen.generate_with_images(
+                n=args.n_per_tier,
+                out_dir=img_dir,
+                prefix=f"scene_{tier}",
+            )
+            scenes.extend(tier_scenes)
+    elif args.n is not None:
+        scenes = gen.generate_with_images(n=args.n, out_dir=img_dir, prefix="scene")
+    else:
+        print("Error: specify --n or --n_per_tier")
+        sys.exit(1)
+
+    print(f"Generated {len(scenes)} scenes  →  images in {img_dir}/")
     print(dataset_stats(scenes))
 
-    save_jsonl(scenes, args.out)
-    print(f"Saved → {args.out}")
+    save_jsonl(scenes, args.out + ".jsonl")
+    print(f"Saved {args.out}.jsonl")
 
     if args.split:
         train, val, test = split_dataset(scenes, seed=args.seed)
-        base = args.out.replace(".jsonl", "")
-        save_jsonl(train, f"{base}_train.jsonl")
-        save_jsonl(val,   f"{base}_val.jsonl")
-        save_jsonl(test,  f"{base}_test.jsonl")
+        save_jsonl(train, args.out + "_train.jsonl")
+        save_jsonl(val,   args.out + "_val.jsonl")
+        save_jsonl(test,  args.out + "_test.jsonl")
         print(f"Splits: {len(train)} train / {len(val)} val / {len(test)} test")
 
 
