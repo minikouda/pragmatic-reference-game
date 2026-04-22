@@ -16,14 +16,14 @@ Design choices
 
 from __future__ import annotations
 
-import uuid
 import random as _random
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+from pathlib import Path
 from typing import Iterable, Iterator
 
 from .schema import (
-    COLORS, SHAPES, SIZES, LOCATIONS, FEATURE_KEYS, FEATURE_VOCAB,
-    Object, Scene, EntropyAnnotation,
+    COLORS, SHAPES, SIZES, FEATURE_KEYS, FEATURE_VOCAB,
+    Object, Scene, EntropyAnnotation, loc_label,
 )
 
 
@@ -82,9 +82,33 @@ class SceneGenerator:
     # ── Public API ───────────────────────────────────────────────────────────
 
     def generate(self, n: int) -> Iterator[Scene]:
-        """Yield `n` scenes satisfying the configured constraints."""
+        """Yield `n` scenes (no images). Use generate_with_images for PNG output."""
         for i in range(n):
             yield self._sample_scene(scene_id=str(i))
+
+    def generate_with_images(
+        self,
+        n: int,
+        out_dir: str | Path,
+        prefix: str = "scene",
+    ) -> list[Scene]:
+        """
+        Generate `n` scenes and render each to a PNG file.
+
+        Images are written to out_dir/{prefix}_{i}.png and the scene's
+        image_path field is set to that relative path.
+        """
+        from .renderer import render_scene_from_objects
+        out_dir = Path(out_dir)
+        out_dir.mkdir(parents=True, exist_ok=True)
+        scenes: list[Scene] = []
+        for i in range(n):
+            scene      = self._sample_scene(scene_id=str(i))
+            img_path   = out_dir / f"{prefix}_{i}.png"
+            render_scene_from_objects(scene.objects, img_path)
+            scene.image_path = str(img_path)
+            scenes.append(scene)
+        return scenes
 
     def generate_stratified(
         self,
@@ -112,12 +136,17 @@ class SceneGenerator:
     # ── Internals ────────────────────────────────────────────────────────────
 
     def _sample_object(self, obj_id: str) -> Object:
+        # Sample pixel coordinates in [10, 90] to stay away from edges
+        x_loc = self._rng.randint(10, 90)
+        y_loc = self._rng.randint(10, 90)
         return Object(
             id=obj_id,
             color=self._rng.choice(COLORS),
             shape=self._rng.choice(SHAPES),
             size=self._rng.choice(SIZES),
-            location=self._rng.choice(LOCATIONS),
+            location=loc_label(x_loc, y_loc),
+            x_loc=x_loc,
+            y_loc=y_loc,
         )
 
     def _feature_overlap(self, a: Object, b: Object) -> int:
@@ -224,7 +253,12 @@ class SceneGenerator:
                         vocab   = FEATURE_VOCAB[k]
                         choices = [v for v in vocab if v != t_feats[k]]
                         new_feats[k] = self._rng.choice(choices) if choices else t_feats[k]
-                distractors.append(Object(id=f"D{i}", **new_feats))
+                x_loc = self._rng.randint(10, 90)
+                y_loc = self._rng.randint(10, 90)
+                distractors.append(Object(
+                    id=f"D{i}", x_loc=x_loc, y_loc=y_loc,
+                    location=loc_label(x_loc, y_loc), **new_feats,
+                ))
 
             all_objs = [target] + distractors
             feature_sets = [frozenset(o.features().items()) for o in all_objs]
@@ -248,13 +282,14 @@ class SceneGenerator:
         self._rng.shuffle(all_objs)
         combined = [
             Object(id=f"obj_{i}", color=o.color, shape=o.shape,
-                   size=o.size, location=o.location)
+                   size=o.size, location=o.location,
+                   x_loc=o.x_loc, y_loc=o.y_loc)
             for i, o in enumerate(all_objs)
         ]
         target_idx = next(
             i for i, o in enumerate(combined)
             if o.color == target.color and o.shape == target.shape
-            and o.size == target.size and o.location == target.location
+            and o.size == target.size and o.x_loc == target.x_loc
         )
         target_obj      = combined[target_idx]
         distractor_objs = [o for i, o in enumerate(combined) if i != target_idx]
