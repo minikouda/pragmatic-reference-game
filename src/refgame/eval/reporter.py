@@ -15,9 +15,12 @@ from ..data.schema import EvalRecord
 from ..metrics.core import aggregate_metrics
 
 
+_DEFAULT_GROUP_KEYS = ["speaker_type", "listener_type", "cost_c"]
+
+
 def summarize(
     records:    list[EvalRecord],
-    group_keys: list[str] = ("speaker_type", "listener_type", "cost_c"),
+    group_keys: list[str] | None = None,
 ) -> list[dict[str, Any]]:
     """
     Aggregate EvalRecord list by `group_keys`.
@@ -25,6 +28,8 @@ def summarize(
     Returns a list of dicts, each containing the group key values plus
     all metrics from `aggregate_metrics`.
     """
+    if group_keys is None:
+        group_keys = _DEFAULT_GROUP_KEYS
     # Group records
     groups: dict[tuple, list[EvalRecord]] = {}
     for r in records:
@@ -65,11 +70,12 @@ def summarize(
 
 
 def summarize_by_tier(
-    records: list[EvalRecord],
-    group_keys: list[str] = ("speaker_type", "listener_type", "cost_c"),
+    records:    list[EvalRecord],
+    group_keys: list[str] | None = None,
 ) -> list[dict]:
     """Summarize broken down by ambiguity_tier × group_keys."""
-    return summarize(records, group_keys=group_keys + ["ambiguity_tier"])
+    keys = list(group_keys) if group_keys else _DEFAULT_GROUP_KEYS
+    return summarize(records, group_keys=keys + ["ambiguity_tier"])
 
 
 def to_latex_table(rows: list[dict], columns: list[str] | None = None) -> str:

@@ -266,7 +266,8 @@ class LLMClient:
             return OpenAI(api_key=key)
         elif provider == "anthropic":
             import anthropic
-            key = api_key or os.environ.get("ANTHROPIC_API_KEY", "")
+            # Support both ANTHROPIC_API_KEY (standard) and ANTHROPIC (.env shorthand)
+            key = api_key or os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("ANTHROPIC", "")
             return anthropic.Anthropic(api_key=key)
         raise ValueError(f"Unknown provider: {provider}")
 
