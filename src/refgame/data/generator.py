@@ -255,9 +255,9 @@ class SceneGenerator:
                         new_feats[k] = self._rng.choice(choices) if choices else t_feats[k]
                 x_loc = self._rng.randint(10, 90)
                 y_loc = self._rng.randint(10, 90)
+                new_feats["location"] = loc_label(x_loc, y_loc)
                 distractors.append(Object(
-                    id=f"D{i}", x_loc=x_loc, y_loc=y_loc,
-                    location=loc_label(x_loc, y_loc), **new_feats,
+                    id=f"D{i}", x_loc=x_loc, y_loc=y_loc, **new_feats,
                 ))
 
             all_objs = [target] + distractors

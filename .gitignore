@@ -3,5 +3,5 @@
 __pycache__/
 data/generated_scenes/
 results/
-data/
+/data/
 .env
