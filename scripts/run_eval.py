@@ -16,7 +16,7 @@ All cost estimates assume Llama-4-Maverick via OpenRouter
 
   Full run    (500 scenes, 2 vllm spk, 1 vllm lst, 3 costs)
     LLM calls : 1 000 speaker + 1 500 listener = 2 500
-    Est. cost : ~$0.55
+    Est. cost : ~$0.30 (gemini-flash) / ~$0.55 (llama-4-maverick)
 
   With symbolic baselines (+ literal + RSA speakers/listeners, no API cost):
     Same VLM call count; symbolic models are free.
@@ -103,11 +103,11 @@ from src.refgame.eval.reporter import save_results, summarize
 # Cost column: estimated $/1M input tokens (check openrouter.ai/models for current prices).
 VLLM_MODEL_PRESETS = {
     # Vision-capable open-weight models
-    "llama-4-maverick":  "meta-llama/llama-4-maverick",    # $0.18/M  — recommended default
-    "llama-4-scout":     "meta-llama/llama-4-scout",       # $0.11/M  — cheaper, slightly weaker
+    "gemini-flash":      "google/gemini-2.0-flash-001",    # $0.10/M  — recommended: cheapest strong vision model (verified)
+    "llama-4-scout":     "meta-llama/llama-4-scout",       # $0.11/M  — good balance of cost and quality
+    "llama-4-maverick":  "meta-llama/llama-4-maverick",    # $0.18/M  — stronger, costlier
     "qwen2-vl-7b":       "qwen/qwen2-vl-7b-instruct",      # $0.10/M  — small Qwen vision model
     "qwen2-vl-72b":      "qwen/qwen2-vl-72b-instruct",     # $0.40/M  — large Qwen
-    "gemini-flash":      "google/gemini-2.0-flash-001",    # $0.10/M  — fast Google model
     # Proprietary baselines (more expensive)
     "claude-haiku":      "anthropic/claude-haiku-4-5",     # $0.80/M
     "gpt-4o-mini":       "openai/gpt-4o-mini",             # $0.15/M
@@ -128,7 +128,7 @@ def _estimate_cost(n_scenes: int, n_vllm_spk: int, n_vllm_lst: int) -> str:
     total_calls = spk_calls + lst_calls
     tokens_in  = total_calls * 1_300
     tokens_out = total_calls * 50
-    cost = tokens_in / 1e6 * 0.18 + tokens_out / 1e6 * 0.72
+    cost = tokens_in / 1e6 * 0.10 + tokens_out / 1e6 * 0.40  # gemini-flash pricing
     return (
         f"Estimated LLM calls: {spk_calls} speaker + {lst_calls} listener = {total_calls}  "
         f"| Est. cost (Llama-4-Maverick): ${cost:.2f}"
@@ -249,7 +249,7 @@ def main():
     n_vllm_spk = sum(1 for s in speakers if "vllm" in s.name)
     n_vllm_lst = sum(1 for l in listeners if "vllm" in l.name)
     est = _estimate_cost(len(scenes), n_vllm_spk, n_vllm_lst)
-    logging.info(est)
+    logging.info(est + " (gemini-flash pricing; scale by 1.8x for llama-4-maverick)")
 
     if args.dry_run:
         print(est)
