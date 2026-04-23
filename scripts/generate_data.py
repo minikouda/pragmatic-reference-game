@@ -30,6 +30,9 @@ def parse_args():
     p.add_argument("--n_per_tier", type=int, default=None, help="Scenes per ambiguity tier")
     p.add_argument("--n_objects",  type=int, default=6,    help="Objects per scene")
     p.add_argument("--seed",       type=int, default=42)
+    p.add_argument("--overlap_mode", type=str, default="none",
+                   choices=["none", "allow", "force"],
+                   help="Physical-overlap policy between rendered objects")
     p.add_argument("--out",        type=str, default="data/scenes",
                    help="Output path stem (images go to {out}_images/, JSONL to {out}.jsonl)")
     p.add_argument("--split",      action="store_true",
@@ -39,7 +42,9 @@ def parse_args():
 
 def main():
     args = parse_args()
-    cfg  = GeneratorConfig(n_objects=args.n_objects, seed=args.seed)
+    cfg  = GeneratorConfig(
+        n_objects=args.n_objects, seed=args.seed, overlap_mode=args.overlap_mode,
+    )
     gen  = SceneGenerator(cfg)
 
     img_dir = args.out + "_images"
@@ -51,6 +56,7 @@ def main():
             tier_cfg = GeneratorConfig(
                 n_objects=args.n_objects,
                 ambiguity_tier=tier,
+                overlap_mode=args.overlap_mode,
                 seed=args.seed + hash(tier) % 1000,
             )
             tier_gen = SceneGenerator(tier_cfg)
