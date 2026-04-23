@@ -7,14 +7,17 @@ Usage
 export OPENROUTER_API_KEY=sk-or-...
 python scripts/run_eval.py \
     --dataset reference_game_dataset/dataset.json \
-    --vllm_model anthropic/claude-haiku-4-5 \
+    --vllm_model qwen2-vl-72b \
     --workers 8 \
     --out results/
+
+# List available built-in model aliases:
+python scripts/run_eval.py --list_vllm_models --dataset reference_game_dataset/dataset.json
 
 # Include symbolic baselines (literal + RSA, no API key needed):
 python scripts/run_eval.py \
     --dataset reference_game_dataset/dataset.json \
-    --vllm_model anthropic/claude-haiku-4-5 \
+    --vllm_model llava-1.6-7b \
     --symbolic_baselines \
     --workers 8 \
     --out results/
@@ -22,7 +25,7 @@ python scripts/run_eval.py \
 # Custom JSONL dataset (e.g. generated scenes):
 python scripts/run_eval.py \
     --jsonl data/scenes_test.jsonl \
-    --vllm_model anthropic/claude-haiku-4-5 \
+    --vllm_model qwen/qwen2-vl-72b-instruct \
     --out results/
 """
 
@@ -48,6 +51,26 @@ from src.refgame.eval.harness import run_grid
 from src.refgame.eval.reporter import save_results, summarize
 
 
+VLLM_MODEL_PRESETS = {
+    # Open-source vision-language models commonly served with vLLM.
+    "llava-1.6-7b": "liuhaotian/llava-1.6-7b",
+    "llava-1.6-13b": "liuhaotian/llava-1.6-13b",
+    "qwen2-vl-7b": "qwen/qwen2-vl-7b-instruct",
+    "qwen2-vl-72b": "qwen/qwen2-vl-72b-instruct",
+    "internvl2-8b": "openbmb/internvl2-8b",
+    # Strong proprietary baselines available via OpenRouter.
+    "claude-haiku": "anthropic/claude-haiku-4-5",
+    "gpt-4o-mini": "openai/gpt-4o-mini",
+}
+
+
+def _resolve_vllm_model(model_arg: str | None) -> str | None:
+    """Resolve short alias to full OpenRouter model ID; pass through unknown IDs."""
+    if model_arg is None:
+        return None
+    return VLLM_MODEL_PRESETS.get(model_arg, model_arg)
+
+
 def parse_args():
     p = argparse.ArgumentParser()
 
@@ -67,7 +90,13 @@ def parse_args():
 
     # Models
     p.add_argument("--vllm_model", type=str, default=None,
-                   help="OpenRouter vision model (e.g. anthropic/claude-haiku-4-5)")
+                   help=(
+                       "OpenRouter model ID or preset alias. "
+                       "Examples: anthropic/claude-haiku-4-5, "
+                       "qwen/qwen2-vl-72b-instruct, llava-1.6-7b"
+                   ))
+    p.add_argument("--list_vllm_models", action="store_true",
+                   help="Print built-in vLLM/OpenRouter model presets and exit")
     p.add_argument("--symbolic_baselines", action="store_true",
                    help="Also run Literal and RSA speaker/listener baselines")
     p.add_argument("--alpha", type=float, default=4.0,
@@ -85,6 +114,14 @@ def parse_args():
 
 def main():
     args = parse_args()
+
+    if args.list_vllm_models:
+        print("Built-in model presets (alias -> OpenRouter model ID):")
+        for alias, model_id in sorted(VLLM_MODEL_PRESETS.items()):
+            print(f"  {alias:<16} -> {model_id}")
+        return
+
+    args.vllm_model = _resolve_vllm_model(args.vllm_model)
 
     # ── Load dataset ──────────────────────────────────────────────────────────
     if args.dataset:
