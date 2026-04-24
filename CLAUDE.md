@@ -17,15 +17,78 @@ Core idea: model clarification as a cost-utility optimization at inference time 
 
 ## Repository Structure
 
-Code (to be added) will likely include:
-- Dataset generator (synthetic JSON "Mini-World" scenes with controllable referential entropy)
-which will create scenes with varying numbers of objects and attributes to manipulate ambiguity levels.
-Can generate datasets with different parameters. Like if target is overlapping with other objects, or if minimum number of features to uniquely identify the target is high, etc.
+```
+src/refgame/
+  data/
+    schema.py          # Scene, Object, EvalRecord, Utterance, ListenerOutput dataclasses
+    generator.py       # Synthetic scene generator (controllable ambiguity, overlap)
+    dataset.py         # load_jsonl helper
+    renderer.py        # PIL-based scene image renderer
+  speakers/
+    base.py            # BaseSpeaker ABC
+    vllm.py            # VLLMSpeaker (naive + pragmatic); sends target props as text, raw image
+    scene_aware.py     # SceneAwareSpeaker: full distractor list → LLM picks minimal features
+    landmark.py        # LandmarkSpeaker (rule) + LandmarkVLLMSpeaker (LLM picks landmark)
+    contrastive.py     # ContrastiveSpeaker (rule) + ContrastiveVLLMSpeaker (LLM picks foil)
+    ordinal.py         # OrdinalSpeaker: superlatives/uniqueness, rule-based, no LLM
+  listeners/
+    base.py            # BaseListener ABC
+    vllm.py            # VLLMListener: predicts (x,y) coords → distance softmax posterior
+    cost_aware.py      # CostAwareListener: EU(commit) vs EU(ask) threshold
+  metrics/
+    core.py            # brier_score, referential_entropy
+  eval/
+    harness.py         # run_grid: speaker cache → listener cache → cost sweep
+    reporter.py        # save_results, summarize → CPA, accuracy, clarification rate
+  utils/
+    llm_client.py      # LLMClient: openrouter/anthropic/openai, retry with 429 backoff
 
-- Speaker
-Three speaker: LLM Speaker (using GPT-4 to generate utterances), Literal Speaker (using a simple rule-based approach to generate literal descriptions), and RSA Speaker (using RSA to generate pragmatic utterances that consider the listener's perspective).
+data/
+  scenes_6_none.jsonl        # 6-object scenes, no forced overlap
+  scenes_6_force.jsonl       # 6-object scenes, forced target overlap
+  scenes_8_*/scenes_10_*     # 8- and 10-object variants
 
-- Listener
-Two listeners: Literal Listener (using a simple rule-based approach to interpret utterances) and RSA Listener (using RSA to interpret utterances by considering the speaker's perspective and the context). And a Cost-Aware Listener that decides whether to ask a clarifying question based on the expected utility of asking vs. guessing.
+scripts/
+  run_speaker_comparison.py  # Main experiment: all speakers × VLLMListener × cost sweep
+  run_diagnostic.py          # Per-scene verbose trace for debugging accuracy failures
+```
 
-- Evaluation scripts
+## Coordinate System
+
+Scene objects store `x_loc`, `y_loc` in **bottom-left=(0,0)** space (y increases upward).
+The VLLMListener prompt uses the same convention; no y-flip is applied when matching
+predicted coords to object positions.
+
+Location labels (`top`, `bottom-left`, etc.) in the data use the same convention:
+small y = visually low on the rendered image, large y = visually high.
+
+## Current Implementation Status
+
+**Speakers implemented:**
+- `vllm-naive` / `vllm-pragmatic`: target props in prompt + raw image (no annotation)
+- `scene-aware` / `scene-ranked`: full distractor list, LLM picks minimal features
+- `landmark-vllm`: LLM selects landmark and spatial relation from distractor list
+- `contrastive-vllm`: LLM identifies foil and contrasting feature from distractor list
+- `ordinal`: rule-based superlatives/uniqueness (free, no LLM)
+- `landmark` / `contrastive`: pure rule-based baselines
+
+**Listener:**
+- `VLLMListener`: predicts (x,y) in bottom-left coords → inverse-distance softmax posterior
+- `CostAwareListener`: wraps any listener; commits if `max(posterior) ≥ 1 - cost_c`, else asks
+
+**Key design decisions:**
+- Speaker receives target properties as text (not visual annotation) to avoid color hallucination
+- Listener predicts coordinates, not object indices — avoids annotation/index indirection
+- Speaker utterances cached per (scene, speaker); listener posteriors cached per (scene, speaker, listener)
+
+**Smoke test results (scenes_6_none, n=20, gemini-2.0-flash-001):**
+- Best accuracy: vllm-pragmatic / scene-aware / contrastive variants at 95%
+- Best CPA at c=0.5: ordinal (+0.425, 35% ask rate)
+- All speakers ask 100% at c≤0.25 (posterior too flat to trigger commit at low cost)
+
+## Known Issues / Next Steps
+
+- **Flat posterior at low cost**: inverse-distance softmax rarely exceeds `1 - c` for c≤0.25.
+  Possible fixes: temperature scaling on distance softmax, sharper falloff function.
+- **scene-ranked underperforms** (70% acc): ranking step may over-specify descriptions.
+- `CommitAcc` is always NaN (no commits at low cost) — needs posterior sharpening to be meaningful.
