@@ -1,20 +1,21 @@
 """
 VLLM Listener: uses a vision-language model to infer the intended object.
 
-The listener sees the scene image + the speaker's utterance and must identify
-which object the speaker is referring to.
+The listener sees the scene image (no numbered overlays) + the speaker's
+utterance and must predict the (x, y) location of the referred object.
 
-Posterior construction
-----------------------
-Most VLMs don't expose log-probabilities, so we use a forced-choice strategy:
+Coordinate convention
+---------------------
+The model is asked to predict in a bottom-left=(0,0), top-right=(100,100)
+coordinate system.  Internally, scene objects store y increasing downward
+(image convention), so we convert: y_scene → 100 - y_scene before showing
+the coordinate system to the model, and invert back when matching.
 
-  1. Show the image with all objects labeled 0..N-1 (numbered overlays).
-  2. Ask the model to output a JSON dict {index: confidence} scoring each object.
-  3. Softmax the confidences to get a proper posterior.
-
-Fallback: if the model outputs only a single index (integer), convert to a
-one-hot-style posterior with high confidence on the chosen object and uniform
-small mass on the rest.
+Accuracy
+--------
+The predicted (x, y) is snapped to the nearest object by Euclidean distance
+(in image-convention coordinates).  That object's index becomes predicted_idx,
+and correct = (predicted_idx == target_idx).
 """
 
 from __future__ import annotations
@@ -26,7 +27,6 @@ import re
 from ..data.schema import ListenerOutput, Object, Scene, Utterance
 from ..utils.llm_client import ChatMessage, LLMClient
 from .base import BaseListener
-from ..speakers.vllm import _annotate_image   # reuse annotation helper
 
 
 # ── Prompt template ───────────────────────────────────────────────────────────
@@ -34,26 +34,30 @@ from ..speakers.vllm import _annotate_image   # reuse annotation helper
 _SYSTEM_LISTENER = """\
 You are a listener in a visual reference game.
 
-You see a scene with several colored shapes. Each object is labeled with a \
-number (0, 1, 2, ...) drawn directly on the image.
+You see a scene with several colored shapes on a white canvas.
 
 The speaker said: "{utterance}"
 
-Your task: decide which object the speaker most likely intended.
+Your task: predict the (x, y) position of the object the speaker is referring to.
 
-Output a JSON object with one key per object index, mapping to a confidence \
-score (0–10) for how well the utterance matches that object:
-  {{"0": <score>, "1": <score>, ...}}
+Coordinate system: bottom-left is (0, 0), top-right is (100, 100).
+x increases to the right, y increases upward.
 
-Be precise: 10 = perfect match, 0 = no match at all.
-Output ONLY valid JSON. No explanation."""
+Output ONLY a JSON object with keys "x" and "y" (floats between 0 and 100):
+  {{"x": <value>, "y": <value>}}
+
+No explanation."""
 
 
 # ── Listener ──────────────────────────────────────────────────────────────────
 
 class VLLMListener(BaseListener):
     """
-    Listener that sends the labeled scene image + utterance to a VLM.
+    Listener that sends the scene image + utterance to a VLM.
+
+    The model predicts (x, y) coordinates (bottom-left origin) of the
+    referred object.  The prediction is snapped to the nearest object by
+    Euclidean distance to determine predicted_idx and the posterior.
 
     Parameters
     ----------
@@ -75,98 +79,85 @@ class VLLMListener(BaseListener):
                 "VLLMListener requires image-backed scenes."
             )
 
-        annotated  = _label_all_objects(scene.image_path, scene.objects)
-        prompt     = _SYSTEM_LISTENER.format(utterance=utterance.text)
-        n          = len(scene.objects)
+        prompt = _SYSTEM_LISTENER.format(utterance=utterance.text)
 
         raw = self.client.complete(
             messages=[
                 ChatMessage(role="system", content=prompt),
-                ChatMessage(role="user",   content=f"Which object did the speaker mean? ({n} objects labeled 0–{n-1})"),
+                ChatMessage(role="user",   content="Where is the object the speaker referred to?"),
             ],
-            image_path=annotated,
+            image_path=scene.image_path,
         )
 
-        scores     = _parse_scores(raw, n)
-        posterior  = _softmax(scores)
-        predicted  = posterior.index(max(posterior))
+        pred_x, pred_y = _parse_coords(raw)
+        posterior, predicted = _coords_to_posterior(pred_x, pred_y, scene.objects)
 
         return ListenerOutput(
             posterior=posterior,
             predicted_idx=predicted,
             listener_type=self.name,
-            listener_meta={"raw_response": raw, "raw_scores": scores},
+            listener_meta={
+                "raw_response": raw,
+                "pred_x": pred_x,
+                "pred_y": pred_y,
+            },
         )
 
 
-# ── Image annotation (draws index labels on all objects) ──────────────────────
+# ── Coordinate parsing ────────────────────────────────────────────────────────
 
-def _label_all_objects(
-    image_path: str,
-    objects:    list[Object],
-) -> "Path":
-    """Draw numbered labels on all objects so the VLM can reference them by index."""
-    from pathlib import Path
-    import tempfile
-
-    try:
-        from PIL import Image, ImageDraw
-    except ImportError:
-        return Path(image_path)
-
-    img  = Image.open(image_path).convert("RGB")
-    draw = ImageDraw.Draw(img)
-    w, h = img.size
-    scale_x, scale_y = w / 100, h / 100
-
-    for i, obj in enumerate(objects):
-        cx  = int(obj.x_loc * scale_x)
-        cy  = int(obj.y_loc * scale_y)
-        r   = 10
-        box = [cx - r, cy - r, cx + r, cy + r]
-        draw.rectangle(box, outline="white", width=2)
-        draw.text((cx - 4, cy - 7), str(i), fill="white")
-
-    tmp = tempfile.NamedTemporaryFile(suffix=".png", delete=False)
-    img.save(tmp.name)
-    from pathlib import Path
-    return Path(tmp.name)
-
-
-# ── Score parsing ─────────────────────────────────────────────────────────────
-
-def _parse_scores(raw: str, n: int) -> list[float]:
+def _parse_coords(raw: str) -> tuple[float, float]:
     """
-    Parse the VLM's JSON confidence response into a list of n floats.
+    Parse the VLM's JSON coordinate response into (x, y) in bottom-left origin.
 
     Handles:
-    - {"0": 8, "1": 2, "2": 9}       — preferred format
-    - {"0": 8}                         — partial (missing indices get 1.0)
-    - A bare integer "2"               — one-hot at that index
+    - {"x": 42.0, "y": 67.5}   — preferred format
+    - Fallback: (50, 50) center
     """
-    # Try JSON parse
     try:
         blob = re.search(r"\{[^{}]+\}", raw, re.DOTALL)
         if blob:
             d = json.loads(blob.group())
-            scores = [float(d.get(str(i), 1.0)) for i in range(n)]
-            return scores
+            x = float(d.get("x", 50.0))
+            y = float(d.get("y", 50.0))
+            return x, y
     except (json.JSONDecodeError, ValueError):
         pass
 
-    # Try bare integer
-    m = re.search(r"\b(\d+)\b", raw)
-    if m:
-        idx = int(m.group(1))
-        if 0 <= idx < n:
-            return [9.0 if i == idx else 1.0 for i in range(n)]
+    # Try bare "x=... y=..." pattern
+    mx = re.search(r'"?x"?\s*[:=]\s*([\d.]+)', raw)
+    my = re.search(r'"?y"?\s*[:=]\s*([\d.]+)', raw)
+    if mx and my:
+        return float(mx.group(1)), float(my.group(1))
 
-    # Fallback: uniform
-    return [1.0] * n
+    return 50.0, 50.0
 
 
-def _softmax(scores: list[float]) -> list[float]:
-    max_s = max(scores)
-    exps  = [math.exp(s - max_s) for s in scores]
-    total = sum(exps)
-    return [e / total for e in exps]
+def _coords_to_posterior(
+    pred_x: float,
+    pred_y: float,
+    objects: list[Object],
+) -> tuple[list[float], int]:
+    """
+    Convert a predicted (x, y) in bottom-left origin to a posterior over objects.
+
+    Objects store y increasing downward (image convention), so we flip:
+        y_image = 100 - y_bottomleft
+
+    Posterior is a distance-based softmax (closer → higher probability).
+    predicted_idx = nearest object.
+    """
+    y_img = 100.0 - pred_y  # convert to image-convention y
+
+    dists = [
+        math.sqrt((obj.x_loc - pred_x) ** 2 + (obj.y_loc - y_img) ** 2)
+        for obj in objects
+    ]
+
+    # Invert distances to scores (avoid div-by-zero)
+    scores = [1.0 / (d + 1e-3) for d in dists]
+    total  = sum(scores)
+    posterior = [s / total for s in scores]
+    predicted = posterior.index(max(posterior))
+
+    return posterior, predicted

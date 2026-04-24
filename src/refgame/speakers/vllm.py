@@ -35,14 +35,17 @@ from .base import BaseSpeaker
 _SYSTEM_NAIVE = """\
 You are a speaker in a visual reference game.
 
-You see a scene with several colored shapes. The TARGET object is marked \
-with a red bounding box labeled "TARGET".
+You see a scene with several colored shapes. The TARGET object has these properties:
+  color    : {color}
+  shape    : {shape}
+  size     : {size}
+  location : {location}
 
 Your task: produce a SHORT natural-language referring expression that uniquely \
 identifies the target so a listener, seeing the same image, can pick it out.
 
 Rules:
-- Use only visual properties: color, shape, size, and spatial position.
+- Use only the properties listed above.
 - Be as brief as possible — omit attributes that don't help distinguish the target.
 - Output ONLY the referring expression (e.g. "the large red circle"). No other text."""
 
@@ -50,13 +53,18 @@ _SYSTEM_PRAGMATIC = """\
 You are a pragmatic speaker in a visual reference game, reasoning like a \
 Rational Speech Act (RSA) model.
 
-The TARGET object is marked with a red bounding box labeled "TARGET".
+The TARGET object has these properties:
+  color    : {color}
+  shape    : {shape}
+  size     : {size}
+  location : {location}
+
+The scene also contains other objects visible in the image (distractors).
 
 Think step by step:
-1. List the target's visual properties (color, shape, size, position).
-2. For each property, check whether it alone rules out all other objects.
-3. Find the MINIMAL set of properties that uniquely identifies the target.
-4. Produce the shortest natural English expression using only those properties.
+1. For each property, check whether it alone rules out all other objects in the scene.
+2. Find the MINIMAL set of properties that uniquely identifies the target.
+3. Produce the shortest natural English expression using only those properties.
 
 Output format (follow exactly):
 REASONING: <your analysis>
@@ -92,15 +100,17 @@ class VLLMSpeaker(BaseSpeaker):
                 "VLLMSpeaker requires image-backed scenes."
             )
 
-        system = _SYSTEM_PRAGMATIC if self.pragmatic else _SYSTEM_NAIVE
-        annotated = _annotate_image(scene.image_path, scene.objects, target_idx)
+        target = scene.objects[target_idx]
+        feats  = target.features()
+        template = _SYSTEM_PRAGMATIC if self.pragmatic else _SYSTEM_NAIVE
+        system   = template.format(**feats)
 
         raw = self.client.complete(
             messages=[
                 ChatMessage(role="system", content=system),
-                ChatMessage(role="user",   content="Describe the TARGET object."),
+                ChatMessage(role="user",   content="Describe the target so a listener can identify it from the image."),
             ],
-            image_path=annotated,
+            image_path=scene.image_path,
         )
 
         if self.pragmatic:
@@ -140,16 +150,20 @@ def _annotate_image(
     w, h = img.size
 
     target = objects[target_idx]
-    # Scale pixel coords: dataset uses 0-100, image may be larger
     scale_x = w / 100
     scale_y = h / 100
     cx = int(target.x_loc * scale_x)
     cy = int(target.y_loc * scale_y)
-    r  = int(20 * scale_x)   # bounding box half-size (generous)
+
+    # Use the object's actual pixel radius + small padding, not a fixed 20px
+    from ..data.schema import SIZE_MAP
+    size_label = target.size if target.size in ("small", "medium", "large") else "medium"
+    px_radius  = {v: k for k, v in SIZE_MAP.items()}.get(size_label, 12)
+    r = int((px_radius + 4) * scale_x)
 
     box = [cx - r, cy - r, cx + r, cy + r]
-    draw.rectangle(box, outline="red", width=3)
-    draw.text((box[0], max(0, box[1] - 14)), "TARGET", fill="red")
+    draw.rectangle(box, outline="magenta", width=2)
+    draw.text((box[0], max(0, box[1] - 14)), "TARGET", fill="magenta")
 
     tmp = tempfile.NamedTemporaryFile(suffix=".png", delete=False)
     img.save(tmp.name)

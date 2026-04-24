@@ -85,7 +85,7 @@ class LLMClient:
         api_key:     str | None = None,
         max_tokens:  int        = 512,
         temperature: float      = 0.0,
-        max_retries: int        = 3,
+        max_retries: int        = 6,
     ) -> None:
         self.model       = model
         self.provider    = provider
@@ -155,7 +155,10 @@ class LLMClient:
                 return result
             except Exception as e:
                 last_exc = e
-                wait = (2 ** attempt) + random.uniform(0, 1)
+                # 429 = rate limit: wait much longer; 504 = transient: retry quickly
+                is_rate_limit = "429" in str(e)
+                base_wait = 30.0 if is_rate_limit else 2 ** attempt
+                wait = base_wait + random.uniform(0, 2)
                 logger.warning(f"LLM call failed (attempt {attempt+1}): {e}. Retry in {wait:.1f}s")
                 time.sleep(wait)
         raise RuntimeError(f"LLM call failed after {self.max_retries} retries") from last_exc

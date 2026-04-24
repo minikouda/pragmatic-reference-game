@@ -260,3 +260,5 @@ class EvalRecord:
     brier_score:     float
     min_desc_length: int | None
     ambiguity_tier:  str | None
+    pred_x:          float | None = None   # predicted x in bottom-left origin
+    pred_y:          float | None = None   # predicted y in bottom-left origin

@@ -181,7 +181,12 @@ def _run_parallel(tasks, fn, cache: dict, n_workers: int, verbose: bool,
             if verbose and (i + 1) % max(1, total // 10) == 0:
                 logger.info(f"  {label}: {i+1}/{total} done")
     if errors:
-        logger.warning(f"{label} phase: {errors}/{total} tasks failed")
+        rate = errors / total
+        msg  = f"{label} phase: {errors}/{total} tasks failed ({rate:.1%})"
+        if rate > 0.05:
+            logger.error(f"HIGH FAILURE RATE — {msg}. Results may be biased. Re-run with --workers 1.")
+        else:
+            logger.warning(msg)
 
 
 # ── Cost-threshold decision ───────────────────────────────────────────────────
@@ -203,6 +208,7 @@ def _apply_cost_decision(
     correct       = predicted_idx == scene.target_idx
 
     ann = scene.entropy_annotation
+    meta = l_out.listener_meta or {}
     return EvalRecord(
         scene_id=scene.id,
         speaker_type=speaker.name,
@@ -219,6 +225,8 @@ def _apply_cost_decision(
         brier_score=brier_score(l_out.posterior, scene.target_idx),
         min_desc_length=ann.min_desc_length if ann else None,
         ambiguity_tier=ann.ambiguity_tier if ann else None,
+        pred_x=meta.get("pred_x"),
+        pred_y=meta.get("pred_y"),
     )
 
 
