@@ -6,10 +6,10 @@ utterance and must predict the (x, y) location of the referred object.
 
 Coordinate convention
 ---------------------
-The model is asked to predict in a bottom-left=(0,0), top-right=(100,100)
-coordinate system.  Internally, scene objects store y increasing downward
-(image convention), so we convert: y_scene → 100 - y_scene before showing
-the coordinate system to the model, and invert back when matching.
+Both the model prompt and scene object coordinates use bottom-left origin:
+bottom-left=(0,0), top-right=(100,100), y increases upward.
+No coordinate flip is applied; predicted (x,y) is matched directly against
+object (x_loc, y_loc) by Euclidean distance.
 
 Accuracy
 --------
@@ -141,16 +141,14 @@ def _coords_to_posterior(
     """
     Convert a predicted (x, y) in bottom-left origin to a posterior over objects.
 
-    Objects store y increasing downward (image convention), so we flip:
-        y_image = 100 - y_bottomleft
+    Both predicted coords and scene objects use bottom-left origin
+    (y=0 at bottom, y increases upward), so no coordinate flip is needed.
 
     Posterior is a distance-based softmax (closer → higher probability).
     predicted_idx = nearest object.
     """
-    y_img = 100.0 - pred_y  # convert to image-convention y
-
     dists = [
-        math.sqrt((obj.x_loc - pred_x) ** 2 + (obj.y_loc - y_img) ** 2)
+        math.sqrt((obj.x_loc - pred_x) ** 2 + (obj.y_loc - pred_y) ** 2)
         for obj in objects
     ]
 
