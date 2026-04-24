@@ -78,6 +78,7 @@ import argparse
 import logging
 import sys
 import os
+from pathlib import Path
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
@@ -145,8 +146,8 @@ def parse_args():
 
     # Dataset source
     src = p.add_mutually_exclusive_group()
-    src.add_argument("--jsonl", type=str,
-                     help="Path to a JSONL scene file (generated or augmented)")
+    src.add_argument("--jsonl", type=str, nargs="+",
+                     help="One or more JSONL scene files. Each is evaluated separately and results saved with the file stem as prefix.")
     src.add_argument("--smoke", action="store_true",
                      help="Generate 5 fresh scenes inline for a quick smoke test")
 
@@ -195,23 +196,17 @@ def main():
 
     args.vllm_model = _resolve_model(args.vllm_model)
 
-    # ── Load / generate dataset ───────────────────────────────────────────────
+    # ── Resolve dataset paths ─────────────────────────────────────────────────
     if args.smoke:
         logging.info("Smoke mode: generating 5 scenes inline")
         gen = SceneGenerator(GeneratorConfig(n_objects=4, seed=0))
-        scenes = gen.generate_with_images(5, out_dir="data/smoke_images", prefix="smoke")
+        smoke_scenes = gen.generate_with_images(5, out_dir="data/smoke_images", prefix="smoke")
+        jsonl_paths = None  # handled inline below
     elif args.jsonl:
-        scenes = load_jsonl(args.jsonl)
-        logging.info(f"Loaded {len(scenes)} scenes from {args.jsonl}")
+        jsonl_paths = args.jsonl
     else:
-        logging.error("Provide --jsonl <path> or --smoke")
+        logging.error("Provide --jsonl <path> [<path> ...] or --smoke")
         sys.exit(1)
-
-    logging.info(f"Dataset: {dataset_stats(scenes)}")
-
-    if args.split and args.jsonl:
-        _, _, scenes = split_dataset(scenes)
-        logging.info(f"Using test split: {len(scenes)} scenes")
 
     # ── Build speakers ────────────────────────────────────────────────────────
     speakers = []
@@ -245,10 +240,26 @@ def main():
         logging.error("No listeners configured. Provide --vllm_model or --symbolic_baselines.")
         sys.exit(1)
 
+    # ── Collect dataset scenes ────────────────────────────────────────────────
+    if args.smoke:
+        dataset_list = [("smoke", smoke_scenes)]
+    else:
+        dataset_list = []
+        for path in jsonl_paths:
+            scenes = load_jsonl(path)
+            logging.info(f"Loaded {len(scenes)} scenes from {path}")
+            if args.split:
+                _, _, scenes = split_dataset(scenes)
+                logging.info(f"Using test split: {len(scenes)} scenes")
+            stem = Path(path).stem
+            dataset_list.append((stem, scenes))
+
+    total_scenes = sum(len(s) for _, s in dataset_list)
+
     # ── Cost / dry-run estimate ───────────────────────────────────────────────
     n_vllm_spk = sum(1 for s in speakers if "vllm" in s.name)
     n_vllm_lst = sum(1 for l in listeners if "vllm" in l.name)
-    est = _estimate_cost(len(scenes), n_vllm_spk, n_vllm_lst)
+    est = _estimate_cost(total_scenes, n_vllm_spk, n_vllm_lst)
     logging.info(est + " (gemini-flash pricing; scale by 1.8x for llama-4-maverick)")
 
     if args.dry_run:
@@ -256,23 +267,30 @@ def main():
         print(f"Speakers  : {[s.name for s in speakers]}")
         print(f"Listeners : {[l.name for l in listeners]}")
         print(f"Costs     : {args.costs}")
-        print(f"Scenes    : {len(scenes)}")
+        print(f"Datasets  : {[stem for stem, _ in dataset_list]}")
+        print(f"Scenes    : {total_scenes} total ({len(dataset_list)} datasets)")
         return
 
-    # ── Run grid ──────────────────────────────────────────────────────────────
-    records = run_grid(
-        scenes=scenes,
-        speakers=speakers,
-        listeners=listeners,
-        cost_values=args.costs,
-        n_workers=args.workers,
-        verbose=True,
-    )
+    # ── Run grid over each dataset ────────────────────────────────────────────
+    all_records = []
+    for stem, scenes in dataset_list:
+        logging.info(f"Running grid on dataset '{stem}' ({len(scenes)} scenes)")
+        records = run_grid(
+            scenes=scenes,
+            speakers=speakers,
+            listeners=listeners,
+            cost_values=args.costs,
+            n_workers=args.workers,
+            verbose=True,
+        )
+        logging.info(f"  → {len(records)} records for '{stem}'")
+        all_records.extend(records)
+        save_results(records, out_dir=args.out, prefix=stem)
 
-    logging.info(f"Collected {len(records)} evaluation records")
+    logging.info(f"All datasets done — {len(all_records)} records total")
 
-    # ── Print summary ─────────────────────────────────────────────────────────
-    summary = summarize(records)
+    # ── Print combined summary ────────────────────────────────────────────────
+    summary = summarize(all_records)
     print(f"\n{'─'*88}")
     print(f"{'Speaker':<32} {'Listener':<28} {'cost':>5}  {'CPA':>6}  {'Acc':>6}  {'Ask%':>6}  n")
     print(f"{'─'*88}")
@@ -284,8 +302,6 @@ def main():
             f"{row.get('n', 0)}"
         )
     print(f"{'─'*88}\n")
-
-    save_results(records, out_dir=args.out, prefix=args.prefix)
 
 
 if __name__ == "__main__":
