@@ -4,3 +4,4 @@ __pycache__/
 data/generated_scenes/
 results/
 .env
+.claude/
