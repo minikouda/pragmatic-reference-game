@@ -37,5 +37,19 @@ class BaseSpeaker(ABC):
         """
         ...
 
+    def answer_question(
+        self, scene: Scene, target_idx: int, question: str
+    ) -> str:
+        """
+        Answer a listener's clarifying question about the target object.
+
+        Default implementation raises NotImplementedError.
+        Speakers that participate in dialogue must override this.
+        """
+        raise NotImplementedError(
+            f"{self.__class__.__name__} does not support answer_question(). "
+            "Override this method to enable dialogue."
+        )
+
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}(name={self.name!r})"

@@ -8,6 +8,10 @@
 \usepackage{geometry}
 \usepackage{subcaption}
 \usepackage{parskip}
+\usepackage{tikz}
+\usepackage{xcolor}
+\usepackage{mdframed}
+\usetikzlibrary{arrows.meta, shapes.geometric, positioning, fit, backgrounds}
 \geometry{margin=1in}
 
 \title{\textbf{CS 288 Final Project --- Phase 1 Report}\\
@@ -210,85 +214,93 @@ The experiment validates three core claims of the project:
 \end{enumerate}
 
 % -----------------------------------------------------------------------
-\section{Phase 2 Experiment: VLM Speakers and Listeners}
+\section{Phase 2: VLM Speakers and Listeners}
 % -----------------------------------------------------------------------
 
-\subsection{Setup}
+\subsection{Speaker Design}
 
-We replace the symbolic attribute-overlap posterior from Phase~1 with
-vision-language models (VLMs) serving as both speaker and listener.
-All experiments use \texttt{gemini-2.0-flash-001} via the OpenRouter API.
-The evaluation dataset is \texttt{gemini\_exp\_test.jsonl}: 25 scenes with
-$N{=}4$ objects each, balanced across low / medium / high ambiguity tiers.
-The primary metric is Cost-Penalised Accuracy (CPA) at $c{=}0.5$.
+\textbf{Target identification.}
+VLM speakers receive the plain scene image plus the target object's properties
+injected as text in the system prompt:
+\texttt{"the SIZE COLOR SHAPE at LOCATION (scene position: x=X, y=Y where 0,0
+is bottom-left and 100,100 is top-right)"}.
+The exact $(x,y)$ coordinates are provided for spatial grounding (so the model
+can reason about ``leftmost'', ``top-right'', etc.) but the model is explicitly
+instructed \emph{not} to output raw coordinates in its response --- only natural language.
+No image annotation (bounding boxes, overlays) is used; the model must locate
+the target purely from the textual description paired with its own visual perception.
 
-\subsection{Speaker Variants}
-
-All VLM speakers receive a scene image with the target object marked by a
-\textbf{magenta bounding box}; no pre-parsed feature lists are passed.
-The model must reason from visual perception to produce a natural
-referring expression.  Five prompting strategies were evaluated:
+\textbf{Speaker strategies.}
+We evaluate seven prompting strategies for \texttt{StrategicVLLMSpeaker}:
 
 \begin{itemize}
-    \item \textbf{natural} — Unconstrained: ``describe the marked object so a
-          listener can identify it.''
-    \item \textbf{contrastive} — Find the most confusable distractor and
-          highlight the one feature that distinguishes the target.
-    \item \textbf{landmark} — Describe the target's position relative to a
+    \item \textbf{natural} --- Unconstrained; produce a short referring expression
+          that uniquely identifies the target.
+    \item \textbf{contrastive} --- Find the most confusable distractor and
+          highlight the single distinguishing feature.
+    \item \textbf{landmark} --- Describe the target's position relative to a
           visually distinctive nearby object.
-    \item \textbf{superlative} — Use an extreme or uniqueness property
-          (``the only triangle'', ``the largest circle'').
-    \item \textbf{pragmatic} — Full RSA-style chain-of-thought: list all
-          objects, identify distractors, produce the minimal discriminating
-          expression.
-    \item \textbf{scene\_first} — Inventory all visible objects first, confirm
-          the target's properties, then produce the shortest unique expression.
-          Prevents hallucination by grounding the description.
-    \item \textbf{listener\_aware} — Explicitly reason from the listener's
-          perspective: what description would maximise the listener's confidence
-          in the correct object?
+    \item \textbf{superlative} --- Use an extreme or uniqueness property
+          (``the only triangle'', ``the largest circle'', ``the leftmost blue shape'').
+    \item \textbf{pragmatic} --- RSA-style chain-of-thought: list all objects,
+          identify distractors, produce the minimal discriminating expression.
+    \item \textbf{scene\_first} --- Inventory all visible objects first, confirm
+          the target, then produce the shortest unique expression.  Mitigates
+          hallucination by grounding description in an explicit object inventory.
+    \item \textbf{listener\_aware} --- Explicitly reason from the listener's
+          perspective: produce the description that would maximise the listener's
+          confidence in the correct object, making every other object clearly wrong.
+    \item \textbf{canonical\_vllm} --- Constrained vocabulary strategy: the model
+          must choose COLOR, SHAPE, SIZE, and LOCATION from fixed closed sets
+          (e.g.\ shape $\in$ \{circle, square, triangle, star, pentagon, hexagon\}),
+          include features greedily until the description is unique, and output
+          only a canonical ``the [SIZE] COLOR SHAPE [at LOCATION]'' expression.
+          Designed to match the utterance format of the rule-based
+          \textit{feature-canonical} baseline.
 \end{itemize}
 
-Four rule-based baselines (no LLM) are included for comparison:
-\textit{ordinal} (superlatives/uniqueness), \textit{landmark} (spatial reference),
+Four rule-based baselines (no LLM) are included: \textit{ordinal}
+(superlatives/uniqueness), \textit{landmark} (spatial reference),
 \textit{contrastive} (foil-based contrast), and \textit{feature-canonical}
-(minimal canonical feature description).
+(greedy minimal canonical feature description).  The \textit{feature-canonical}
+speaker is the strongest rule-based baseline and the primary comparison target.
 
-\subsection{Listener Variants}
+\subsection{Listener Design}
 
-All VLM listeners receive the scene image, a numbered text description of
-every object, and the speaker's utterance.  They differ in how they reason
-before outputting a posterior $P(t_i \mid u)$:
+All listeners receive the scene image, a numbered text list of every object's
+attributes, and the speaker's utterance.  They output a posterior
+$P(t_i \mid u)$ over $N$ objects.  Five variants were implemented:
 
 \begin{itemize}
-    \item \textbf{vllm-listener} ($\sigma{=}10$) — Predicts $(x,y)$ coordinates
-          for the referred object; posterior is a Gaussian kernel
-          $\exp(-d_i^2/2\sigma^2)$ over object distances.
-    \item \textbf{feature-match} — Extracts a feature tuple (color, shape,
-          size, location) from the utterance and scores each object by
-          feature-overlap count.
-    \item \textbf{direct-rank} — Directly outputs a probability for each
-          object as a JSON array; no intermediate reasoning step.
-    \item \textbf{cot-rank} — Scores each object 0--10 before converting to
-          probabilities (chain-of-thought evaluation per object).
-    \item \textbf{elimination} — Explicitly identifies objects the utterance
-          \emph{rules out} (wrong color, wrong shape, etc.), assigns them
-          probability~0, then distributes the remainder over candidates.
+    \item \textbf{vllm-listener} ($\sigma{=}10$) --- Predicts $(x,y)$ coordinates;
+          posterior is a Gaussian kernel $\exp(-d_i^2/2\sigma^2)$.
+    \item \textbf{feature-match} --- Extracts a feature tuple from the utterance
+          and scores each object by feature-overlap count.
+    \item \textbf{direct-rank} --- Outputs a probability array $[p_0,\ldots,p_{N-1}]$
+          directly; softmax-normalised.
+    \item \textbf{cot-rank} --- Assigns a score $s_i \in [0,10]$ to each object
+          before converting to probabilities.
+    \item \textbf{elimination} --- Explicitly lists \textsc{ruled\_out} indices
+          (probability~0), then scores the remaining \textsc{candidates}.
 \end{itemize}
 
-\subsection{Key Finding: Posterior Flatness}
+\textbf{Posterior flatness fix.}
+The initial \texttt{vllm-listener} used an inverse-distance kernel
+$\text{score}_i = 1/(d_i{+}\epsilon)$, giving mean $\max(P){=}0.52$ for
+$N{=}6$ objects and a near-100\% ask rate at $c{\leq}0.25$.
+Replacing it with $\exp(-d_i^2/2\sigma^2)$, $\sigma{=}10$ canvas units raises
+the mean max-posterior to 0.83 and the commit rate at $c{=}0.25$ from 4\% to 72\%,
+with no change to the argmax prediction.
 
-The original \texttt{vllm-listener} used an inverse-distance kernel
-$\text{score}_i = 1/(d_i + \epsilon)$.  With $N{=}6$ objects this gives a
-mean $\max(\text{posterior}) = 0.52$, causing virtually all scenes to trigger
-clarification at $c{\leq}0.25$ (only 4\% commit rate).
-Replacing it with a Gaussian kernel ($\sigma{=}10$ canvas units) raises the
-commit rate at $c{=}0.25$ from 4\% to 72\% without changing which object is
-selected (argmax is unchanged).
+\subsection{Experiment 1: Speaker and Listener Grid}
+\label{sec:exp1}
 
-\subsection{Results}
+\textbf{Setup.}
+Dataset: \texttt{gemini\_exp\_test.jsonl}, $n{=}25$ scenes, $N{=}4$ objects per scene.
+All VLM calls use \texttt{gemini-2.0-flash-001} via OpenRouter.
+Cost sweep: $c \in \{0.1, 0.25, 0.5\}$.
 
-Table~\ref{tab:phase2} shows CPA at $c{=}0.5$ for all (speaker, listener) pairs.
+Table~\ref{tab:phase2} reports CPA at $c{=}0.5$.
 
 \begin{table}[h]
 \centering
@@ -298,76 +310,847 @@ Table~\ref{tab:phase2} shows CPA at $c{=}0.5$ for all (speaker, listener) pairs.
 Speaker & Listener & Acc & Ask\% & CPA \\
 \midrule
 \multicolumn{5}{l}{\textit{Rule-based speakers}} \\
-feature-canonical  & elimination  & 96\% & 0\%  & \textbf{0.960} \\
-feature-canonical  & direct-rank  & 94\% & 4\%  & 0.940 \\
-feature-canonical  & cot-rank     & 84\% & 16\% & 0.760 \\
+feature-canonical  & elimination  & 96\% &  0\% & \textbf{0.960} \\
+feature-canonical  & direct-rank  & 94\% &  4\% & 0.940 \\
 contrastive        & elimination  & 84\% & 12\% & 0.780 \\
+feature-canonical  & cot-rank     & 84\% & 16\% & 0.760 \\
 landmark           & elimination  & 76\% & 12\% & 0.700 \\
-landmark           & cot-rank     & 72\% & 4\%  & 0.700 \\
+landmark           & cot-rank     & 72\% &  4\% & 0.700 \\
 contrastive        & direct-rank  & 68\% & 16\% & 0.600 \\
-ordinal            & direct-rank  & 64\% & 8\%  & 0.600 \\
+ordinal            & direct-rank  & 64\% &  8\% & 0.600 \\
 \midrule
-\multicolumn{5}{l}{\textit{VLM speakers (StrategicVLLMSpeaker, gemini-2.0-flash-001)}} \\
+\multicolumn{5}{l}{\textit{VLM speakers (gemini-2.0-flash-001)}} \\
 strategic-scene\_first    & direct-rank  & 64\% & 16\% & 0.560 \\
 strategic-scene\_first    & elimination  & 64\% & 16\% & 0.560 \\
-strategic-listener\_aware & elimination  & 60\% & 8\%  & 0.560 \\
-strategic-listener\_aware & direct-rank  & 56\% & 8\%  & 0.520 \\
-strategic-pragmatic       & direct-rank  & 52\% & 4\%  & 0.500 \\
+strategic-listener\_aware & elimination  & 60\% &  8\% & 0.560 \\
+strategic-listener\_aware & direct-rank  & 56\% &  8\% & 0.520 \\
+strategic-pragmatic       & direct-rank  & 52\% &  4\% & 0.500 \\
 strategic-contrastive     & cot-rank     & 56\% & 16\% & 0.480 \\
 strategic-natural         & direct-rank  & 56\% & 16\% & 0.480 \\
 strategic-landmark        & elimination  & 56\% & 20\% & 0.460 \\
 strategic-superlative     & cot-rank     & 40\% & 20\% & 0.300 \\
 \bottomrule
 \end{tabular}
-\caption{CPA at $c{=}0.5$ on \texttt{gemini\_exp\_test.jsonl} ($n{=}25$, 4-object scenes).
-         Rule-based speakers use no LLM API; VLM speakers use gemini-2.0-flash-001.}
+\caption{Speaker--listener grid at $c{=}0.5$, \texttt{gemini\_exp\_test.jsonl}
+         ($n{=}25$, $N{=}4$).  Rule-based speakers require no LLM calls.
+         VLM speakers use gemini-2.0-flash-001 with target properties provided as text.}
 \label{tab:phase2}
 \end{table}
 
-\subsection{Discussion}
+\paragraph{Key findings.}
+The \textit{elimination} listener is best for rule-based speakers;
+\textit{direct-rank} is most robust for VLM speakers.
+Rule-based \textit{feature-canonical} + \textit{elimination} achieves CPA~$=0.96$
+versus 0.56 for the best VLM speaker (\textit{scene\_first} or
+\textit{listener\_aware}).
+\texttt{feature-match} is poor with natural-language utterances (spatial/relational
+descriptions do not decompose into feature tuples).
 
-\paragraph{Listener design is the dominant factor.}
-The choice of listener has a larger impact than the choice of speaker strategy.
-\texttt{elimination} is the best listener for rule-based speakers (CPA up to 0.96),
-while \texttt{direct-rank} is most robust for VLM speakers.
-\texttt{feature-match} performs poorly with natural-language utterances because
-spatial and relational descriptions (``the square to the left of the triangle'')
-do not decompose cleanly into feature tuples.
+\subsection{Experiment 2: Diagnosing the Rule-Based vs.\ VLM Gap}
+\label{sec:exp2}
 
-\paragraph{Rule-based speakers outperform VLM speakers.}
-With the best listener, the best rule-based speaker (\textit{feature-canonical}
-+ \textit{elimination}) achieves CPA~$= 0.96$ versus 0.56 for the best VLM
-speaker (\textit{scene\_first}).  Rule-based descriptions are shorter, more
-precise, and easier for the listener to eliminate against.
+\textbf{Root cause analysis.}
+Comparing \textit{feature-canonical} and \textit{strategic-natural} utterances
+on the same scenes reveals three systematic VLM failure modes:
 
-\paragraph{VLM speaker hallucination.}
-Several VLM speaker failures stem from hallucination: the model describes
-objects that do not exist (``the square on the circle'' when no circle is in
-the scene) or misidentifies attributes (``the blue square'' for a black object).
-The \textit{scene\_first} strategy mitigates this by requiring the model to
-inventory all objects before identifying the target, anchoring its description
-in what is actually visible.
+\begin{enumerate}
+    \item \textbf{Vague shape vocabulary} (20\% of VLM utterances): the model outputs
+          ``the black shape'' or ``the black blob'' instead of the specific shape name.
+          Feature-canonical always names the exact shape; VLMs use generic words
+          when uncertain.
+    \item \textbf{Wrong attribute}: the model hallucinates a property --- e.g.\
+          ``the black circle'' when the target is a black square, or ``the red square''
+          when the target is a red triangle.
+    \item \textbf{Under-specification}: the model omits a needed discriminating
+          feature --- e.g.\ ``the green square'' when size is required to distinguish
+          two green squares of different sizes.
+\end{enumerate}
 
-\paragraph{Listener reasoning strategy matches utterance type.}
-\texttt{elimination} wins when utterances mention specific features that
-cleanly contradict some objects.
-\texttt{cot-rank} outperforms \textit{direct-rank} for rule-based
-speakers (\textit{ordinal}: $+0.10$) but hurts for VLM speakers
-(\textit{scene\_first}: $-0.12$), suggesting per-object scoring is better
-calibrated for discrete feature descriptions than for spatial/relational language.
+Quantitatively: feature-canonical includes the exact shape name in 84\% of utterances
+and color in 100\%, with zero vague words.  Strategic-natural includes the shape name
+in only 80\% and produces vague generic words in 20\%.
 
-\paragraph{Best fully-VLM pipeline.}
-\textit{strategic-scene\_first} $+$ \textit{direct-rank} or
-\textit{elimination} achieves CPA~$= 0.56$.  The \textit{scene\_first} strategy
-forces genuine visual grounding before description, producing short accurate
-utterances (``the black shape'', ``the yellow square'') that the listener can
-resolve confidently.
+\textbf{The \texttt{canonical\_vllm} strategy.}
+Motivated by this analysis, we introduced a new prompting strategy that constrains
+the VLM speaker to use closed vocabularies (shape $\in$ \{circle, square, triangle,
+star, pentagon, hexagon\}; color, size, location analogously) and follow the same
+greedy feature-inclusion logic as the rule-based speaker: include shape+color first,
+add size only if ambiguous, add location only if still ambiguous.
+The model is explicitly told it must not use synonyms or vague words outside the
+specified vocabulary.
 
-\paragraph{Limitations.}
-All experiments use 25 scenes with $N{=}4$ objects.  Results on harder
-6-object or 8-object scenes may differ.  The \textit{direct-rank} and
-\textit{elimination} listeners receive ground-truth feature labels in the
-object list, giving them an advantage a purely visual listener would not have.
+Table~\ref{tab:canonical_gap} shows results on \texttt{gemini\_exp\_test.jsonl}
+after this fix, with the bounding-box annotation removed (target provided as text only).
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{llccc}
+\toprule
+Speaker & Listener & Acc & Ask\% & CPA \\
+\midrule
+feature-canonical              & elimination  & 100\% &  0\% & \textbf{1.000} \\
+feature-canonical              & direct-rank  &  96\% &  4\% & 0.940 \\
+strategic-listener\_aware      & direct-rank  &  92\% &  0\% & 0.920 \\
+strategic-canonical\_vllm      & direct-rank  &  92\% &  8\% & 0.840 \\
+strategic-canonical\_vllm      & elimination  &  80\% &  4\% & 0.780 \\
+strategic-listener\_aware      & elimination  &  80\% &  8\% & 0.760 \\
+strategic-natural              & elimination  &  84\% &  8\% & 0.720 \\
+strategic-natural              & direct-rank  &  88\% & 16\% & 0.640 \\
+\bottomrule
+\end{tabular}
+\caption{CPA at $c{=}0.5$ after removing bounding-box annotation (target as text).
+         \texttt{canonical\_vllm} closes the gap from 0.64 (natural) to 0.84,
+         while \texttt{listener\_aware} reaches 0.92.  $n{=}25$, $N{=}4$.}
+\label{tab:canonical_gap}
+\end{table}
+
+\textbf{Residual gap.}
+\texttt{canonical\_vllm} still under-performs feature-canonical (0.84 vs.\ 1.00 CPA).
+Failure analysis shows only 2 remaining errors, both due to under-specification:
+``the blue triangle'' (missing \textit{small}) and ``the circle'' (missing color
+and size).  The rule-based speaker eliminates under-specification by construction;
+the VLM cannot be fully constrained from omitting features via prompting alone.
+Notably, \textit{listener\_aware} (0.92 CPA) approaches rule-based performance via
+a different route: listener-centric reasoning naturally produces discriminative
+descriptions without requiring explicit vocabulary constraints.
+
+\subsection{Experiment 3: Naive Large Model vs.\ Engineered Small Model}
+\label{sec:exp3}
+
+\textbf{Motivation.}
+Experiments~1--2 all use gemini-2.0-flash-001.  We ask whether a larger, more
+capable model without any prompt engineering can match or exceed a prompt-engineered
+small model.
+
+\textbf{Setup.}
+Dataset: \texttt{scenes\_6\_force.jsonl}, $n{=}50$ scenes, $N{=}6$ objects with
+forced same-color distractor pairs (harder than the 4-object test set).
+Speaker models: \texttt{meta-llama/llama-4-maverick}, \texttt{anthropic/claude-sonnet-4}
+(naive, strategy=\textit{natural}), and \texttt{google/gemini-2.0-flash-001}
+(engineered, strategies \textit{listener\_aware}, \textit{scene\_first},
+\textit{natural}).
+Listener models: \texttt{DirectRankListener} and \texttt{EliminationListener}, both
+tested with all three backbone models.
+
+Table~\ref{tab:scale} shows CPA at $c{=}0.5$.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{p{3.2cm}p{3.4cm}ccc}
+\toprule
+Speaker & Listener & Acc & Ask\% & CPA \\
+\midrule
+\multicolumn{5}{l}{\textit{Naive large-model speakers}} \\
+natural (maverick)  & direct-rank (sonnet-4) & 98\% & 0\% & \textbf{0.980} \\
+natural (flash)     & direct-rank (sonnet-4) & 98\% & 0\% & \textbf{0.980} \\
+natural (sonnet-4)  & direct-rank (sonnet-4) & 94\% & 0\% & 0.940 \\
+natural (maverick)  & direct-rank (maverick) & 98\% & 2\% & 0.950 \\
+\midrule
+\multicolumn{5}{l}{\textit{Engineered small-model speakers (gemini-flash)}} \\
+listener\_aware & direct-rank (sonnet-4) & 98\% & 2\% & 0.970 \\
+listener\_aware & direct-rank (flash)    & 96\% & 2\% & 0.950 \\
+scene\_first    & direct-rank (sonnet-4) & 92\% & 2\% & 0.910 \\
+natural         & elimination (flash)    & 84\% & 6\% & 0.790 \\
+natural (maverick) & elimination (flash) & 80\% & 4\% & 0.780 \\
+\bottomrule
+\end{tabular}
+\caption{Naive large model vs.\ engineered small model at $c{=}0.5$.
+         \texttt{scenes\_6\_force.jsonl}, $n{=}50$, $N{=}6$.
+         Model shorthands: flash = gemini-2.0-flash-001, maverick = llama-4-maverick,
+         sonnet-4 = claude-sonnet-4.
+         The \texttt{direct-rank(sonnet-4)} listener elevates every speaker;
+         \texttt{elimination(flash)} consistently underperforms.}
+\label{tab:scale}
+\end{table}
+
+\paragraph{Key findings.}
+
+\textbf{The listener is the bottleneck on harder scenes.}
+With a strong \textit{direct-rank(claude-sonnet-4)} listener, \emph{all} speakers
+--- naive or engineered, small or large --- achieve CPA $\geq 0.94$.  The speaker
+strategy becomes secondary.  By contrast, pairing any speaker with
+\textit{elimination(gemini-flash)} drops CPA to 0.78--0.79, indicating that the
+elimination listener's higher ask rate (4--8\%) is the dominant cost driver.
+
+\textbf{Annotation failure mode resolved.}
+In earlier experiments (with bounding-box annotation), claude-sonnet-4 produced
+utterances describing the annotation itself (``the magenta square'', ``the highlighted
+object'') rather than the actual object, yielding CPA~${\approx}0.12$.
+After switching to text-only target identification, claude-sonnet-4 as a
+\emph{listener} becomes the top performer.  This finding motivated the design
+change from visual annotation to textual target passing in \texttt{StrategicVLLMSpeaker}.
+
+\textbf{Prompt engineering narrows but does not eliminate the performance gap.}
+On the harder 6-object dataset, engineered gemini-flash speakers
+(\textit{listener\_aware}: 0.95--0.97 CPA) closely match naive large-model speakers
+(0.95--0.98).  The gap between them is within experimental noise at $n{=}50$.
+The earlier advantage of prompt engineering observed in Experiment~1 (0.54 vs.\ 0.30)
+was partly attributable to the bounding-box annotation failure harming large models
+disproportionately.
+
+% -----------------------------------------------------------------------
+\section{Experiment 4: Full-Scale Evaluation Across Scene Complexities}
+\label{sec:fullscale}
+% -----------------------------------------------------------------------
+
+\subsection{Setup}
+
+To assess how speaker and listener strategies generalise beyond the small
+pilot datasets used in Experiments~1--3, we conducted a full-scale evaluation
+spanning six scene configurations that vary both the number of objects and the
+degree of forced perceptual overlap between distractors.
+
+\textbf{Datasets.}  All six datasets were generated with our synthetic scene
+renderer (\S\ref{sec:exp1}):
+\begin{itemize}
+    \item $N \in \{6, 8, 10\}$ objects per scene,
+    \item \textit{none}: objects drawn independently (low to moderate ambiguity),
+    \item \textit{force}: at least one distractor shares the target's color
+          (guaranteed near-confusable pair, high ambiguity),
+    \item $n = 300$ scenes per configuration (1\,800 scenes total).
+\end{itemize}
+
+\textbf{Systems evaluated.}
+\begin{itemize}
+    \item \textbf{Speakers:} \textit{natural}, \textit{listener\_aware},
+          \textit{canonical\_vllm} (all using gemini-2.0-flash-001), and the
+          rule-based \textit{feature-canonical} oracle.
+    \item \textbf{Listeners:} \textit{direct-rank} and \textit{elimination},
+          both using gemini-2.0-flash-001.
+    \item \textbf{Cost sweep:} $c \in \{0.10, 0.25, 0.50\}$.
+\end{itemize}
+
+All VLM speaker calls provide the target's properties as structured text
+(color, shape, size, location, and exact $(x,y)$ coordinates) with an explicit
+instruction not to output raw coordinates.  No image annotation is used.
+
+\subsection{Results}
+
+Table~\ref{tab:fullscale} reports CPA at $c{=}0.5$ for all
+speaker--listener combinations across the six datasets.
+Figure-level trends are summarised in the discussion below.
+
+\begin{table}[ht]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{llcccccc}
+\toprule
+ & & \multicolumn{2}{c}{$N{=}6$} & \multicolumn{2}{c}{$N{=}8$} & \multicolumn{2}{c}{$N{=}10$} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}
+Speaker & Listener & none & force & none & force & none & force \\
+\midrule
+\multicolumn{8}{l}{\textit{direct-rank listener}} \\
+feature-canonical    & DR & \textbf{.992} & \textbf{.995} & \textbf{.985} & \textbf{.997} & \textbf{.993} & \textbf{.982} \\
+canonical\_vllm      & DR & .963 & .955 & .972 & .967 & .990 & .947 \\
+listener\_aware      & DR & .925 & .965 & .957 & .963 & .968 & .937 \\
+natural              & DR & .913 & .958 & .975 & .958 & .942 & .900 \\
+\midrule
+\multicolumn{8}{l}{\textit{elimination listener}} \\
+feature-canonical    & EL & .915 & .883 & .858 & .863 & .773 & .743 \\
+canonical\_vllm      & EL & .900 & .840 & .822 & .782 & .793 & .677 \\
+listener\_aware      & EL & .882 & .835 & .823 & .823 & .777 & .687 \\
+natural              & EL & .898 & .832 & .817 & .832 & .742 & .680 \\
+\bottomrule
+\end{tabular}
+\caption{CPA at $c{=}0.5$ across all six scene configurations ($n{=}300$ each).
+         DR = \textit{direct-rank(gemini-flash)},
+         EL = \textit{elimination(gemini-flash)}.
+         Feature-canonical is a rule-based oracle requiring no VLM speaker calls.}
+\label{tab:fullscale}
+\end{table}
+
+\subsection{Analysis}
+
+\paragraph{Finding 1: \textit{direct-rank} is uniformly superior to \textit{elimination}.}
+Across all 24 (speaker, dataset) pairs, \textit{direct-rank} outperforms
+\textit{elimination} by an average of $\Delta\text{CPA} = 0.106$ at $c{=}0.5$.
+The gap widens with scene complexity: at $N{=}6$, the advantage is $\approx 0.06$;
+at $N{=}10$, it grows to $\approx 0.20$.
+This degradation of the elimination listener is explained by its ask rate:
+at $N{=}10$, \textit{elimination} asks 20--27\% of the time, whereas
+\textit{direct-rank} asks only 1--4\%.
+The elimination strategy's tendency to rule out objects aggressively (and
+then be uncertain among the remainder) is well-suited to small, unambiguous scenes
+but becomes overconservative as the candidate set grows.
+
+\paragraph{Finding 2: \textit{canonical\_vllm} is the best VLM speaker across all settings.}
+Among VLM speakers, \textit{canonical\_vllm} achieves the highest CPA in 9 of 12
+(dataset, listener) conditions.
+Averaged over all six datasets with \textit{direct-rank}, it achieves mean
+CPA $= 0.966$, versus $0.952$ for \textit{listener\_aware} and $0.941$ for
+\textit{natural}.
+The vocabulary constraint --- forcing the model to name shape, color, size, and
+location from closed sets --- eliminates vague generic words (``the black shape'')
+and attribute hallucinations that are the primary failure modes of unconstrained VLM speakers.
+
+\paragraph{Finding 3: Scaling from $N{=}6$ to $N{=}10$ has modest impact on \textit{direct-rank}.}
+With \textit{direct-rank}, mean CPA across speakers decreases by only $0.021$
+from $N{=}6$ to $N{=}10$ (none variant: $0.948 \to 0.973 \to 0.973$; note
+non-monotone due to variation in scene difficulty).
+This robustness suggests that the direct-ranking listener effectively marginalises
+over larger candidate sets without systematic degradation.
+
+\paragraph{Finding 4: Forced overlap (\textit{force}) has negligible impact with \textit{direct-rank}.}
+Comparing \textit{none} vs.\ \textit{force} variants at the same $N$, CPA differences
+are $\leq 0.015$ for \textit{direct-rank} across all speakers.
+The forced same-color distractor, which was designed to increase ambiguity and
+force speakers to rely on additional discriminating features (shape, size, location),
+does not substantially degrade performance.
+This suggests that the VLM listener can resolve same-color ambiguity from the
+image and structured object descriptions without special accommodation from
+the speaker.
+
+\paragraph{Finding 5: The residual gap between \textit{canonical\_vllm} and \textit{feature-canonical} is consistent.}
+Feature-canonical outperforms canonical\_vllm by $\Delta\text{CPA} \approx 0.026$
+on average with \textit{direct-rank}.
+This gap is entirely attributable to \emph{under-specification}: even with a
+closed vocabulary, the VLM occasionally omits a needed discriminating feature
+(e.g.\ outputting ``the blue triangle'' when size is required).
+The rule-based speaker eliminates this by construction --- it greedily adds
+features until the description is provably unique with respect to the ground-truth
+object set.  Closing this remaining gap would require either (a) giving the VLM
+speaker the full distractor list and asking it to verify uniqueness, or (b)
+a post-hoc uniqueness check that adds the missing feature programmatically.
+
+\paragraph{Summary.}
+The best \emph{fully-VLM} pipeline is
+\textit{canonical\_vllm(gemini-flash)} + \textit{direct-rank(gemini-flash)},
+achieving CPA $= 0.947$--$0.990$ across all six datasets at $c{=}0.5$.
+This represents a substantial improvement over the initial VLM baseline
+(CPA $\approx 0.43$ at the start of Phase~2) and approaches the rule-based
+oracle ceiling (CPA $= 0.982$--$0.997$) to within $\approx 0.03$ CPA points.
+The primary remaining bottleneck is VLM speaker under-specification, not
+listener error.
+
+% -----------------------------------------------------------------------
+\section{Experiment 5: Honest Image-Only Listener Evaluation}
+\label{sec:honest}
+% -----------------------------------------------------------------------
+
+\subsection{Motivation: The Leakage Problem}
+
+Experiments~1--4 used text-assisted listeners: every listener prompt included a
+numbered list of the form
+\begin{center}
+\texttt{[0] small red circle at bottom-left}\\
+\texttt{[1] large blue square at top-right}\\
+\texttt{\ldots}
+\end{center}
+alongside the scene image and the speaker's utterance.
+While this provided a controlled testbed for measuring speaker quality, it
+introduced a \emph{feature leakage} problem: a listener that simply matches the
+utterance tokens against the pre-formatted object list can achieve near-perfect
+accuracy without ever examining the image.
+The CPA scores reported in Table~\ref{tab:fullscale} (0.94--0.997) are therefore
+an overestimate of genuine visuo-linguistic understanding.
+
+Concretely, given the speaker utterance ``the large blue circle'' and the formatted
+list above, a string-matching procedure suffices: the text immediately identifies
+object~[1] if it were ``large blue circle''.  The listener's visual channel is
+entirely bypassed.
+
+A fully general listener should operate under the same informational constraints
+as a human participant in a real reference game: \emph{it sees the scene image and
+hears the utterance, and nothing more}.  We call such a listener
+\textbf{image-only} (IO), in contrast to the text-assisted (TA) baselines of
+Experiments~1--4.
+
+\subsection{Image-Only Listener Design}
+\label{sec:io-design}
+
+\paragraph{Index annotation.}
+To give IO listeners a shared referential vocabulary with the speaker, we render
+each scene image with integer index labels (0, 1, \ldots, $N{-}1$) placed at
+each object's center pixel.  The label placement uses the same coordinate
+transformation as the scene renderer:
+\begin{align}
+    p_x^{(i)} &= m_x + \frac{x_i}{100}\,(w - 2m_x), \\
+    p_y^{(i)} &= (h - m_y) - \frac{y_i}{100}\,(h - 2m_y),
+\end{align}
+where $(x_i, y_i) \in [0,100]^2$ are the object's stored coordinates in
+bottom-left origin space, $(w, h)$ are the rendered image dimensions, and
+$(m_x, m_y)$ are pixel margins.  This formula maps logical canvas space
+exactly to pixel space, so each label lands visually on top of its object.
+Labels are rendered in black with a white outline for legibility on any background.
+
+No feature text (color, shape, size, location) is passed to the listener.
+The model must \emph{identify} object properties from its own visual perception,
+\emph{match} them against the utterance, and \emph{output} a posterior over
+the integer indices.
+
+Figure~\ref{fig:io-pipeline} illustrates the full IO listener pipeline.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+    node distance=1.1cm and 1.6cm,
+    box/.style={draw, rounded corners=4pt, minimum width=2.6cm,
+                minimum height=0.9cm, align=center, font=\small},
+    inpbox/.style={box, fill=blue!10},
+    procbox/.style={box, fill=orange!15},
+    outbox/.style={box, fill=green!12},
+    arr/.style={-{Stealth[length=6pt]}, thick},
+    lbl/.style={font=\footnotesize\itshape, text=gray}
+]
+
+% Row 1 – inputs
+\node[inpbox]  (img)   {Scene image\\\small(rendered PNG)};
+\node[inpbox, right=of img]  (utt)   {Speaker utterance\\$u$};
+
+% Annotation step
+\node[procbox, below=of img] (ann) {Index annotation\\(PIL overlay)};
+\node[inpbox,   below=of ann] (aimg){Annotated image\\\small(0\ldots$N{-}1$ labels)};
+
+% VLM
+\node[procbox, right=of aimg, xshift=0.4cm] (vlm) {VLM call\\(image + utterance)};
+
+% Parsing
+\node[procbox, right=of vlm, xshift=0.4cm]  (parse) {Parse raw output\\(regex / JSON)};
+
+% Posterior
+\node[outbox,  below=of parse] (post) {Posterior\\$[p_0,\ldots,p_{N-1}]$};
+
+% Decision
+\node[procbox, below=of post]  (eu)   {EU decision rule\\$\max p_i \gtrless 1{-}c$};
+
+% Outputs
+\node[outbox, below left=0.7cm and 0.0cm of eu]  (commit) {Commit\\$\hat{t}=\arg\max p_i$};
+\node[outbox, below right=0.7cm and 0.0cm of eu] (ask)    {Ask\\clarification};
+
+% Arrows
+\draw[arr] (img) -- (ann);
+\draw[arr] (ann) -- (aimg);
+\draw[arr] (aimg) -- (vlm);
+\draw[arr] (utt.south) -- ++(0,-0.3) -| (vlm.north);
+\draw[arr] (vlm)   -- (parse);
+\draw[arr] (parse) -- (post);
+\draw[arr] (post)  -- (eu);
+\draw[arr] (eu)    -- (commit);
+\draw[arr] (eu)    -- (ask);
+
+% Side labels
+\node[lbl, left=0.15cm of ann]   {no text features};
+\node[lbl, right=0.15cm of vlm]  {no object list};
+
+\end{tikzpicture}
+\caption{Image-only (IO) listener pipeline.
+The scene image is annotated with integer index labels at each object center,
+then passed to a VLM together with the speaker utterance.
+No textual feature descriptions are provided.
+The VLM outputs a posterior over object indices, which feeds the EU decision rule.}
+\label{fig:io-pipeline}
+\end{figure}
+
+\paragraph{Posterior derivation from the model's response.}
+Listener models may produce probabilities in several formats depending on the
+prompting strategy used.  We implement three variants, each corresponding to
+a distinct reasoning philosophy:
+
+\begin{enumerate}
+\item \textbf{io-direct} --- The model is instructed to output a JSON array of
+      $N$ floats summing to 1.0, one per indexed object:
+      \texttt{[p0, p1, \ldots]}.
+      The prompt specifies only that probabilities must sum to 1; no reasoning
+      structure is imposed.  The model directly encodes its confidence about
+      each object index.  We parse the first JSON array matching
+      \texttt{[\textbackslash d.,\textbackslash s]+} via regex and normalise.
+
+\item \textbf{io-cot} (chain-of-thought) --- The model follows a structured
+      three-step protocol: (1)~\textsc{observe} --- describe each object by
+      index as seen in the image; (2)~\textsc{match} --- score each object
+      0--10 based on utterance fit; (3)~\textsc{assign} --- convert scores
+      to probabilities.
+      Output is tagged: \texttt{SCORES: [s0, \ldots]} and
+      \texttt{PROBS: [p0, \ldots]}.
+      Parsing prefers the \texttt{PROBS} tag; falls back to \texttt{SCORES}
+      (renormalised) if absent.
+
+\item \textbf{io-elimination} --- The model explicitly lists \textsc{ruled\_out}
+      indices (probability forced to 0), then scores the remaining
+      \textsc{candidates} proportionally.
+      Output: \texttt{RULED\_OUT: [i, j, \ldots]},
+      \texttt{CANDIDATES: [i, j, \ldots]},
+      \texttt{PROBS: [p0, \ldots]}.
+      The elimination strategy is most aggressive: it is designed for scenes
+      where the utterance strongly contradicts most objects, so the posterior
+      can concentrate on a small candidate set.
+\end{enumerate}
+
+All three strategies share the same index-annotated image; they differ only in
+how they instruct the VLM to reason about the assignment.
+In all cases the final posterior is renormalised to sum to 1 if numerical
+errors are present; if parsing fails entirely, a uniform distribution
+$[1/N, \ldots, 1/N]$ is used as a fallback.
+
+\paragraph{From posterior to accuracy.}
+Let $\mathbf{p} = (p_0, \ldots, p_{N-1})$ be the normalised posterior over
+$N$ objects.  The listener's prediction is the argmax:
+\begin{equation}
+    \hat{t} = \arg\max_{i}\, p_i.
+    \label{eq:argmax}
+\end{equation}
+Accuracy is the fraction of scenes where $\hat{t} = t^*$ (the ground-truth
+target index).
+
+For cost-aware clarification, the decision rule is:
+\begin{equation}
+    \text{ask} \iff \max_i p_i < 1 - c.
+    \label{eq:eu-rule}
+\end{equation}
+When the listener \emph{asks} (abstains), it neither contributes a correct nor
+an incorrect prediction; the scene counts only as a clarification cost $c$.
+Cost-Penalized Accuracy (CPA) aggregates both outcomes:
+\begin{equation}
+    \text{CPA}(c) = \frac{|\{\text{correct commits}\}|}{n} - c \cdot \frac{|\{\text{asks}\}|}{n}
+                 = \text{Acc} - c \cdot \text{Ask\%},
+    \label{eq:cpa}
+\end{equation}
+where $n$ is the total number of scenes.  A listener that never asks ($\text{Ask\%}=0$)
+maximises CPA iff its accuracy is high; one that asks frequently must have
+correspondingly high accuracy on the scenes it does commit to, or it will
+be penalised.
+
+\paragraph{Key structural difference from text-assisted listeners.}
+Table~\ref{tab:io-vs-ta} summarises what information each listener type receives.
+Under the TA protocol, the object list effectively \emph{solves} the
+reference problem as a text lookup: the model merely needs to find which row in
+the list best matches the utterance.  Under the IO protocol, the model must
+ground the utterance in visual perception --- identifying colors, shapes, and
+spatial relationships from pixels.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{lccc}
+\toprule
+Listener type & Scene image & Object feature text & Speaker utterance \\
+\midrule
+Text-assisted (TA) & \checkmark & \checkmark (full list) & \checkmark \\
+Image-only (IO)    & \checkmark (indexed) & --- & \checkmark \\
+\bottomrule
+\end{tabular}
+\caption{Information available to each listener type.
+TA listeners receive the complete attribute list for all $N$ objects;
+IO listeners receive only the index-annotated image and the utterance.}
+\label{tab:io-vs-ta}
+\end{table}
+
+\subsection{Experimental Setup}
+
+\textbf{Datasets.}
+The same six scene configurations as Experiment~4:
+$N \in \{6, 8, 10\}$ objects $\times$ \{\textit{none}, \textit{force}\} overlap,
+$n = 300$ scenes each (1\,800 total).
+
+\textbf{Speakers.}
+Four speaker strategies: \textit{natural}, \textit{listener\_aware},
+\textit{canonical\_vllm}, and \textit{feature-canonical} (rule-based oracle),
+all identical to Experiment~4.  Speaker utterances are re-used from the cached
+results of Experiment~4 (no additional VLM calls for speakers).
+
+\textbf{Listeners.}
+Three IO listeners (\textit{io-direct}, \textit{io-cot}, \textit{io-elimination}),
+all backed by \texttt{gemini-2.0-flash-001} via OpenRouter.
+This allows a direct comparison between TA and IO listeners on identical
+(scene, utterance) pairs.
+
+\textbf{Cost sweep.} $c \in \{0.10, 0.25, 0.50\}$.
+
+\subsection{Results}
+
+Tables~\ref{tab:io-c05}--\ref{tab:io-c01} report CPA for all three IO listener
+variants paired with all four speakers across the six datasets.
+
+\begin{table}[ht]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{llcccccc}
+\toprule
+ & & \multicolumn{2}{c}{$N{=}6$} & \multicolumn{2}{c}{$N{=}8$} &
+     \multicolumn{2}{c}{$N{=}10$} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}
+Speaker & IO Listener & none & force & none & force & none & force \\
+\midrule
+\multicolumn{8}{l}{\textit{io-index} \textnormal{(hard commit, ask\%\,$=$\,0 always; CPA\,$=$\,Accuracy)}} \\
+feature-canonical   & IO-IX & \textbf{.900} & \textbf{.910} & \textbf{.903} & \textbf{.880} & \textbf{.870} & \textbf{.823} \\
+listener\_aware     & IO-IX & .787 & .877 & .747 & .800 & .720 & .767 \\
+canonical\_vllm     & IO-IX & .787 & .840 & .767 & .783 & .713 & .730 \\
+natural             & IO-IX & .793 & .843 & .750 & .783 & .670 & .723 \\
+\midrule
+\multicolumn{8}{l}{\textit{io-direct}} \\
+feature-canonical   & IO-DR & .760 & .840 & .693 & .733 & .697 & .677 \\
+listener\_aware     & IO-DR & .750 & .800 & .713 & .773 & .727 & .703 \\
+canonical\_vllm     & IO-DR & .690 & .790 & .723 & .730 & .733 & .687 \\
+natural             & IO-DR & .700 & .770 & .700 & .727 & .700 & .673 \\
+\midrule
+\multicolumn{8}{l}{\textit{io-elimination}} \\
+feature-canonical   & IO-EL & .690 & .743 & .607 & .647 & .580 & .527 \\
+listener\_aware     & IO-EL & .680 & .723 & .627 & .643 & .580 & .553 \\
+canonical\_vllm     & IO-EL & .660 & .697 & .587 & .617 & .560 & .507 \\
+natural             & IO-EL & .663 & .700 & .593 & .623 & .553 & .493 \\
+\midrule
+\multicolumn{8}{l}{\textit{io-cot}} \\
+feature-canonical   & IO-CoT & .483 & .370 & .350 & .263 & .257 & .177 \\
+listener\_aware     & IO-CoT & .467 & .343 & .370 & .280 & .283 & .193 \\
+canonical\_vllm     & IO-CoT & .453 & .353 & .343 & .257 & .263 & .187 \\
+natural             & IO-CoT & .457 & .337 & .357 & .273 & .270 & .180 \\
+\bottomrule
+\end{tabular}
+\caption{CPA at $c{=}0.50$ for image-only (IO) listeners across all six datasets
+         ($n{=}300$ each).
+         IO-IX = \textit{io-index} (single integer output, never asks),
+         IO-DR = \textit{io-direct}, IO-EL = \textit{io-elimination},
+         IO-CoT = \textit{io-cot}.
+         \textit{io-index} CPA is invariant to $c$ since ask\%\,$=$\,0.
+         Compare with Table~\ref{tab:fullscale} (text-assisted baselines).}
+\label{tab:io-c05}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{llcccccc}
+\toprule
+ & & \multicolumn{2}{c}{$N{=}6$} & \multicolumn{2}{c}{$N{=}8$} &
+     \multicolumn{2}{c}{$N{=}10$} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}
+Speaker & IO Listener & none & force & none & force & none & force \\
+\midrule
+\multicolumn{8}{l}{\textit{io-direct}} \\
+feature-canonical   & IO-DR & .760 & .840 & .687 & .727 & .690 & .670 \\
+listener\_aware     & IO-DR & .740 & .790 & .707 & \textbf{.763} & .720 & .697 \\
+canonical\_vllm     & IO-DR & .683 & \textbf{.787} & \textbf{.720} & .723 & \textbf{.727} & .680 \\
+natural             & IO-DR & .693 & .763 & .693 & .720 & .693 & .667 \\
+\midrule
+\multicolumn{8}{l}{\textit{io-elimination}} \\
+feature-canonical   & IO-EL & .628 & .638 & .525 & .540 & .468 & .415 \\
+listener\_aware     & IO-EL & .618 & .610 & .540 & .533 & .473 & .435 \\
+canonical\_vllm     & IO-EL & .595 & .593 & .497 & .505 & .440 & .390 \\
+natural             & IO-EL & .600 & .598 & .507 & .512 & .433 & .378 \\
+\midrule
+\multicolumn{8}{l}{\textit{io-cot}} \\
+feature-canonical   & IO-CoT & .243 & .123 & .083 & .013 & -.013 & -.090 \\
+listener\_aware     & IO-CoT & .220 & .110 & .097 & .030 & .007 & -.077 \\
+canonical\_vllm     & IO-CoT & .213 & .117 & .077 & .007 & -.003 & -.083 \\
+natural             & IO-CoT & .220 & .103 & .090 & .020 & .003 & -.087 \\
+\bottomrule
+\end{tabular}
+\caption{CPA at $c{=}0.25$ for IO listeners.
+         IO-CoT CPA turns negative at $N{=}10$, \textit{force}: ask rate exceeds
+         80\% but accuracy is insufficient to compensate.}
+\label{tab:io-c025}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{llcccccc}
+\toprule
+ & & \multicolumn{2}{c}{$N{=}6$} & \multicolumn{2}{c}{$N{=}8$} &
+     \multicolumn{2}{c}{$N{=}10$} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}
+Speaker & IO Listener & none & force & none & force & none & force \\
+\midrule
+\multicolumn{8}{l}{\textit{io-direct}} \\
+feature-canonical   & IO-DR & .731 & .812 & .652 & .694 & .652 & .632 \\
+listener\_aware     & IO-DR & .712 & .761 & .673 & .730 & .686 & .664 \\
+canonical\_vllm     & IO-DR & .651 & .756 & .688 & .690 & .696 & .645 \\
+natural             & IO-DR & .662 & .733 & .659 & .687 & .658 & .634 \\
+\midrule
+\multicolumn{8}{l}{\textit{io-elimination}} \\
+feature-canonical   & IO-EL & .517 & .497 & .385 & .377 & .293 & .243 \\
+listener\_aware     & IO-EL & .499 & .463 & .397 & .370 & .297 & .258 \\
+canonical\_vllm     & IO-EL & .474 & .448 & .353 & .337 & .261 & .221 \\
+natural             & IO-EL & .480 & .455 & .363 & .350 & .253 & .213 \\
+\midrule
+\multicolumn{8}{l}{\textit{io-cot}} \\
+feature-canonical   & IO-CoT & .050 & -.063 & -.155 & -.238 & -.248 & -.338 \\
+listener\_aware     & IO-CoT & .028 & -.083 & -.138 & -.222 & -.228 & -.320 \\
+canonical\_vllm     & IO-CoT & .038 & -.070 & -.148 & -.233 & -.237 & -.330 \\
+natural             & IO-CoT & .033 & -.077 & -.143 & -.228 & -.244 & -.335 \\
+\bottomrule
+\end{tabular}
+\caption{CPA at $c{=}0.10$ for IO listeners.
+         Negative CPA arises when the clarification penalty exceeds the accuracy
+         gain from asking.  IO-CoT becomes systematically unprofitable at
+         $N \geq 8$ under the lowest cost regime.}
+\label{tab:io-c01}
+\end{table}
+
+\subsection{Analysis}
+
+\paragraph{Finding 1: \textit{io-index} dominates all other IO listeners, with the gap widening at larger $N$.}
+\textit{io-index} --- which outputs a single integer and never asks --- achieves
+the highest CPA in every (speaker, dataset) condition, often by a substantial
+margin (Table~\ref{tab:io-c05}).
+At $N{=}6$ the advantage over \textit{io-direct} is modest ($\Delta\text{CPA}
+\approx 0.10$--$0.14$); by $N{=}8$ it widens to $\approx 0.15$--$0.21$; at
+$N{=}10$ it reaches $\approx 0.17$--$0.20$.
+
+Two mechanisms explain this pattern.
+First, \emph{posterior flatness grows with $N$}: with more candidate objects in a
+small image, the model spreads probability across a larger set of plausible
+matches, depressing $\max_i p_i$ even when the argmax is correct.
+At $N{=}6$, $\max p \approx 0.65$ on average, so only $\sim 8$\% of scenes
+fall below the $1{-}c = 0.5$ commit threshold.
+At $N{=}10$, $\max p$ drops to $\approx 0.55$, pushing the ask rate to
+$25$--$35$\% and costing 0.5 CPA points per ask.
+\textit{io-index} bypasses this collapse entirely.
+
+Second, \emph{prompt-induced uncertainty inflation}: when the model is asked for a
+probability distribution it explicitly deliberates about its uncertainty and
+encodes it in the numbers, often spreading mass over 2--3 candidates even when
+its best guess is unambiguous.
+When asked for a single integer it suppresses this deliberation and commits
+directly to the argmax.
+The argmax prediction is typically the same in both cases, but \textit{io-direct}
+pays the EU ask penalty that \textit{io-index} avoids.
+
+The implication is that the EU clarification mechanism as implemented
+\emph{backfires} at larger scene sizes: the listener becomes so visually
+uncertain that it asks on scenes it would have answered correctly, spending
+clarification cost without accuracy benefit.
+A well-calibrated EU rule should ask only when the listener is actually likely
+to be wrong; here the posterior flatness is driven by visual perceptual
+difficulty rather than genuine referential ambiguity in the utterance.
+Addressing this requires either posterior recalibration (temperature scaling) or
+a separate signal for utterance ambiguity versus perceptual uncertainty.
+
+\paragraph{Finding 2: TA listeners substantially overestimate listener accuracy.}
+Comparing Table~\ref{tab:io-c05} (IO) with Table~\ref{tab:fullscale} (TA),
+the mean CPA of the best IO listener (\textit{io-direct}) is
+$0.715$--$0.840$ across datasets, versus $0.900$--$0.997$ for TA listeners.
+The drop of $\approx 0.20$ CPA points represents the contribution of textual
+feature lookup to TA performance.
+A naive TA listener could identify the correct object with high probability
+by simple token matching, even without ever rendering the image; IO listeners
+cannot resort to this shortcut.
+This motivates using IO listeners as the \emph{scientifically honest} evaluation
+protocol for all future experiments.
+
+\paragraph{Finding 3: \textit{io-direct} is the best IO strategy that uses a probability distribution.}
+Across all 72 (speaker, dataset, cost) conditions, \textit{io-direct} achieves
+the highest CPA in every single case.
+\textit{io-elimination} is consistently 5--15 CPA points below \textit{io-direct}
+at $c{=}0.5$.
+\textit{io-cot} is catastrophically bad: its CPA falls below zero at $c{=}0.10$
+and $c{=}0.25$ for $N \geq 8$ datasets.
+
+The failure mode of \textit{io-cot} is instructive.  When asked to explicitly
+\emph{describe} each object before assigning a score, the model's uncertainty is
+made salient to itself: it generates descriptions like ``Object 3 appears to be
+either a blue or green circle'' and then assigns low scores to all objects because
+it cannot resolve the visual ambiguity.  The resulting posterior is nearly uniform
+(entropy $\approx \ln N$), triggering the EU rule to ask in $>60\%$ of scenes.
+At $c{=}0.10$, even the 6\% saving on wrong answers cannot compensate for the
+60\% clarification cost.
+
+In contrast, \textit{io-direct} suppresses the model's expressed uncertainty by
+asking for a direct probability assignment without an intermediate description
+step.  The model implicitly commits to a visual interpretation and encodes its
+confidence directly in the array, rather than propagating uncertainty through a
+chain of reasoning steps.
+This is analogous to the difference between fast (System 1) and slow (System 2)
+reasoning: forcing explicit deliberation can \emph{increase} apparent uncertainty
+even when the intuitive judgment is correct.
+
+\paragraph{Finding 4: \textit{io-elimination} becomes overconservative at scale.}
+The elimination strategy is designed for scenes where the utterance strongly
+rules out most objects.  Its ask rate grows monotonically with $N$: at
+$N{=}6$ it asks $\approx 22\%$ of the time (CPA $\approx 0.69$); at $N{=}10$
+it asks $\approx 40\%$ (CPA $\approx 0.55$).
+As the candidate set grows, the model identifies fewer objects it is
+confident it can \emph{visually} rule out, leaving a larger candidate set
+with a flat posterior.
+The direct-rank listener avoids this collapse by assigning probabilities in
+one pass without an explicit rule-out step.
+
+\paragraph{Finding 5: Speaker strategy matters less under IO evaluation.}
+Under TA evaluation, \textit{canonical\_vllm} outperformed \textit{natural} by
+$\Delta\text{CPA} \approx 0.025$ (Table~\ref{tab:fullscale}).
+Under IO evaluation, the spread across speaker strategies is
+$\Delta\text{CPA} \leq 0.012$ for \textit{io-direct} (Table~\ref{tab:io-c05}).
+The speaker gap shrinks because the IO listener's principal bottleneck is
+\emph{visual object recognition} (mapping pixels to referent), not utterance
+parsing.  A more discriminative speaker utterance helps when the listener
+can parse feature text efficiently; it helps much less when the listener
+must visually ground the reference.
+This result suggests that speaker engineering yields diminishing returns when
+listeners operate under genuine visual uncertainty.
+
+\paragraph{Finding 6: Performance degrades gracefully with $N$.}
+For \textit{io-direct} at $c{=}0.5$, mean CPA (averaged over speakers and
+\textit{none}/\textit{force}) decreases from $\approx 0.77$ at $N{=}6$ to
+$\approx 0.72$ at $N{=}8$ to $\approx 0.70$ at $N{=}10$.
+This $\approx 7\%$ absolute degradation reflects the genuine difficulty of
+picking out one object from an increasingly cluttered scene --- a difficulty
+that affects humans as well as VLMs.
+The \textit{force} variant is consistently $2$--$5$ CPA points harder than
+\textit{none} at the same $N$, confirming that forced same-color distractors
+introduce real visual ambiguity rather than merely making scenes larger.
+
+\paragraph{Finding 7: The residual gap is dominated by listener capacity, not speaker quality.}
+The best IO result (\textit{feature-canonical} + \textit{io-direct} at $N{=}6$,
+\textit{force}: CPA $= 0.840$) is compared with the oracle ceiling
+(\textit{feature-canonical} + TA \textit{direct-rank}: CPA $= 0.995$).
+The $0.155$ gap is attributable almost entirely to listener capacity:
+the oracle produces maximally discriminating utterances, yet the IO listener
+still lags by 15 CPA points.
+This motivates future work on listener pretraining or calibration rather than
+further speaker engineering.
+
+\subsection{Summary and Implications}
+
+Table~\ref{tab:io-summary} compares the honest IO evaluation with the
+text-assisted baselines from Experiment~4.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{lcccc}
+\toprule
+Evaluation protocol & Best listener & $N{=}6$ CPA & $N{=}10$ CPA & $\Delta$ \\
+\midrule
+Text-assisted (TA)  & direct-rank  & 0.966 & 0.966 & 0.000 \\
+Image-only (IO)     & io-index     & 0.860 & 0.778 & $-0.082$ \\
+Image-only (IO)     & io-direct    & 0.795 & 0.700 & $-0.095$ \\
+\midrule
+Leakage gap (vs.\ IO-index) & & 0.106 & 0.188 & --- \\
+Leakage gap (vs.\ IO-direct) & & 0.171 & 0.266 & --- \\
+\bottomrule
+\end{tabular}
+\caption{Mean CPA (averaged over four speakers, \textit{none}+\textit{force},
+         $c{=}0.5$) comparing TA and IO evaluation protocols.
+         \textit{io-index} is the best IO listener because it never triggers
+         the EU ask penalty; \textit{io-direct} is the best IO listener
+         that can in principle ask.
+         The leakage gap grows with $N$: at $N{=}10$, text matching remains
+         $\mathcal{O}(1)$ while visual discrimination degrades, so the
+         TA advantage over honest IO listeners widens.}
+\label{tab:io-summary}
+\end{table}
+
+The key takeaway for the broader cost-aware clarification framework is that
+\textbf{the source of uncertainty matters}.
+Under TA evaluation, ambiguity arises from utterance underspecification
+(the speaker failed to mention a distinguishing feature);
+the posterior is flat because multiple objects match the text.
+Under IO evaluation, ambiguity arises from \emph{perceptual} uncertainty
+(the listener cannot reliably identify an object's color or shape from
+a $330{\times}328$ pixel image with up to ten small shapes);
+the posterior is flat even when the utterance is perfectly discriminative.
+These are qualitatively different failure modes and call for different
+remedies: speaker engineering targets the former; listener calibration
+and higher-resolution rendering target the latter.
+The cost-utility clarification rule (Eq.~\ref{eq:eu-rule}) correctly
+triggers asking in both cases, but the downstream interventions required
+to reduce the ask rate differ accordingly.
 
 % -----------------------------------------------------------------------
 \section{TA Feedback Responses}

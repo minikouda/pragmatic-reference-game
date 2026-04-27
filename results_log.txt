@@ -1,0 +1,24 @@
+{'n_scenes': 30, 'has_images': 30, 'tier_counts': {'low': 27, 'medium': 3}, 'mdl_mean': 1.1, 'mdl_min': 1, 'mdl_max': 2}
+
+Speaker                             Listener                        cost     CPA     Acc     Ask
+------------------------------------------------------------------------------------------
+literal                             literal                         0.10   1.000   1.000   0.000
+literal                             literal                         0.50   1.000   1.000   0.000
+literal                             literal                         0.25   1.000   1.000   0.000
+literal                             vllm-listener(llama-4-maverick)  0.25   0.183   0.200   0.067
+literal                             vllm-listener(llama-4-maverick)  0.50   0.183   0.200   0.033
+vllm-pragmatic(llama-4-maverick)    vllm-listener(llama-4-maverick)  0.25   0.167   0.267   0.133
+vllm-naive(llama-4-maverick)        literal                         0.10   0.160   0.433   0.400
+vllm-naive(llama-4-maverick)        literal                         0.50   0.150   0.433   0.300
+vllm-pragmatic(llama-4-maverick)    vllm-listener(llama-4-maverick)  0.50   0.150   0.300   0.167
+vllm-pragmatic(llama-4-maverick)    vllm-listener(llama-4-maverick)  0.10   0.147   0.267   0.200
+literal                             vllm-listener(llama-4-maverick)  0.10   0.117   0.167   0.167
+vllm-naive(llama-4-maverick)        literal                         0.25   0.100   0.433   0.400
+vllm-naive(llama-4-maverick)        vllm-listener(llama-4-maverick)  0.50   0.100   0.333   0.267
+vllm-naive(llama-4-maverick)        vllm-listener(llama-4-maverick)  0.10   0.097   0.300   0.367
+vllm-naive(llama-4-maverick)        vllm-listener(llama-4-maverick)  0.25   0.092   0.300   0.300
+vllm-pragmatic(llama-4-maverick)    literal                         0.10   0.070   0.433   0.633
+vllm-pragmatic(llama-4-maverick)    literal                         0.50  -0.050   0.367   0.433
+vllm-pragmatic(llama-4-maverick)    literal                         0.25  -0.083   0.333   0.600
+Results saved to results/llava_exp/
+Saved to results/llava_exp/

@@ -1,0 +1,91 @@
+\relax 
+\providecommand\zref@newlabel[2]{}
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Project Overview}{1}{section.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2}Phase 1: Metric Definitions (Shizhe)}{1}{section.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Brier Score (multi-class adaptation)}{1}{subsection.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Expected Calibration Error (ECE)}{2}{subsection.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Phase 1 Experiment}{2}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Setup}{2}{subsection.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Results}{2}{subsection.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Discussion}{2}{subsection.3.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Summary statistics across ambiguity levels.}}{3}{table.caption.1}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{tab:summary}{{1}{3}{Summary statistics across ambiguity levels}{table.caption.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Entropy and Brier Score by ambiguity level (60 instances).}}{3}{figure.caption.2}\protected@file@percent }
+\newlabel{fig:entropy_brier}{{1}{3}{Entropy and Brier Score by ambiguity level (60 instances)}{figure.caption.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Phase 2: VLM Speakers and Listeners}{3}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Speaker Design}{3}{subsection.4.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces ECE reliability diagram. Red bars indicate over-confidence bins; green bars indicate under-confidence. Overall ECE $= 0.105$, near the acceptable threshold.}}{4}{figure.caption.3}\protected@file@percent }
+\newlabel{fig:ece}{{2}{4}{ECE reliability diagram. Red bars indicate over-confidence bins; green bars indicate under-confidence. Overall ECE $= 0.105$, near the acceptable threshold}{figure.caption.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Clarification behaviour across cost values $c \in [0, 1]$.}}{5}{figure.caption.4}\protected@file@percent }
+\newlabel{fig:clarification}{{3}{5}{Clarification behaviour across cost values $c \in [0, 1]$}{figure.caption.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Listener Design}{5}{subsection.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Experiment 1: Speaker and Listener Grid}{5}{subsection.4.3}\protected@file@percent }
+\newlabel{sec:exp1}{{4.3}{5}{Experiment 1: Speaker and Listener Grid}{subsection.4.3}{}}
+\@writefile{toc}{\contentsline {paragraph}{Key findings.}{5}{section*.6}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Speaker--listener grid at $c{=}0.5$, \texttt  {gemini\_exp\_test.jsonl} ($n{=}25$, $N{=}4$). Rule-based speakers require no LLM calls. VLM speakers use gemini-2.0-flash-001 with target properties provided as text.}}{6}{table.caption.5}\protected@file@percent }
+\newlabel{tab:phase2}{{2}{6}{Speaker--listener grid at $c{=}0.5$, \texttt {gemini\_exp\_test.jsonl} ($n{=}25$, $N{=}4$). Rule-based speakers require no LLM calls. VLM speakers use gemini-2.0-flash-001 with target properties provided as text}{table.caption.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Experiment 2: Diagnosing the Rule-Based vs.\ VLM Gap}{6}{subsection.4.4}\protected@file@percent }
+\newlabel{sec:exp2}{{4.4}{6}{Experiment 2: Diagnosing the Rule-Based vs.\ VLM Gap}{subsection.4.4}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces CPA at $c{=}0.5$ after removing bounding-box annotation (target as text). \texttt  {canonical\_vllm} closes the gap from 0.64 (natural) to 0.84, while \texttt  {listener\_aware} reaches 0.92. $n{=}25$, $N{=}4$.}}{7}{table.caption.7}\protected@file@percent }
+\newlabel{tab:canonical_gap}{{3}{7}{CPA at $c{=}0.5$ after removing bounding-box annotation (target as text). \texttt {canonical\_vllm} closes the gap from 0.64 (natural) to 0.84, while \texttt {listener\_aware} reaches 0.92. $n{=}25$, $N{=}4$}{table.caption.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Experiment 3: Naive Large Model vs.\ Engineered Small Model}{7}{subsection.4.5}\protected@file@percent }
+\newlabel{sec:exp3}{{4.5}{7}{Experiment 3: Naive Large Model vs.\ Engineered Small Model}{subsection.4.5}{}}
+\@writefile{toc}{\contentsline {paragraph}{Key findings.}{7}{section*.9}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Naive large model vs.\ engineered small model at $c{=}0.5$. \texttt  {scenes\_6\_force.jsonl}, $n{=}50$, $N{=}6$. Model shorthands: flash = gemini-2.0-flash-001, maverick = llama-4-maverick, sonnet-4 = claude-sonnet-4. The \texttt  {direct-rank(sonnet-4)} listener elevates every speaker; \texttt  {elimination(flash)} consistently underperforms.}}{8}{table.caption.8}\protected@file@percent }
+\newlabel{tab:scale}{{4}{8}{Naive large model vs.\ engineered small model at $c{=}0.5$. \texttt {scenes\_6\_force.jsonl}, $n{=}50$, $N{=}6$. Model shorthands: flash = gemini-2.0-flash-001, maverick = llama-4-maverick, sonnet-4 = claude-sonnet-4. The \texttt {direct-rank(sonnet-4)} listener elevates every speaker; \texttt {elimination(flash)} consistently underperforms}{table.caption.8}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Experiment 4: Full-Scale Evaluation Across Scene Complexities}{8}{section.5}\protected@file@percent }
+\newlabel{sec:fullscale}{{5}{8}{Experiment 4: Full-Scale Evaluation Across Scene Complexities}{section.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Setup}{8}{subsection.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Results}{9}{subsection.5.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces CPA at $c{=}0.5$ across all six scene configurations ($n{=}300$ each). DR = \textit  {direct-rank(gemini-flash)}, EL = \textit  {elimination(gemini-flash)}. Feature-canonical is a rule-based oracle requiring no VLM speaker calls.}}{9}{table.caption.10}\protected@file@percent }
+\newlabel{tab:fullscale}{{5}{9}{CPA at $c{=}0.5$ across all six scene configurations ($n{=}300$ each). DR = \textit {direct-rank(gemini-flash)}, EL = \textit {elimination(gemini-flash)}. Feature-canonical is a rule-based oracle requiring no VLM speaker calls}{table.caption.10}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Analysis}{9}{subsection.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Finding 1: \textit  {direct-rank} is uniformly superior to \textit  {elimination}.}{9}{section*.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Finding 2: \textit  {canonical\_vllm} is the best VLM speaker across all settings.}{9}{section*.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Finding 3: Scaling from $N{=}6$ to $N{=}10$ has modest impact on \textit  {direct-rank}.}{9}{section*.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Finding 4: Forced overlap (\textit  {force}) has negligible impact with \textit  {direct-rank}.}{10}{section*.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Finding 5: The residual gap between \textit  {canonical\_vllm} and \textit  {feature-canonical} is consistent.}{10}{section*.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Summary.}{10}{section*.16}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Experiment 5: Honest Image-Only Listener Evaluation}{10}{section.6}\protected@file@percent }
+\newlabel{sec:honest}{{6}{10}{Experiment 5: Honest Image-Only Listener Evaluation}{section.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Motivation: The Leakage Problem}{10}{subsection.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Image-Only Listener Design}{11}{subsection.6.2}\protected@file@percent }
+\newlabel{sec:io-design}{{6.2}{11}{Image-Only Listener Design}{subsection.6.2}{}}
+\@writefile{toc}{\contentsline {paragraph}{Index annotation.}{11}{section*.17}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Image-only (IO) listener pipeline. The scene image is annotated with integer index labels at each object center, then passed to a VLM together with the speaker utterance. No textual feature descriptions are provided. The VLM outputs a posterior over object indices, which feeds the EU decision rule.}}{11}{figure.caption.18}\protected@file@percent }
+\newlabel{fig:io-pipeline}{{4}{11}{Image-only (IO) listener pipeline. The scene image is annotated with integer index labels at each object center, then passed to a VLM together with the speaker utterance. No textual feature descriptions are provided. The VLM outputs a posterior over object indices, which feeds the EU decision rule}{figure.caption.18}{}}
+\@writefile{toc}{\contentsline {paragraph}{Posterior derivation from the model's response.}{12}{section*.19}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{From posterior to accuracy.}{12}{section*.20}\protected@file@percent }
+\newlabel{eq:argmax}{{6}{12}{From posterior to accuracy}{equation.6.6}{}}
+\newlabel{eq:eu-rule}{{7}{12}{From posterior to accuracy}{equation.6.7}{}}
+\newlabel{eq:cpa}{{8}{12}{From posterior to accuracy}{equation.6.8}{}}
+\@writefile{toc}{\contentsline {paragraph}{Key structural difference from text-assisted listeners.}{12}{section*.21}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Information available to each listener type. TA listeners receive the complete attribute list for all $N$ objects; IO listeners receive only the index-annotated image and the utterance.}}{13}{table.caption.22}\protected@file@percent }
+\newlabel{tab:io-vs-ta}{{6}{13}{Information available to each listener type. TA listeners receive the complete attribute list for all $N$ objects; IO listeners receive only the index-annotated image and the utterance}{table.caption.22}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Experimental Setup}{13}{subsection.6.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}Results}{13}{subsection.6.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.5}Analysis}{13}{subsection.6.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Finding 1: \textit  {io-index} dominates all other IO listeners, with the gap widening at larger $N$.}{13}{section*.26}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces CPA at $c{=}0.50$ for image-only (IO) listeners across all six datasets ($n{=}300$ each). IO-IX = \textit  {io-index} (single integer output, never asks), IO-DR = \textit  {io-direct}, IO-EL = \textit  {io-elimination}, IO-CoT = \textit  {io-cot}. \textit  {io-index} CPA is invariant to $c$ since ask\%\,$=$\,0. Compare with Table~\ref {tab:fullscale} (text-assisted baselines).}}{14}{table.caption.23}\protected@file@percent }
+\newlabel{tab:io-c05}{{7}{14}{CPA at $c{=}0.50$ for image-only (IO) listeners across all six datasets ($n{=}300$ each). IO-IX = \textit {io-index} (single integer output, never asks), IO-DR = \textit {io-direct}, IO-EL = \textit {io-elimination}, IO-CoT = \textit {io-cot}. \textit {io-index} CPA is invariant to $c$ since ask\%\,$=$\,0. Compare with Table~\ref {tab:fullscale} (text-assisted baselines)}{table.caption.23}{}}
+\@writefile{toc}{\contentsline {paragraph}{Finding 2: TA listeners substantially overestimate listener accuracy.}{14}{section*.27}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Finding 3: \textit  {io-direct} is the best IO strategy that uses a probability distribution.}{14}{section*.28}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces CPA at $c{=}0.25$ for IO listeners. IO-CoT CPA turns negative at $N{=}10$, \textit  {force}: ask rate exceeds 80\% but accuracy is insufficient to compensate.}}{15}{table.caption.24}\protected@file@percent }
+\newlabel{tab:io-c025}{{8}{15}{CPA at $c{=}0.25$ for IO listeners. IO-CoT CPA turns negative at $N{=}10$, \textit {force}: ask rate exceeds 80\% but accuracy is insufficient to compensate}{table.caption.24}{}}
+\@writefile{toc}{\contentsline {paragraph}{Finding 4: \textit  {io-elimination} becomes overconservative at scale.}{15}{section*.29}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Finding 5: Speaker strategy matters less under IO evaluation.}{15}{section*.30}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces CPA at $c{=}0.10$ for IO listeners. Negative CPA arises when the clarification penalty exceeds the accuracy gain from asking. IO-CoT becomes systematically unprofitable at $N \geq 8$ under the lowest cost regime.}}{16}{table.caption.25}\protected@file@percent }
+\newlabel{tab:io-c01}{{9}{16}{CPA at $c{=}0.10$ for IO listeners. Negative CPA arises when the clarification penalty exceeds the accuracy gain from asking. IO-CoT becomes systematically unprofitable at $N \geq 8$ under the lowest cost regime}{table.caption.25}{}}
+\@writefile{toc}{\contentsline {paragraph}{Finding 6: Performance degrades gracefully with $N$.}{16}{section*.31}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Finding 7: The residual gap is dominated by listener capacity, not speaker quality.}{16}{section*.32}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.6}Summary and Implications}{16}{subsection.6.6}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {10}{\ignorespaces Mean CPA (averaged over four speakers, \textit  {none}+\textit  {force}, $c{=}0.5$) comparing TA and IO evaluation protocols. \textit  {io-index} is the best IO listener because it never triggers the EU ask penalty; \textit  {io-direct} is the best IO listener that can in principle ask. The leakage gap grows with $N$: at $N{=}10$, text matching remains $\mathcal  {O}(1)$ while visual discrimination degrades, so the TA advantage over honest IO listeners widens.}}{17}{table.caption.33}\protected@file@percent }
+\newlabel{tab:io-summary}{{10}{17}{Mean CPA (averaged over four speakers, \textit {none}+\textit {force}, $c{=}0.5$) comparing TA and IO evaluation protocols. \textit {io-index} is the best IO listener because it never triggers the EU ask penalty; \textit {io-direct} is the best IO listener that can in principle ask. The leakage gap grows with $N$: at $N{=}10$, text matching remains $\mathcal {O}(1)$ while visual discrimination degrades, so the TA advantage over honest IO listeners widens}{table.caption.33}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}TA Feedback Responses}{17}{section.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8}Recommended Paper Summary (Thomas)}{17}{section.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9}Next Steps (Phase 2)}{17}{section.9}\protected@file@percent }
+\gdef \@abspage@last{18}

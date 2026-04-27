@@ -1,0 +1,405 @@
+WARNING:src.refgame.utils.llm_client:LLM call failed (attempt 1): Error code: 504 - {'error': {'message': 'The operation was aborted', 'code': 504, 'metadata': {'provider_name': 'Google'}}, 'user_id': 'user_3AyIfKOfSusrqRYmgnbKHC2KIpL'}. Retry in 2.8s
+WARNING:src.refgame.utils.llm_client:LLM call failed (attempt 2): Error code: 429 - {'error': {'message': 'Provider returned error', 'code': 429, 'metadata': {'raw': 'google/gemini-2.0-flash-001 is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations', 'provider_name': 'Google AI Studio', 'is_byok': False}}, 'user_id': 'user_3AyIfKOfSusrqRYmgnbKHC2KIpL'}. Retry in 31.3s
+WARNING:src.refgame.utils.llm_client:LLM call failed (attempt 1): Error code: 504 - {'error': {'message': 'The operation was aborted', 'code': 504, 'metadata': {'provider_name': 'Google'}}, 'user_id': 'user_3AyIfKOfSusrqRYmgnbKHC2KIpL'}. Retry in 2.5s
+WARNING:src.refgame.utils.llm_client:LLM call failed (attempt 1): Error code: 429 - {'error': {'message': 'Provider returned error', 'code': 429, 'metadata': {'raw': 'google/gemini-2.0-flash-001 is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations', 'provider_name': 'Google', 'is_byok': False}}, 'user_id': 'user_3AyIfKOfSusrqRYmgnbKHC2KIpL'}. Retry in 30.2s
+WARNING:src.refgame.utils.llm_client:LLM call failed (attempt 2): Error code: 504 - {'error': {'message': 'The operation was aborted', 'code': 504, 'metadata': {'provider_name': 'Google'}}, 'user_id': 'user_3AyIfKOfSusrqRYmgnbKHC2KIpL'}. Retry in 3.1s
+
+================================================================================
+  DIAGNOSTIC BASELINE
+  Dataset : data/scenes_6_none.jsonl  (20 scenes)
+  Speaker : ordinal
+  Model   : google/gemini-2.0-flash-001
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+Scene 0  (target_idx=3)
+  TARGET   : large green circle @ (24,13) [top-left]
+  SCENE    :
+    [0] small blue square @ (79,63) [right]
+    [1] small yellow square @ (79,21) [top-right]
+    [2] small green square @ (58,22) [top]
+    [3] large green circle @ (24,13) [top-left] ◀ TARGET
+    [4] small yellow triangle @ (37,39) [center]
+    [5] large green square @ (30,64) [left]
+  UTTERANCE: "the only circle"  [meta: {'strategy': 'unique_shape'}]
+  LISTENER :
+    raw output : {"x": 25.0, "y": 18.0}
+    predicted  : (25.0, 18.0)
+    snapped to : [3] large green circle @ (24,13) [top-left]
+    dist_to_target = 5.1 px-units
+    distances  :  [0]=70.3  [1]=54.1  [2]=33.2  [3]=5.1*  [4]=24.2  [5]=46.3
+  RESULT   : ✓ PASS
+
+────────────────────────────────────────────────────────────────────────────────
+Scene 1  (target_idx=0)
+  TARGET   : large black triangle @ (25,58) [left]
+  SCENE    :
+    [0] large black triangle @ (25,58) [left] ◀ TARGET
+    [1] small blue square @ (18,15) [top-left]
+    [2] small red square @ (39,22) [top]
+    [3] medium blue triangle @ (57,55) [center]
+    [4] medium green triangle @ (90,89) [bottom-right]
+    [5] medium blue triangle @ (19,87) [bottom-left]
+  UTTERANCE: "the black one"  [meta: {'strategy': 'unique_color'}]
+  LISTENER :
+    raw output : {"x": 25.0, "y": 45.0}
+    predicted  : (25.0, 45.0)
+    snapped to : [0] large black triangle @ (25,58) [left]
+    dist_to_target = 13.0 px-units
+    distances  :  [0]=13.0*  [1]=30.8  [2]=26.9  [3]=33.5  [4]=78.5  [5]=42.4
+  RESULT   : ✓ PASS
+
+────────────────────────────────────────────────────────────────────────────────
+Scene 2  (target_idx=3)
+  TARGET   : medium green circle @ (81,38) [right]
+  SCENE    :
+    [0] large blue triangle @ (43,27) [top]
+    [1] large yellow square @ (86,69) [bottom-right]
+    [2] small red square @ (14,50) [left]
+    [3] medium green circle @ (81,38) [right] ◀ TARGET
+    [4] small green circle @ (37,82) [bottom]
+    [5] large yellow square @ (11,24) [top-left]
+  UTTERANCE: "the rightmost circle"  [meta: {'strategy': 'spatial_ordinal(rightmost)'}]
+  LISTENER :
+    raw output : {"x": 75.0, "y": 45.0}
+    predicted  : (75.0, 45.0)
+    snapped to : [3] medium green circle @ (81,38) [right]
+    dist_to_target = 9.2 px-units
+    distances  :  [0]=36.7  [1]=26.4  [2]=61.2  [3]=9.2*  [4]=53.0  [5]=67.4
+  RESULT   : ✓ PASS
+
+────────────────────────────────────────────────────────────────────────────────
+Scene 3  (target_idx=0)
+  TARGET   : small green triangle @ (68,10) [top-right]
+  SCENE    :
+    [0] small green triangle @ (68,10) [top-right] ◀ TARGET
+    [1] large green square @ (10,86) [bottom-left]
+    [2] small blue triangle @ (29,57) [left]
+    [3] large red circle @ (20,20) [top-left]
+    [4] small yellow triangle @ (90,48) [right]
+    [5] small black circle @ (49,40) [center]
+  UTTERANCE: "the topmost triangle"  [meta: {'strategy': 'spatial_ordinal(topmost)'}]
+  LISTENER :
+    raw output : {"x": 29.5, "y": 54.0}
+    predicted  : (29.5, 54.0)
+    snapped to : [2] small blue triangle @ (29,57) [left]
+    dist_to_target = 58.5 px-units
+    distances  :  [0]=58.5*  [1]=37.5  [2]=3.0  [3]=35.3  [4]=60.8  [5]=24.0
+  RESULT   : ✗ COORD_MISS
+
+────────────────────────────────────────────────────────────────────────────────
+Scene 4  (target_idx=1)
+  TARGET   : large yellow triangle @ (31,43) [left]
+  SCENE    :
+    [0] large yellow circle @ (86,15) [top-right]
+    [1] large yellow triangle @ (31,43) [left] ◀ TARGET
+    [2] medium blue triangle @ (37,79) [bottom]
+    [3] medium red triangle @ (61,57) [center]
+    [4] small black circle @ (85,38) [right]
+    [5] medium yellow triangle @ (53,12) [top]
+  UTTERANCE: "the leftmost triangle"  [meta: {'strategy': 'spatial_ordinal(leftmost)'}]
+  LISTENER :
+    raw output : {"x": 20.0, "y": 40.0}
+    predicted  : (20.0, 40.0)
+    snapped to : [1] large yellow triangle @ (31,43) [left]
+    dist_to_target = 11.4 px-units
+    distances  :  [0]=70.6  [1]=11.4*  [2]=42.5  [3]=44.4  [4]=65.0  [5]=43.3
+  RESULT   : ✓ PASS
+
+────────────────────────────────────────────────────────────────────────────────
+Scene 5  (target_idx=0)
+  TARGET   : large green square @ (50,40) [center]
+  SCENE    :
+    [0] large green square @ (50,40) [center] ◀ TARGET
+    [1] small yellow square @ (78,37) [right]
+    [2] large blue square @ (23,80) [bottom-left]
+    [3] small green circle @ (48,68) [bottom]
+    [4] small yellow circle @ (48,88) [bottom]
+    [5] small yellow circle @ (68,89) [bottom-right]
+  UTTERANCE: "the green square"  [meta: {'strategy': 'color_shape'}]
+  LISTENER :
+    raw output : {"x": 37.5, "y": 40.625}
+    predicted  : (37.5, 40.6)
+    snapped to : [0] large green square @ (50,40) [center]
+    dist_to_target = 12.5 px-units
+    distances  :  [0]=12.5*  [1]=40.7  [2]=42.0  [3]=29.3  [4]=48.5  [5]=57.2
+  RESULT   : ✓ PASS
+
+────────────────────────────────────────────────────────────────────────────────
+Scene 6  (target_idx=5)
+  TARGET   : small red square @ (43,74) [bottom]
+  SCENE    :
+    [0] large red triangle @ (66,80) [bottom]
+    [1] small green circle @ (21,64) [left]
+    [2] small red circle @ (80,28) [top-right]
+    [3] small blue triangle @ (24,19) [top-left]
+    [4] small green circle @ (52,26) [top]
+    [5] small red square @ (43,74) [bottom] ◀ TARGET
+  UTTERANCE: "the only square"  [meta: {'strategy': 'unique_shape'}]
+  LISTENER :
+    raw output : {"x": 40.0, "y": 75.0}
+    predicted  : (40.0, 75.0)
+    snapped to : [5] small red square @ (43,74) [bottom]
+    dist_to_target = 3.2 px-units
+    distances  :  [0]=26.5  [1]=22.0  [2]=61.7  [3]=58.2  [4]=50.4  [5]=3.2*
+  RESULT   : ✓ PASS
+
+────────────────────────────────────────────────────────────────────────────────
+Scene 7  (target_idx=4)
+  TARGET   : small green triangle @ (41,23) [top]
+  SCENE    :
+    [0] large black square @ (23,58) [left]
+    [1] medium green circle @ (62,41) [center]
+    [2] medium blue circle @ (89,29) [top-right]
+    [3] small red square @ (13,34) [left]
+    [4] small green triangle @ (41,23) [top] ◀ TARGET
+    [5] small blue triangle @ (62,13) [top]
+  UTTERANCE: "the leftmost triangle"  [meta: {'strategy': 'spatial_ordinal(leftmost)'}]
+  LISTENER :
+    raw output : {"x": 35.0, "y": 13.0}
+    predicted  : (35.0, 13.0)
+    snapped to : [4] small green triangle @ (41,23) [top]
+    dist_to_target = 11.7 px-units
+    distances  :  [0]=46.6  [1]=38.9  [2]=56.3  [3]=30.4  [4]=11.7*  [5]=27.0
+  RESULT   : ✓ PASS
+
+────────────────────────────────────────────────────────────────────────────────
+Scene 8  (target_idx=0)
+  TARGET   : large black circle @ (78,52) [right]
+  SCENE    :
+    [0] large black circle @ (78,52) [right] ◀ TARGET
+    [1] large yellow square @ (18,52) [left]
+    [2] large green square @ (80,10) [top-right]
+    [3] small red triangle @ (54,50) [center]
+    [4] large red circle @ (42,15) [top]
+    [5] medium green circle @ (32,84) [bottom-left]
+  UTTERANCE: "the black one"  [meta: {'strategy': 'unique_color'}]
+  LISTENER :
+    raw output : {"x": 72.187, "y": 63.593}
+    predicted  : (72.2, 63.6)
+    snapped to : [0] large black circle @ (78,52) [right]
+    dist_to_target = 13.0 px-units
+    distances  :  [0]=13.0*  [1]=55.4  [2]=54.2  [3]=22.7  [4]=57.2  [5]=45.1
+  RESULT   : ✓ PASS
+
+────────────────────────────────────────────────────────────────────────────────
+Scene 9  (target_idx=1)
+  TARGET   : medium red triangle @ (37,75) [bottom]
+  SCENE    :
+    [0] large black circle @ (89,52) [right]
+    [1] medium red triangle @ (37,75) [bottom] ◀ TARGET
+    [2] small yellow triangle @ (20,46) [left]
+    [3] small black square @ (70,88) [bottom-right]
+    [4] large blue circle @ (49,38) [center]
+    [5] medium blue triangle @ (90,83) [bottom-right]
+  UTTERANCE: "the red one"  [meta: {'strategy': 'unique_color'}]
+  LISTENER :
+    raw output : {"x": 35.0, "y": 65.0}
+    predicted  : (35.0, 65.0)
+    snapped to : [1] medium red triangle @ (37,75) [bottom]
+    dist_to_target = 10.2 px-units
+    distances  :  [0]=55.5  [1]=10.2*  [2]=24.2  [3]=41.9  [4]=30.4  [5]=57.9
+  RESULT   : ✓ PASS
+
+────────────────────────────────────────────────────────────────────────────────
+Scene 10  (target_idx=1)
+  TARGET   : small red circle @ (10,23) [top-left]
+  SCENE    :
+    [0] medium blue square @ (19,46) [left]
+    [1] small red circle @ (10,23) [top-left] ◀ TARGET
+    [2] small blue square @ (25,68) [bottom-left]
+    [3] large blue triangle @ (67,43) [right]
+    [4] medium black circle @ (50,79) [bottom]
+    [5] small black triangle @ (76,69) [bottom-right]
+  UTTERANCE: "the red one"  [meta: {'strategy': 'unique_color'}]
+  LISTENER :
+    raw output : {"x": 20.0, "y": 12.0}
+    predicted  : (20.0, 12.0)
+    snapped to : [1] small red circle @ (10,23) [top-left]
+    dist_to_target = 14.9 px-units
+    distances  :  [0]=34.0  [1]=14.9*  [2]=56.2  [3]=56.3  [4]=73.4  [5]=79.9
+  RESULT   : ✓ PASS
+
+────────────────────────────────────────────────────────────────────────────────
+Scene 11  (target_idx=3)
+  TARGET   : large red square @ (37,18) [top]
+  SCENE    :
+    [0] small yellow square @ (84,12) [top-right]
+    [1] medium green square @ (10,55) [left]
+    [2] medium blue square @ (53,61) [center]
+    [3] large red square @ (37,18) [top] ◀ TARGET
+    [4] medium red circle @ (87,38) [right]
+    [5] medium red circle @ (79,69) [bottom-right]
+  UTTERANCE: "the red square"  [meta: {'strategy': 'color_shape'}]
+  LISTENER :
+    raw output : {"x": 32.8, "y": 25.0}
+    predicted  : (32.8, 25.0)
+    snapped to : [3] large red square @ (37,18) [top]
+    dist_to_target = 8.2 px-units
+    distances  :  [0]=52.8  [1]=37.7  [2]=41.3  [3]=8.2*  [4]=55.7  [5]=63.8
+  RESULT   : ✓ PASS
+
+────────────────────────────────────────────────────────────────────────────────
+Scene 12  (target_idx=4)
+  TARGET   : small red circle @ (64,27) [top]
+  SCENE    :
+    [0] medium black triangle @ (20,70) [bottom-left]
+    [1] large black circle @ (38,18) [top]
+    [2] small blue circle @ (89,29) [top-right]
+    [3] medium red triangle @ (83,58) [right]
+    [4] small red circle @ (64,27) [top] ◀ TARGET
+    [5] small green circle @ (43,58) [center]
+  UTTERANCE: "the red circle"  [meta: {'strategy': 'color_shape'}]
+  LISTENER :
+    raw output : {"x": 50.0, "y": 20.0}
+    predicted  : (50.0, 20.0)
+    snapped to : [1] large black circle @ (38,18) [top]
+    dist_to_target = 15.7 px-units
+    distances  :  [0]=58.3  [1]=12.2  [2]=40.0  [3]=50.3  [4]=15.7*  [5]=38.6
+  RESULT   : ✗ COORD_MISS
+
+────────────────────────────────────────────────────────────────────────────────
+Scene 13  (target_idx=0)
+  TARGET   : large yellow circle @ (86,25) [top-right]
+  SCENE    :
+    [0] large yellow circle @ (86,25) [top-right] ◀ TARGET
+    [1] medium green circle @ (13,73) [bottom-left]
+    [2] small red circle @ (21,45) [left]
+    [3] large red square @ (53,11) [top]
+    [4] medium green circle @ (78,64) [right]
+    [5] small green square @ (65,85) [bottom]
+  UTTERANCE: "the yellow one"  [meta: {'strategy': 'unique_color'}]
+  LISTENER :
+    raw output : {"x": 77.1, "y": 22.9}
+    predicted  : (77.1, 22.9)
+    snapped to : [0] large yellow circle @ (86,25) [top-right]
+    dist_to_target = 9.1 px-units
+    distances  :  [0]=9.1*  [1]=81.4  [2]=60.3  [3]=26.9  [4]=41.1  [5]=63.3
+  RESULT   : ✓ PASS
+
+────────────────────────────────────────────────────────────────────────────────
+Scene 14  (target_idx=3)
+  TARGET   : medium yellow circle @ (86,45) [right]
+  SCENE    :
+    [0] medium green triangle @ (61,41) [center]
+    [1] small red square @ (46,70) [bottom]
+    [2] large green triangle @ (16,80) [bottom-left]
+    [3] medium yellow circle @ (86,45) [right] ◀ TARGET
+    [4] large blue triangle @ (34,20) [top]
+    [5] medium blue triangle @ (72,81) [bottom-right]
+  UTTERANCE: "the only circle"  [meta: {'strategy': 'unique_shape'}]
+  LISTENER :
+    raw output : {"x": 80.0, "y": 45.0}
+    predicted  : (80.0, 45.0)
+    snapped to : [3] medium yellow circle @ (86,45) [right]
+    dist_to_target = 6.0 px-units
+    distances  :  [0]=19.4  [1]=42.2  [2]=72.9  [3]=6.0*  [4]=52.4  [5]=36.9
+  RESULT   : ✓ PASS
+
+────────────────────────────────────────────────────────────────────────────────
+Scene 15  (target_idx=4)
+  TARGET   : small red circle @ (18,61) [left]
+  SCENE    :
+    [0] large yellow triangle @ (63,87) [bottom]
+    [1] large blue circle @ (48,20) [top]
+    [2] small red square @ (76,58) [right]
+    [3] large blue circle @ (90,16) [top-right]
+    [4] small red circle @ (18,61) [left] ◀ TARGET
+    [5] medium blue square @ (36,90) [bottom]
+  UTTERANCE: "the leftmost circle"  [meta: {'strategy': 'spatial_ordinal(leftmost)'}]
+  LISTENER :
+    raw output : {"x": 17.1875, "y": 50.0}
+    predicted  : (17.2, 50.0)
+    snapped to : [4] small red circle @ (18,61) [left]
+    dist_to_target = 11.0 px-units
+    distances  :  [0]=58.9  [1]=43.0  [2]=59.4  [3]=80.4  [4]=11.0*  [5]=44.2
+  RESULT   : ✓ PASS
+
+────────────────────────────────────────────────────────────────────────────────
+Scene 16  (target_idx=4)
+  TARGET   : large black square @ (19,30) [top-left]
+  SCENE    :
+    [0] small black circle @ (44,28) [top]
+    [1] medium green circle @ (86,70) [bottom-right]
+    [2] small red circle @ (46,46) [center]
+    [3] small yellow square @ (49,86) [bottom]
+    [4] large black square @ (19,30) [top-left] ◀ TARGET
+    [5] large blue triangle @ (24,79) [bottom-left]
+  UTTERANCE: "the leftmost square"  [meta: {'strategy': 'spatial_ordinal(leftmost)'}]
+  LISTENER :
+    raw output : {"x": 18.7, "y": 28.1}
+    predicted  : (18.7, 28.1)
+    snapped to : [4] large black square @ (19,30) [top-left]
+    dist_to_target = 1.9 px-units
+    distances  :  [0]=25.3  [1]=79.3  [2]=32.6  [3]=65.3  [4]=1.9*  [5]=51.2
+  RESULT   : ✓ PASS
+
+────────────────────────────────────────────────────────────────────────────────
+Scene 17  (target_idx=5)
+  TARGET   : large yellow triangle @ (61,44) [center]
+  SCENE    :
+    [0] medium red square @ (10,79) [bottom-left]
+    [1] medium red triangle @ (30,52) [left]
+    [2] large black circle @ (44,83) [bottom]
+    [3] medium blue triangle @ (13,21) [top-left]
+    [4] medium red triangle @ (86,15) [top-right]
+    [5] large yellow triangle @ (61,44) [center] ◀ TARGET
+  UTTERANCE: "the yellow one"  [meta: {'strategy': 'unique_color'}]
+  LISTENER :
+    raw output : {"x": 60.0, "y": 50.0}
+    predicted  : (60.0, 50.0)
+    snapped to : [5] large yellow triangle @ (61,44) [center]
+    dist_to_target = 6.1 px-units
+    distances  :  [0]=57.8  [1]=30.1  [2]=36.7  [3]=55.2  [4]=43.6  [5]=6.1*
+  RESULT   : ✓ PASS
+
+────────────────────────────────────────────────────────────────────────────────
+Scene 18  (target_idx=1)
+  TARGET   : medium blue circle @ (20,74) [bottom-left]
+  SCENE    :
+    [0] medium yellow triangle @ (46,58) [center]
+    [1] medium blue circle @ (20,74) [bottom-left] ◀ TARGET
+    [2] large green circle @ (52,18) [top]
+    [3] large blue triangle @ (53,89) [bottom]
+    [4] small yellow triangle @ (66,66) [center]
+    [5] large black triangle @ (19,47) [left]
+  UTTERANCE: "the leftmost circle"  [meta: {'strategy': 'spatial_ordinal(leftmost)'}]
+  LISTENER :
+    raw output : {"x": 23.1, "y": 76.2}
+    predicted  : (23.1, 76.2)
+    snapped to : [1] medium blue circle @ (20,74) [bottom-left]
+    dist_to_target = 3.8 px-units
+    distances  :  [0]=29.3  [1]=3.8*  [2]=65.0  [3]=32.5  [4]=44.1  [5]=29.5
+  RESULT   : ✓ PASS
+
+────────────────────────────────────────────────────────────────────────────────
+Scene 19  (target_idx=2)
+  TARGET   : medium green triangle @ (16,71) [bottom-left]
+  SCENE    :
+    [0] medium red square @ (21,38) [left]
+    [1] small green circle @ (60,74) [bottom]
+    [2] medium green triangle @ (16,71) [bottom-left] ◀ TARGET
+    [3] small green circle @ (76,25) [top-right]
+    [4] small yellow circle @ (44,67) [bottom]
+    [5] medium green circle @ (38,13) [top]
+  UTTERANCE: "the only triangle"  [meta: {'strategy': 'unique_shape'}]
+  LISTENER :
+    raw output : {"x": 25.0, "y": 75.0}
+    predicted  : (25.0, 75.0)
+    snapped to : [2] medium green triangle @ (16,71) [bottom-left]
+    dist_to_target = 9.8 px-units
+    distances  :  [0]=37.2  [1]=35.0  [2]=9.8*  [3]=71.4  [4]=20.6  [5]=63.3
+  RESULT   : ✓ PASS
+
+================================================================================
+  SUMMARY  (20 scenes)
+================================================================================
+  PASS          : 18/20  (90.0%)
+  COORD_MISS    : 2/20  (10.0%)
+  AMB_UTTERANCE : 0/20  (0.0%)
+  PARSE_FAIL    : 0/20  (0.0%)
+
+  Ambiguous utterances: 0/20
+  Avg dist-to-target on failures: 37.1
+  Avg dist-to-target on passes  : 8.9
+

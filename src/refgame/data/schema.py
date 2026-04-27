@@ -41,8 +41,8 @@ FEATURE_KEYS = tuple(FEATURE_VOCAB.keys())
 def loc_label(x: float, y: float, canvas: int = 100) -> str:
     """Map pixel (x, y) on a [0, canvas]² grid to a coarse spatial label."""
     xn, yn = x / canvas, y / canvas
-    col = "left" if xn < 0.33 else ("right" if xn > 0.66 else "center")
-    row = "top"  if yn < 0.33 else ("bottom" if yn > 0.66 else "center")
+    col = "left"   if xn < 0.33 else ("right"  if xn > 0.66 else "center")
+    row = "bottom" if yn < 0.33 else ("top"    if yn > 0.66 else "center")
     if row == col == "center":
         return "center"
     if row == "center":

@@ -1,27 +1,19 @@
 """
-DirectRankListener: VLM directly scores each object in the scene.
+Listener variants for the reference game.
 
-Instead of predicting coordinates or extracting features, the model is
-shown all objects (described textually) and asked to assign a probability
-to each one.  This gives a direct posterior without any intermediate step.
+Text-assisted (leaky — receive full object feature list as text):
+  DirectRankListener    : direct probability array output
+  CoTRankListener       : score 0-10 per object, then convert
+  EliminationListener   : rule out objects, distribute over remainder
 
-Why this is better than coordinate prediction
----------------------------------------------
-- No noisy (x, y) → nearest-object snapping
-- The model reasons about the full set of candidates simultaneously
-- Handles both spatial and feature-based utterances naturally
-- Works even when utterances are ambiguous — the model spreads probability mass
+Honest image-only (no feature text — visual reasoning only):
+  ImageOnlyDirectRankListener   : direct probability array from image
+  ImageOnlyCoTRankListener      : observe → score → assign from image
+  ImageOnlyEliminationListener  : eliminate visually → assign from image
 
-Prompt design
--------------
-The model sees:
-  1. The scene image (for visual grounding)
-  2. A numbered list of all objects with their text descriptions
-  3. The speaker's utterance
-  4. An instruction to output one probability per object as a JSON array
-
-The raw JSON probabilities are softmax-normalized to ensure they form a
-valid distribution, so the model doesn't need to output exact probabilities.
+All honest listeners receive the scene image annotated with index numbers
+(0, 1, 2, ...) placed at each object's center. No color/shape/size text
+is provided; the model must identify objects from visual perception alone.
 """
 
 from __future__ import annotations
@@ -35,7 +27,7 @@ from ..utils.llm_client import ChatMessage, LLMClient
 from .base import BaseListener
 
 
-# ── Prompts ───────────────────────────────────────────────────────────────────
+# ── Text-assisted prompts (leaky) ─────────────────────────────────────────────
 
 _SYSTEM_DIRECT_RANK = """\
 You are a listener in a visual reference game.
@@ -102,7 +94,7 @@ CANDIDATES: [i, j, ...]  ← remaining indices
 PROBS: [p0, p1, ...]     ← {n} floats summing to 1.0, 0 for ruled-out objects"""
 
 
-# ── Helpers ───────────────────────────────────────────────────────────────────
+# ── Shared helpers ────────────────────────────────────────────────────────────
 
 def _format_objects(scene: Scene) -> str:
     lines = []
@@ -113,7 +105,6 @@ def _format_objects(scene: Scene) -> str:
 
 
 def _parse_probs(raw: str, n: int) -> list[float] | None:
-    """Extract a JSON array of n floats; return None on failure."""
     try:
         blob = re.search(r"\[[\d.,\s]+\]", raw)
         if blob:
@@ -126,7 +117,6 @@ def _parse_probs(raw: str, n: int) -> list[float] | None:
 
 
 def _parse_tagged_probs(raw: str, tag: str, n: int) -> list[float] | None:
-    """Extract the array on the line starting with TAG: in CoT/elimination output."""
     m = re.search(rf"{tag}\s*:\s*(\[[\d.,\s]+\])", raw, re.IGNORECASE)
     if m:
         try:
@@ -135,16 +125,7 @@ def _parse_tagged_probs(raw: str, tag: str, n: int) -> list[float] | None:
                 return [float(v) for v in arr]
         except (json.JSONDecodeError, ValueError):
             pass
-    # Fall back to any array of the right length
     return _parse_probs(raw, n)
-
-
-def _softmax(values: list[float]) -> list[float]:
-    """Stable softmax."""
-    m = max(values)
-    exps = [math.exp(v - m) for v in values]
-    total = sum(exps)
-    return [e / total for e in exps]
 
 
 def _normalize(probs: list[float]) -> list[float]:
@@ -154,40 +135,25 @@ def _normalize(probs: list[float]) -> list[float]:
     return [p / total for p in probs]
 
 
-# ── Listener ──────────────────────────────────────────────────────────────────
+# ── Text-assisted listeners (leaky) ───────────────────────────────────────────
 
 class DirectRankListener(BaseListener):
-    """
-    Asks the VLM to directly assign probabilities to each scene object.
-
-    The model sees the scene image + a numbered list of all objects + the
-    utterance, and outputs one probability per object as a JSON array.
-
-    Parameters
-    ----------
-    client : vision-capable LLMClient
-    """
+    """VLM assigns probabilities given full object feature text + image."""
 
     def __init__(self, client: LLMClient) -> None:
         self.client = client
 
     @property
     def name(self) -> str:
-        model = self.client.model.split("/")[-1]
-        return f"direct-rank({model})"
+        return f"direct-rank({self.client.model.split('/')[-1]})"
 
     def listen(self, scene: Scene, utterance: Utterance) -> ListenerOutput:
         if scene.image_path is None:
             raise ValueError(f"Scene {scene.id} has no image_path.")
-
         n = len(scene.objects)
-        object_list = _format_objects(scene)
         prompt = _SYSTEM_DIRECT_RANK.format(
-            n=n,
-            object_list=object_list,
-            utterance=utterance.text,
+            n=n, object_list=_format_objects(scene), utterance=utterance.text,
         )
-
         raw = self.client.complete(
             messages=[
                 ChatMessage(role="system", content=prompt),
@@ -195,61 +161,33 @@ class DirectRankListener(BaseListener):
             ],
             image_path=scene.image_path,
         )
-
         raw_probs = _parse_probs(raw, n)
-
-        if raw_probs is not None:
-            posterior = _normalize(raw_probs)
-            parse_ok = True
-        else:
-            # Fallback: uniform
-            posterior = [1.0 / n] * n
-            parse_ok = False
-
+        posterior = _normalize(raw_probs) if raw_probs is not None else [1.0 / n] * n
         predicted = posterior.index(max(posterior))
-
         return ListenerOutput(
-            posterior=posterior,
-            predicted_idx=predicted,
+            posterior=posterior, predicted_idx=predicted,
             listener_type=self.name,
-            listener_meta={
-                "raw_response": raw,
-                "raw_probs": raw_probs,
-                "parse_ok": parse_ok,
-            },
+            listener_meta={"raw_response": raw, "parse_ok": raw_probs is not None},
         )
 
 
 class CoTRankListener(BaseListener):
-    """
-    Like DirectRankListener but uses chain-of-thought reasoning.
-
-    The model first scores each object 0–10 for how well the utterance matches,
-    identifies ruled-out objects, then converts scores to probabilities.
-    This forces explicit per-object reasoning instead of direct probability guessing,
-    which reduces hallucination and improves calibration.
-    """
+    """Chain-of-thought scoring given full object feature text + image."""
 
     def __init__(self, client: LLMClient) -> None:
         self.client = client
 
     @property
     def name(self) -> str:
-        model = self.client.model.split("/")[-1]
-        return f"cot-rank({model})"
+        return f"cot-rank({self.client.model.split('/')[-1]})"
 
     def listen(self, scene: Scene, utterance: Utterance) -> ListenerOutput:
         if scene.image_path is None:
             raise ValueError(f"Scene {scene.id} has no image_path.")
-
         n = len(scene.objects)
         prompt = _SYSTEM_COT_RANK.format(
-            n=n,
-            n1=n - 1,
-            object_list=_format_objects(scene),
-            utterance=utterance.text,
+            n=n, n1=n - 1, object_list=_format_objects(scene), utterance=utterance.text,
         )
-
         raw = self.client.complete(
             messages=[
                 ChatMessage(role="system", content=prompt),
@@ -257,60 +195,33 @@ class CoTRankListener(BaseListener):
             ],
             image_path=scene.image_path,
         )
-
-        raw_probs = _parse_tagged_probs(raw, "PROBS", n)
-        if raw_probs is None:
-            # Try scores line and normalize
-            raw_probs = _parse_tagged_probs(raw, "SCORES", n)
-
-        if raw_probs is not None:
-            posterior = _normalize(raw_probs)
-            parse_ok = True
-        else:
-            posterior = [1.0 / n] * n
-            parse_ok = False
-
+        raw_probs = _parse_tagged_probs(raw, "PROBS", n) or _parse_tagged_probs(raw, "SCORES", n)
+        posterior = _normalize(raw_probs) if raw_probs is not None else [1.0 / n] * n
         predicted = posterior.index(max(posterior))
         return ListenerOutput(
-            posterior=posterior,
-            predicted_idx=predicted,
+            posterior=posterior, predicted_idx=predicted,
             listener_type=self.name,
-            listener_meta={"raw_response": raw, "parse_ok": parse_ok},
+            listener_meta={"raw_response": raw, "parse_ok": raw_probs is not None},
         )
 
 
 class EliminationListener(BaseListener):
-    """
-    Listener that explicitly rules out objects before assigning probabilities.
-
-    The model identifies which objects the utterance contradicts, removes them,
-    then distributes probability over the remaining candidates.  This mirrors
-    how humans narrow down referents: rule out the impossible, then pick from
-    what remains.
-
-    Works especially well for negative/contrastive utterances and utterances
-    that mention specific properties (color, shape) that cleanly exclude objects.
-    """
+    """Elimination strategy given full object feature text + image."""
 
     def __init__(self, client: LLMClient) -> None:
         self.client = client
 
     @property
     def name(self) -> str:
-        model = self.client.model.split("/")[-1]
-        return f"elimination({model})"
+        return f"elimination({self.client.model.split('/')[-1]})"
 
     def listen(self, scene: Scene, utterance: Utterance) -> ListenerOutput:
         if scene.image_path is None:
             raise ValueError(f"Scene {scene.id} has no image_path.")
-
         n = len(scene.objects)
         prompt = _SYSTEM_ELIMINATION.format(
-            n=n,
-            object_list=_format_objects(scene),
-            utterance=utterance.text,
+            n=n, object_list=_format_objects(scene), utterance=utterance.text,
         )
-
         raw = self.client.complete(
             messages=[
                 ChatMessage(role="system", content=prompt),
@@ -318,20 +229,265 @@ class EliminationListener(BaseListener):
             ],
             image_path=scene.image_path,
         )
-
         raw_probs = _parse_tagged_probs(raw, "PROBS", n)
-
-        if raw_probs is not None:
-            posterior = _normalize(raw_probs)
-            parse_ok = True
-        else:
-            posterior = [1.0 / n] * n
-            parse_ok = False
-
+        posterior = _normalize(raw_probs) if raw_probs is not None else [1.0 / n] * n
         predicted = posterior.index(max(posterior))
         return ListenerOutput(
-            posterior=posterior,
-            predicted_idx=predicted,
+            posterior=posterior, predicted_idx=predicted,
+            listener_type=self.name,
+            listener_meta={"raw_response": raw, "parse_ok": raw_probs is not None},
+        )
+
+
+# ── Image-only helpers ────────────────────────────────────────────────────────
+
+def _annotate_indices(image_path: str, objects, canvas_w=330, canvas_h=328, margin=5) -> str:
+    """Overlay index numbers at each object's center. Returns path to temp PNG."""
+    import tempfile
+    from PIL import Image, ImageDraw, ImageFont
+
+    img = Image.open(image_path).convert("RGB")
+    draw = ImageDraw.Draw(img)
+    w, h = img.size
+    sx = w / canvas_w
+    mx = margin * sx
+    my = margin * (h / canvas_h)
+
+    try:
+        font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", size=max(12, int(14 * sx)))
+    except Exception:
+        font = ImageFont.load_default()
+
+    for i, obj in enumerate(objects):
+        px = int(mx + obj.x_loc / 100 * (w - 2 * mx))
+        py = int((h - my) - obj.y_loc / 100 * (h - 2 * my))
+        label = str(i)
+        for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+            draw.text((px + dx - 5, py + dy - 8), label, fill="white", font=font)
+        draw.text((px - 5, py - 8), label, fill="black", font=font)
+
+    tmp = tempfile.NamedTemporaryFile(suffix=".png", delete=False)
+    img.save(tmp.name)
+    return tmp.name
+
+
+def _io_listen(client, scene, utterance, prompt_tmpl, parse_fn, user_msg):
+    """Shared: annotate image with indices, call VLM, parse posterior."""
+    n = len(scene.objects)
+    annotated = _annotate_indices(scene.image_path, scene.objects)
+    prompt = prompt_tmpl.format(n=n, n1=n - 1, utterance=utterance.text)
+    raw = client.complete(
+        messages=[
+            ChatMessage(role="system", content=prompt),
+            ChatMessage(role="user", content=user_msg),
+        ],
+        image_path=annotated,
+    )
+    raw_probs = parse_fn(raw, n)
+    posterior = _normalize(raw_probs) if raw_probs is not None else [1.0 / n] * n
+    predicted = posterior.index(max(posterior))
+    return raw, posterior, predicted, raw_probs is not None
+
+
+# ── Image-only prompt templates ───────────────────────────────────────────────
+
+_IO_INDEX = """\
+You are a listener in a visual reference game.
+
+The image shows {n} objects labelled 0 to {n1}.
+Look at each numbered object carefully — note its color, shape, and position.
+
+The speaker said: "{utterance}"
+
+Your task: identify which single numbered object the speaker is referring to.
+Use ONLY what you see in the image.
+
+Output ONLY a single integer (the label of the object). No explanation."""
+
+_IO_DIRECT = """\
+You are a listener in a visual reference game.
+
+The image shows {n} objects labelled 0 to {n1}.
+Look at each numbered object carefully — note its color, shape, and position.
+
+The speaker said: "{utterance}"
+
+Assign a probability to each numbered object being the one the speaker refers to.
+Use ONLY what you see in the image. Probabilities must sum to 1.0.
+
+Output ONLY a JSON array of {n} floats:  [p0, p1, ..., p{n1}]
+No explanation."""
+
+_IO_COT = """\
+You are a listener in a visual reference game.
+
+The image shows {n} objects labelled 0 to {n1}.
+Look at each numbered object carefully — note its color, shape, and size.
+
+The speaker said: "{utterance}"
+
+Reason step by step using only what you see:
+1. OBSERVE — for each label 0..{n1}, describe what you see (color, shape, size).
+2. MATCH — score how well the utterance describes each object (0 = no match, 10 = perfect).
+3. ASSIGN — convert scores to probabilities summing to 1.0.
+
+Output format (follow exactly):
+SCORES: [s0, s1, ...]   ← integers 0–10
+PROBS:  [p0, p1, ...]   ← floats summing to 1.0"""
+
+_IO_ELIMINATION = """\
+You are a listener in a visual reference game.
+
+The image shows {n} objects labelled 0 to {n1}.
+Look at each numbered object carefully — note its color, shape, and position.
+
+The speaker said: "{utterance}"
+
+Use an elimination strategy based only on what you see:
+1. RULED_OUT — list indices of objects that clearly do NOT match the utterance
+   (wrong color, wrong shape, wrong position). Be aggressive.
+2. CANDIDATES — the remaining indices after elimination.
+3. PROBS — probability 0 for ruled-out objects; distribute the rest among
+   candidates proportional to how well each matches visually.
+
+Output format (follow exactly):
+RULED_OUT: [i, j, ...]
+CANDIDATES: [i, j, ...]
+PROBS: [p0, p1, ...]   ← {n} floats summing to 1.0"""
+
+
+# ── Honest image-only listeners ───────────────────────────────────────────────
+
+class ImageOnlyDirectRankListener(BaseListener):
+    """
+    Direct probability assignment from indexed image + utterance only.
+    No object feature text is provided — purely visual reasoning.
+    """
+
+    def __init__(self, client: LLMClient) -> None:
+        self.client = client
+
+    @property
+    def name(self) -> str:
+        return f"io-direct({self.client.model.split('/')[-1]})"
+
+    def listen(self, scene: Scene, utterance: Utterance) -> ListenerOutput:
+        if scene.image_path is None:
+            raise ValueError(f"Scene {scene.id} has no image_path.")
+        raw, posterior, predicted, parse_ok = _io_listen(
+            self.client, scene, utterance, _IO_DIRECT,
+            _parse_probs, "Assign probabilities based on what you see.",
+        )
+        return ListenerOutput(
+            posterior=posterior, predicted_idx=predicted,
+            listener_type=self.name,
+            listener_meta={"raw_response": raw, "parse_ok": parse_ok},
+        )
+
+
+class ImageOnlyCoTRankListener(BaseListener):
+    """
+    Chain-of-thought scoring from indexed image + utterance only.
+    Observe each object visually, score 0–10, then convert to probabilities.
+    """
+
+    def __init__(self, client: LLMClient) -> None:
+        self.client = client
+
+    @property
+    def name(self) -> str:
+        return f"io-cot({self.client.model.split('/')[-1]})"
+
+    def listen(self, scene: Scene, utterance: Utterance) -> ListenerOutput:
+        if scene.image_path is None:
+            raise ValueError(f"Scene {scene.id} has no image_path.")
+
+        def _parse(raw, n):
+            return _parse_tagged_probs(raw, "PROBS", n) or _parse_tagged_probs(raw, "SCORES", n)
+
+        raw, posterior, predicted, parse_ok = _io_listen(
+            self.client, scene, utterance, _IO_COT,
+            _parse, "Observe, score, then assign probabilities.",
+        )
+        return ListenerOutput(
+            posterior=posterior, predicted_idx=predicted,
+            listener_type=self.name,
+            listener_meta={"raw_response": raw, "parse_ok": parse_ok},
+        )
+
+
+class ImageOnlyEliminationListener(BaseListener):
+    """
+    Elimination strategy from indexed image + utterance only.
+    Visually rule out non-matching objects, then distribute probability.
+    """
+
+    def __init__(self, client: LLMClient) -> None:
+        self.client = client
+
+    @property
+    def name(self) -> str:
+        return f"io-elimination({self.client.model.split('/')[-1]})"
+
+    def listen(self, scene: Scene, utterance: Utterance) -> ListenerOutput:
+        if scene.image_path is None:
+            raise ValueError(f"Scene {scene.id} has no image_path.")
+        raw, posterior, predicted, parse_ok = _io_listen(
+            self.client, scene, utterance, _IO_ELIMINATION,
+            lambda r, n: _parse_tagged_probs(r, "PROBS", n),
+            "Eliminate visually, then assign probabilities.",
+        )
+        return ListenerOutput(
+            posterior=posterior, predicted_idx=predicted,
+            listener_type=self.name,
+            listener_meta={"raw_response": raw, "parse_ok": parse_ok},
+        )
+
+
+class ImageOnlyIndexListener(BaseListener):
+    """
+    Hardest-commit IO listener: output a single integer index, no distribution.
+
+    The model picks one object and commits absolutely — max posterior is always
+    1.0, so the EU rule never triggers clarification and CPA == Accuracy.
+    This is the simplest possible IO listener and serves as an upper-bound
+    reference for ask-rate-free performance.
+    """
+
+    def __init__(self, client: LLMClient) -> None:
+        self.client = client
+
+    @property
+    def name(self) -> str:
+        return f"io-index({self.client.model.split('/')[-1]})"
+
+    def listen(self, scene: Scene, utterance: Utterance) -> ListenerOutput:
+        if scene.image_path is None:
+            raise ValueError(f"Scene {scene.id} has no image_path.")
+        n = len(scene.objects)
+        annotated = _annotate_indices(scene.image_path, scene.objects)
+        prompt = _IO_INDEX.format(n=n, n1=n - 1, utterance=utterance.text)
+        raw = self.client.complete(
+            messages=[
+                ChatMessage(role="system", content=prompt),
+                ChatMessage(role="user", content="Which object index is the speaker referring to?"),
+            ],
+            image_path=annotated,
+        )
+        # Parse: first integer in response, clamped to [0, n-1]
+        m = re.search(r"\b(\d+)\b", raw.strip())
+        if m:
+            idx = int(m.group(1))
+            parse_ok = 0 <= idx < n
+            predicted = idx if parse_ok else 0
+        else:
+            predicted = 0
+            parse_ok = False
+        # Hard posterior: probability 1 on the chosen index
+        posterior = [0.0] * n
+        posterior[predicted] = 1.0
+        return ListenerOutput(
+            posterior=posterior, predicted_idx=predicted,
             listener_type=self.name,
             listener_meta={"raw_response": raw, "parse_ok": parse_ok},
         )

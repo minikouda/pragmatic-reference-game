@@ -46,10 +46,7 @@ description visually.
 
 from __future__ import annotations
 
-import tempfile
-from pathlib import Path
-
-from ..data.schema import Object, Scene, Utterance
+from ..data.schema import Scene, Utterance
 from ..utils.llm_client import ChatMessage, LLMClient
 from .base import BaseSpeaker
 
@@ -59,30 +56,35 @@ from .base import BaseSpeaker
 # The target is visually marked in the image — the prompt does NOT describe its
 # features; the model must use its own visual perception.
 
+_SHAPE_VOCAB = "circle, square, triangle, star, pentagon, hexagon"
+_SIZE_VOCAB  = "small, medium, large"
+_COLOR_VOCAB = "red, blue, green, black, white, yellow, orange, purple, pink, gray"
+_LOC_VOCAB   = "top-left, top, top-right, left, center, right, bottom-left, bottom, bottom-right"
+
 _PROMPTS: dict[str, str] = {
 
     "scene_first": """\
 You are a speaker in a visual reference game.
 
-The TARGET object is marked with a MAGENTA bounding box in the image.
+The TARGET object is: {target_desc}
 
 Think step by step:
 1. INVENTORY — list every object you see in the image (color, shape, approximate size).
-2. IDENTIFY — which one has the magenta box? Confirm its properties.
+2. IDENTIFY — find the target object described above in the image.
 3. DISCRIMINATE — what single property or combination makes it uniquely identifiable
    compared to every other object you listed?
 4. EXPRESSION — write the shortest natural phrase using only that property.
 
 Output format (follow exactly):
 INVENTORY: <comma-separated list of objects>
-TARGET: <properties of the marked object>
+TARGET: <properties of the target>
 DISCRIMINATING: <what makes it unique>
 EXPRESSION: <the referring expression>""",
 
     "listener_aware": """\
 You are a speaker in a visual reference game.
 
-The TARGET object is marked with a MAGENTA bounding box in the image.
+The TARGET object is: {target_desc}
 
 Your listener will see the SAME image, read your description, and assign a
 probability to each object being the one you mean.  Your goal is to write
@@ -97,7 +99,7 @@ Output ONLY the referring expression (short, under 12 words). No other text.""",
     "natural": """\
 You are a speaker in a visual reference game.
 
-The TARGET object is marked with a MAGENTA bounding box in the image.
+The TARGET object is: {target_desc}
 
 Your task: produce a SHORT natural referring expression that uniquely identifies
 the target so a listener, seeing the same image, can pick it out.
@@ -110,7 +112,7 @@ Rules:
     "contrastive": """\
 You are a speaker in a visual reference game.
 
-The TARGET object is marked with a MAGENTA bounding box in the image.
+The TARGET object is: {target_desc}
 
 Your task: produce a CONTRASTIVE referring expression.
 Look at the other objects in the scene and find the one most likely to be
@@ -132,7 +134,7 @@ Output ONLY the referring expression. No other text.""",
     "landmark": """\
 You are a speaker in a visual reference game.
 
-The TARGET object is marked with a MAGENTA bounding box in the image.
+The TARGET object is: {target_desc}
 
 Your task: produce a LANDMARK referring expression.
 Look for a visually distinctive nearby object (unique color, shape, or size)
@@ -150,7 +152,7 @@ Output ONLY the referring expression. No other text.""",
     "superlative": """\
 You are a speaker in a visual reference game.
 
-The TARGET object is marked with a MAGENTA bounding box in the image.
+The TARGET object is: {target_desc}
 
 Your task: produce a SUPERLATIVE or UNIQUENESS referring expression.
 Describe the target using a property that makes it extreme or unique in the scene.
@@ -173,7 +175,7 @@ Output ONLY the referring expression. No other text.""",
     "pragmatic": """\
 You are a pragmatic speaker in a visual reference game, reasoning like an RSA model.
 
-The TARGET object is marked with a MAGENTA bounding box in the image.
+The TARGET object is: {target_desc}
 
 Think step by step:
 1. Look at all objects in the scene and list their visible properties.
@@ -186,62 +188,37 @@ OBJECTS: <brief list of what you see>
 CONFUSABLE: <which objects could be confused with the target>
 DISTINGUISHING: <which property separates the target from confusable objects>
 EXPRESSION: <the referring expression>""",
+
+    "canonical_vllm": """\
+You are a speaker in a visual reference game.
+
+The TARGET object is: {target_desc}
+
+Your task: produce a MINIMAL CANONICAL description that uniquely identifies the target.
+
+Step 1 — look at the image and confirm the target's exact properties:
+  - COLOR  (must be one of: """ + _COLOR_VOCAB + """)
+  - SHAPE  (must be one of: """ + _SHAPE_VOCAB + """)
+  - SIZE   (must be one of: """ + _SIZE_VOCAB + """)
+  - LOCATION (must be one of: """ + _LOC_VOCAB + """)
+
+Step 2 — decide which features are needed to distinguish the target from ALL other objects.
+  Start with COLOR + SHAPE. Add SIZE only if another object shares the same color+shape.
+  Add LOCATION only if still ambiguous after size.
+
+Step 3 — output the expression in this exact format:
+  "the [SIZE] COLOR SHAPE [at LOCATION]"
+  where SIZE and LOCATION are included only if needed.
+
+Rules:
+- Use ONLY words from the vocabulary lists above. No synonyms, no vague words like "shape" or "object".
+- The expression must be the shortest one that uniquely picks out the target.
+
+Output ONLY the canonical expression. No explanation.""",
 }
 
 
 # ── Image annotation ──────────────────────────────────────────────────────────
-
-def _annotate_target(
-    image_path: str | Path,
-    objects:    list[Object],
-    target_idx: int,
-) -> Path:
-    """
-    Draw a magenta bounding box + 'TARGET' label on the target object.
-    Returns path to a temporary annotated PNG.
-    Falls back to the original image if Pillow is unavailable.
-    """
-    try:
-        from PIL import Image, ImageDraw
-    except ImportError:
-        return Path(image_path)
-
-    img  = Image.open(image_path).convert("RGB")
-    draw = ImageDraw.Draw(img)
-    w, h = img.size
-
-    target = objects[target_idx]
-
-    # Mirror renderer.py coordinate formula exactly:
-    #   px = MARGIN + x_loc/100 * (W - 2*MARGIN)
-    #   py = (H - MARGIN) - y_loc/100 * (H - 2*MARGIN)
-    # Scale MARGIN proportionally if the image has been resized.
-    CANVAS_W, CANVAS_H, MARGIN_PX = 330, 328, 5
-    scale_x = w / CANVAS_W
-    scale_y = h / CANVAS_H
-    margin_x = MARGIN_PX * scale_x
-    margin_y = MARGIN_PX * scale_y
-    draw_w   = w - 2 * margin_x
-    draw_h   = h - 2 * margin_y
-
-    px = int(margin_x + target.x_loc / 100 * draw_w)
-    py = int((h - margin_y) - target.y_loc / 100 * draw_h)
-
-    # Object radius from SIZE_MAP, scaled to actual image dimensions.
-    from ..data.schema import SIZE_MAP
-    size_label = target.size if hasattr(target, "size") else "medium"
-    px_radius = next((k for k, v in SIZE_MAP.items() if v == size_label), 12)
-    r = int(px_radius * scale_x + 6)
-
-    box = [px - r, py - r, px + r, py + r]
-    color = "magenta"
-    draw.rectangle(box, outline=color, width=3)
-    draw.text((box[0], max(0, box[1] - 16)), "TARGET", fill=color)
-
-    tmp = tempfile.NamedTemporaryFile(suffix=".png", delete=False)
-    img.save(tmp.name)
-    return Path(tmp.name)
-
 
 # ── Expression extraction ─────────────────────────────────────────────────────
 
@@ -286,18 +263,57 @@ class StrategicVLLMSpeaker(BaseSpeaker):
         model = self.client.model.split("/")[-1]
         return f"strategic-{self.strategy}({model})"
 
+    def answer_question(self, scene: Scene, target_idx: int, question: str) -> str:
+        """Answer a listener's clarifying question by visually inspecting the image."""
+        if scene.image_path is None:
+            raise ValueError(f"Scene {scene.id} has no image_path.")
+        target = scene.objects[target_idx]
+        f = target.features()
+        target_desc = (
+            f"{f['size']} {f['color']} {f['shape']} at {f['location']} "
+            f"(scene position: x={target.x_loc:.1f}, y={target.y_loc:.1f} "
+            f"where 0,0 is bottom-left and 100,100 is top-right)"
+        )
+        prompt = (
+            f"You are a speaker in a visual reference game.\n\n"
+            f"The TARGET object is: {target_desc}\n\n"
+            f"The listener asked: \"{question}\"\n\n"
+            f"Answer the listener's question in one short phrase that helps them "
+            f"identify the target. Look at the image to ground your answer.\n\n"
+            f"Output ONLY the answer (e.g. \"the left one\", \"it's a circle\", "
+            f"\"the larger one\"). No other text."
+        )
+        raw = self.client.complete(
+            messages=[
+                ChatMessage(role="system", content=prompt),
+                ChatMessage(role="user", content="Answer the listener's question."),
+            ],
+            image_path=scene.image_path,
+        )
+        return raw.strip().strip('"').strip("'").rstrip(".")
+
     def speak(self, scene: Scene, target_idx: int) -> Utterance:
         if scene.image_path is None:
             raise ValueError(f"Scene {scene.id} has no image_path.")
 
-        annotated_path = _annotate_target(scene.image_path, scene.objects, target_idx)
+        target = scene.objects[target_idx]
+        f = target.features()
+        target_desc = (
+            f"{f['size']} {f['color']} {f['shape']} at {f['location']} "
+            f"(scene position: x={target.x_loc:.1f}, y={target.y_loc:.1f} "
+            f"where 0,0 is bottom-left and 100,100 is top-right)"
+        )
+        prompt = _PROMPTS[self.strategy].format(target_desc=target_desc)
 
         raw = self.client.complete(
             messages=[
-                ChatMessage(role="system", content=_PROMPTS[self.strategy]),
-                ChatMessage(role="user",   content="Describe the TARGET object."),
+                ChatMessage(role="system", content=prompt),
+                ChatMessage(role="user", content=(
+                    "Describe the TARGET object using natural language only. "
+                    "Do NOT output raw numbers or coordinates."
+                )),
             ],
-            image_path=annotated_path,
+            image_path=scene.image_path,
         )
 
         expression = _extract_expression(raw)
@@ -306,7 +322,9 @@ class StrategicVLLMSpeaker(BaseSpeaker):
             text=expression,
             speaker_type=self.name,
             speaker_meta={
-                "strategy": self.strategy,
+                "strategy":    self.strategy,
                 "raw_response": raw,
+                "target_desc": target_desc,
+                "target_idx":  target_idx,    # used by DialogueListener.answer_question
             },
         )

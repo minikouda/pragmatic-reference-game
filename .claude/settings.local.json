@@ -14,7 +14,19 @@
       "Bash(git commit -m ' *)",
       "Bash(git commit *)",
       "Read(//Users/zhangshizhe/**)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(tee results_log.txt)",
+      "Bash(tee results_diagnostic_ordinal_6none.txt)",
+      "Bash(tee results_diagnostic_ordinal_6none_fixed.txt)",
+      "Bash(tee results_smoke_6none.txt)",
+      "Bash(tee results/strategic_exp_run.log)",
+      "Bash(tee results/strategic_exp2_run.log)",
+      "Bash(kill 82915 83035 83353)",
+      "Bash(python scripts/run_io_index.py)",
+      "Bash(echo \"PID: $!\")",
+      "Bash(grep \"c=0.50$\\\\|c=0.10$\\\\|c=0.25$\\\\|scenes_\" /tmp/io_index_run.log)",
+      "Bash(grep -A4 \"c=0.50$\")",
+      "Bash(grep -v \"^--$\")"
     ]
   }
 }
