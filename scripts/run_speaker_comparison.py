@@ -107,6 +107,8 @@ def main():
         StrategicVLLMSpeaker(client=client, strategy="landmark"),
         StrategicVLLMSpeaker(client=client, strategy="superlative"),
         StrategicVLLMSpeaker(client=client, strategy="pragmatic"),
+        StrategicVLLMSpeaker(client=client, strategy="scene_first"),
+        StrategicVLLMSpeaker(client=client, strategy="listener_aware"),
     ]
 
     rule_speakers = [] if args.no_rule else [

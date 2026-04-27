@@ -210,6 +210,166 @@ The experiment validates three core claims of the project:
 \end{enumerate}
 
 % -----------------------------------------------------------------------
+\section{Phase 2 Experiment: VLM Speakers and Listeners}
+% -----------------------------------------------------------------------
+
+\subsection{Setup}
+
+We replace the symbolic attribute-overlap posterior from Phase~1 with
+vision-language models (VLMs) serving as both speaker and listener.
+All experiments use \texttt{gemini-2.0-flash-001} via the OpenRouter API.
+The evaluation dataset is \texttt{gemini\_exp\_test.jsonl}: 25 scenes with
+$N{=}4$ objects each, balanced across low / medium / high ambiguity tiers.
+The primary metric is Cost-Penalised Accuracy (CPA) at $c{=}0.5$.
+
+\subsection{Speaker Variants}
+
+All VLM speakers receive a scene image with the target object marked by a
+\textbf{magenta bounding box}; no pre-parsed feature lists are passed.
+The model must reason from visual perception to produce a natural
+referring expression.  Five prompting strategies were evaluated:
+
+\begin{itemize}
+    \item \textbf{natural} — Unconstrained: ``describe the marked object so a
+          listener can identify it.''
+    \item \textbf{contrastive} — Find the most confusable distractor and
+          highlight the one feature that distinguishes the target.
+    \item \textbf{landmark} — Describe the target's position relative to a
+          visually distinctive nearby object.
+    \item \textbf{superlative} — Use an extreme or uniqueness property
+          (``the only triangle'', ``the largest circle'').
+    \item \textbf{pragmatic} — Full RSA-style chain-of-thought: list all
+          objects, identify distractors, produce the minimal discriminating
+          expression.
+    \item \textbf{scene\_first} — Inventory all visible objects first, confirm
+          the target's properties, then produce the shortest unique expression.
+          Prevents hallucination by grounding the description.
+    \item \textbf{listener\_aware} — Explicitly reason from the listener's
+          perspective: what description would maximise the listener's confidence
+          in the correct object?
+\end{itemize}
+
+Four rule-based baselines (no LLM) are included for comparison:
+\textit{ordinal} (superlatives/uniqueness), \textit{landmark} (spatial reference),
+\textit{contrastive} (foil-based contrast), and \textit{feature-canonical}
+(minimal canonical feature description).
+
+\subsection{Listener Variants}
+
+All VLM listeners receive the scene image, a numbered text description of
+every object, and the speaker's utterance.  They differ in how they reason
+before outputting a posterior $P(t_i \mid u)$:
+
+\begin{itemize}
+    \item \textbf{vllm-listener} ($\sigma{=}10$) — Predicts $(x,y)$ coordinates
+          for the referred object; posterior is a Gaussian kernel
+          $\exp(-d_i^2/2\sigma^2)$ over object distances.
+    \item \textbf{feature-match} — Extracts a feature tuple (color, shape,
+          size, location) from the utterance and scores each object by
+          feature-overlap count.
+    \item \textbf{direct-rank} — Directly outputs a probability for each
+          object as a JSON array; no intermediate reasoning step.
+    \item \textbf{cot-rank} — Scores each object 0--10 before converting to
+          probabilities (chain-of-thought evaluation per object).
+    \item \textbf{elimination} — Explicitly identifies objects the utterance
+          \emph{rules out} (wrong color, wrong shape, etc.), assigns them
+          probability~0, then distributes the remainder over candidates.
+\end{itemize}
+
+\subsection{Key Finding: Posterior Flatness}
+
+The original \texttt{vllm-listener} used an inverse-distance kernel
+$\text{score}_i = 1/(d_i + \epsilon)$.  With $N{=}6$ objects this gives a
+mean $\max(\text{posterior}) = 0.52$, causing virtually all scenes to trigger
+clarification at $c{\leq}0.25$ (only 4\% commit rate).
+Replacing it with a Gaussian kernel ($\sigma{=}10$ canvas units) raises the
+commit rate at $c{=}0.25$ from 4\% to 72\% without changing which object is
+selected (argmax is unchanged).
+
+\subsection{Results}
+
+Table~\ref{tab:phase2} shows CPA at $c{=}0.5$ for all (speaker, listener) pairs.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{llccc}
+\toprule
+Speaker & Listener & Acc & Ask\% & CPA \\
+\midrule
+\multicolumn{5}{l}{\textit{Rule-based speakers}} \\
+feature-canonical  & elimination  & 96\% & 0\%  & \textbf{0.960} \\
+feature-canonical  & direct-rank  & 94\% & 4\%  & 0.940 \\
+feature-canonical  & cot-rank     & 84\% & 16\% & 0.760 \\
+contrastive        & elimination  & 84\% & 12\% & 0.780 \\
+landmark           & elimination  & 76\% & 12\% & 0.700 \\
+landmark           & cot-rank     & 72\% & 4\%  & 0.700 \\
+contrastive        & direct-rank  & 68\% & 16\% & 0.600 \\
+ordinal            & direct-rank  & 64\% & 8\%  & 0.600 \\
+\midrule
+\multicolumn{5}{l}{\textit{VLM speakers (StrategicVLLMSpeaker, gemini-2.0-flash-001)}} \\
+strategic-scene\_first    & direct-rank  & 64\% & 16\% & 0.560 \\
+strategic-scene\_first    & elimination  & 64\% & 16\% & 0.560 \\
+strategic-listener\_aware & elimination  & 60\% & 8\%  & 0.560 \\
+strategic-listener\_aware & direct-rank  & 56\% & 8\%  & 0.520 \\
+strategic-pragmatic       & direct-rank  & 52\% & 4\%  & 0.500 \\
+strategic-contrastive     & cot-rank     & 56\% & 16\% & 0.480 \\
+strategic-natural         & direct-rank  & 56\% & 16\% & 0.480 \\
+strategic-landmark        & elimination  & 56\% & 20\% & 0.460 \\
+strategic-superlative     & cot-rank     & 40\% & 20\% & 0.300 \\
+\bottomrule
+\end{tabular}
+\caption{CPA at $c{=}0.5$ on \texttt{gemini\_exp\_test.jsonl} ($n{=}25$, 4-object scenes).
+         Rule-based speakers use no LLM API; VLM speakers use gemini-2.0-flash-001.}
+\label{tab:phase2}
+\end{table}
+
+\subsection{Discussion}
+
+\paragraph{Listener design is the dominant factor.}
+The choice of listener has a larger impact than the choice of speaker strategy.
+\texttt{elimination} is the best listener for rule-based speakers (CPA up to 0.96),
+while \texttt{direct-rank} is most robust for VLM speakers.
+\texttt{feature-match} performs poorly with natural-language utterances because
+spatial and relational descriptions (``the square to the left of the triangle'')
+do not decompose cleanly into feature tuples.
+
+\paragraph{Rule-based speakers outperform VLM speakers.}
+With the best listener, the best rule-based speaker (\textit{feature-canonical}
++ \textit{elimination}) achieves CPA~$= 0.96$ versus 0.56 for the best VLM
+speaker (\textit{scene\_first}).  Rule-based descriptions are shorter, more
+precise, and easier for the listener to eliminate against.
+
+\paragraph{VLM speaker hallucination.}
+Several VLM speaker failures stem from hallucination: the model describes
+objects that do not exist (``the square on the circle'' when no circle is in
+the scene) or misidentifies attributes (``the blue square'' for a black object).
+The \textit{scene\_first} strategy mitigates this by requiring the model to
+inventory all objects before identifying the target, anchoring its description
+in what is actually visible.
+
+\paragraph{Listener reasoning strategy matches utterance type.}
+\texttt{elimination} wins when utterances mention specific features that
+cleanly contradict some objects.
+\texttt{cot-rank} outperforms \textit{direct-rank} for rule-based
+speakers (\textit{ordinal}: $+0.10$) but hurts for VLM speakers
+(\textit{scene\_first}: $-0.12$), suggesting per-object scoring is better
+calibrated for discrete feature descriptions than for spatial/relational language.
+
+\paragraph{Best fully-VLM pipeline.}
+\textit{strategic-scene\_first} $+$ \textit{direct-rank} or
+\textit{elimination} achieves CPA~$= 0.56$.  The \textit{scene\_first} strategy
+forces genuine visual grounding before description, producing short accurate
+utterances (``the black shape'', ``the yellow square'') that the listener can
+resolve confidently.
+
+\paragraph{Limitations.}
+All experiments use 25 scenes with $N{=}4$ objects.  Results on harder
+6-object or 8-object scenes may differ.  The \textit{direct-rank} and
+\textit{elimination} listeners receive ground-truth feature labels in the
+object list, giving them an advantage a purely visual listener would not have.
+
+% -----------------------------------------------------------------------
 \section{TA Feedback Responses}
 % -----------------------------------------------------------------------
 
