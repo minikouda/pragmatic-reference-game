@@ -1,25 +1,30 @@
 """
 Speaker comparison experiment.
 
-Runs all speaker variants against the VLLMListener on a subset of scenes,
-then prints a ranked summary table.
+Runs all speaker variants against multiple listener variants on a subset of
+scenes, then prints a ranked summary table.
 
 Speakers evaluated
 ------------------
-Baselines (VLLM):
-  vllm-naive       : target properties only, no distractor context
-  vllm-pragmatic   : chain-of-thought over target properties only
-
-New strategies (VLLM):
-  scene-aware      : target + full distractor list, model picks minimal features
-  scene-ranked     : scene-aware + explicit feature ranking step
-  landmark-vllm    : rule landmark suggestion + LLM polish
-  contrastive-vllm : foil-aware contrast + LLM polish
+Strategic VLLM (annotated image + strategy prompt, no pre-parsed features):
+  strategic-natural     : unconstrained — model describes however it sees fit
+  strategic-contrastive : find most-confusable distractor, highlight difference
+  strategic-landmark    : describe target relative to a distinctive nearby object
+  strategic-superlative : use extreme/uniqueness property (only, largest, leftmost)
+  strategic-pragmatic   : RSA-style chain-of-thought — enumerate distractors,
+                          find minimal discriminating expression
 
 Rule-based (free, no API):
-  ordinal          : superlatives / uniqueness ("the only triangle", "the leftmost circle")
-  landmark         : pure rule-based spatial reference
-  contrastive      : pure rule-based feature contrast
+  ordinal               : superlatives / uniqueness ("the only triangle")
+  landmark              : pure rule-based spatial reference
+  contrastive           : pure rule-based feature contrast
+  feature-canonical     : minimal canonical feature description
+
+Listeners evaluated
+-------------------
+  vllm-listener         : coordinate prediction + Gaussian posterior (sigma=10)
+  feature-match         : VLM extracts features → feature-overlap posterior
+  direct-rank           : VLM directly assigns probability to each object
 
 Usage
 -----
@@ -29,12 +34,14 @@ python scripts/run_speaker_comparison.py \
     --condition force \
     --n 30 \
     --model gemini-flash \
-    --costs 0.1 0.25 \
+    --costs 0.1 0.25 0.5 \
     --workers 4 \
     --out results/speaker_comparison/
 
 Writes results/speaker_comparison/experiment_records.jsonl and
 results/speaker_comparison/experiment_summary.json (single unified files).
+    --out results/speaker_comparison/ \
+    --listeners vllm feature_match direct_rank
 """
 
 from __future__ import annotations
@@ -53,12 +60,14 @@ load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
 from src.refgame.data.dataset import load_jsonl
-from src.refgame.speakers.vllm import VLLMSpeaker
-from src.refgame.speakers.scene_aware import SceneAwareSpeaker
-from src.refgame.speakers.landmark import LandmarkSpeaker, LandmarkVLLMSpeaker
-from src.refgame.speakers.contrastive import ContrastiveSpeaker, ContrastiveVLLMSpeaker
+from src.refgame.speakers.strategic import StrategicVLLMSpeaker
 from src.refgame.speakers.ordinal import OrdinalSpeaker
+from src.refgame.speakers.landmark import LandmarkSpeaker
+from src.refgame.speakers.contrastive import ContrastiveSpeaker
+from src.refgame.speakers.feature_canonical import FeatureCanonicalSpeaker
 from src.refgame.listeners.vllm import VLLMListener
+from src.refgame.listeners.feature_match import FeatureMatchListener
+from src.refgame.listeners.direct_rank import DirectRankListener
 from src.refgame.eval.harness import run_grid
 from src.refgame.eval.reporter import (
     DEFAULT_RECORDS_FILE,
@@ -79,16 +88,20 @@ def main():
     p = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--jsonl",       type=str, required=True, help="Scene JSONL file")
-    p.add_argument("--scene_size",  type=int, required=True,
-                   help="Number of objects per scene (tag attached to every record).")
-    p.add_argument("--condition",   type=str, required=True,
-                   help="Per-dataset condition tag (e.g. 'none' or 'force' overlap).")
     p.add_argument("--n",           type=int, default=30,    help="Number of scenes to use")
     p.add_argument("--model",       type=str, default="gemini-flash")
     p.add_argument("--costs",       type=float, nargs="+", default=[0.1, 0.25])
     p.add_argument("--workers",     type=int, default=4)
     p.add_argument("--out",         type=str, default="results/speaker_comparison/")
     p.add_argument("--no_rule",     action="store_true", help="Skip rule-based speakers")
+    p.add_argument("--scene_size",  type=int, required=True,
+                   help="Number of objects per scene (tag attached to every record).")
+    p.add_argument("--condition",   type=str, required=True,
+                   help="Per-dataset condition tag (e.g. 'none' or 'force' overlap).")
+    p.add_argument("--listeners", type=str, nargs="+",
+                   default=["vllm"],
+                   choices=["vllm", "feature_match", "direct_rank"],
+                   help="Which listener variants to include")
     args = p.parse_args()
 
     model_id = VLLM_MODEL_PRESETS.get(args.model, args.model)
@@ -102,25 +115,33 @@ def main():
     )
 
     # ── Speakers ──────────────────────────────────────────────────────────────
+    # Strategic VLLM speakers: annotated image + strategy prompt only.
+    # No pre-parsed feature lists — model reasons from visual perception.
     vllm_speakers = [
-        VLLMSpeaker(client=client, pragmatic=False),          # naive baseline
-        VLLMSpeaker(client=client, pragmatic=True),           # pragmatic baseline
-        SceneAwareSpeaker(client=client, ranked=False),       # scene-aware
-        SceneAwareSpeaker(client=client, ranked=True),        # scene-aware + ranking
-        LandmarkVLLMSpeaker(client=client),                   # landmark + LLM
-        ContrastiveVLLMSpeaker(client=client),                # contrastive + LLM
+        StrategicVLLMSpeaker(client=client, strategy="natural"),
+        StrategicVLLMSpeaker(client=client, strategy="contrastive"),
+        StrategicVLLMSpeaker(client=client, strategy="landmark"),
+        StrategicVLLMSpeaker(client=client, strategy="superlative"),
+        StrategicVLLMSpeaker(client=client, strategy="pragmatic"),
     ]
 
     rule_speakers = [] if args.no_rule else [
         OrdinalSpeaker(),
         LandmarkSpeaker(),
         ContrastiveSpeaker(),
+        FeatureCanonicalSpeaker(),
     ]
 
     speakers = vllm_speakers + rule_speakers
 
-    # ── Listener ──────────────────────────────────────────────────────────────
-    listeners = [VLLMListener(client=client)]
+    # ── Listeners ─────────────────────────────────────────────────────────────
+    listeners = []
+    if "vllm" in args.listeners:
+        listeners.append(VLLMListener(client=client, sigma=10.0))      # Gaussian kernel
+    if "feature_match" in args.listeners:
+        listeners.append(FeatureMatchListener(client=client))
+    if "direct_rank" in args.listeners:
+        listeners.append(DirectRankListener(client=client))
 
     n_vllm_spk   = len(vllm_speakers)
     n_rule_spk   = len(rule_speakers)
