@@ -35,7 +35,10 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import asdict
 from typing import Sequence
 
-from ..data.schema import EvalRecord, ListenerOutput, Scene, Utterance
+from ..data.schema import (
+    EvalRecord, ListenerOutput, Scene, Utterance,
+    LOCATION_TO_GRID, GRID_TO_COORDS, GRID_TO_REGION,
+)
 from ..speakers.base import BaseSpeaker
 from ..listeners.base import BaseListener
 from ..listeners.cost_aware import CostAwareListener
@@ -51,6 +54,7 @@ def run_grid(
     cost_values: list[float] = (0.1, 0.25, 0.5),
     n_workers:   int = 1,
     verbose:     bool = True,
+    meta:        dict | None = None,
 ) -> list[EvalRecord]:
     """
     Evaluate all (speaker, listener, cost_c) triples on all scenes.
@@ -78,12 +82,17 @@ def run_grid(
     cost_values : clarification costs to sweep (e.g. [0.1, 0.25, 0.5])
     n_workers   : thread pool size for LLM calls (1 = sequential)
     verbose     : log phase-level progress
+    meta        : configuration tags applied to every produced EvalRecord.
+                  Recognized keys: "scene_size" (int), "condition" (str).
+                  These let the unified summary group by dataset slice
+                  without re-parsing file stems.
 
     Returns
     -------
     Flat list of EvalRecord, one per (scene × speaker × listener × cost_c).
     The list order is deterministic (scenes outer, speakers, listeners, costs).
     """
+    meta = meta or {}
 
     # ── Phase 1: cache speaker utterances ────────────────────────────────────
     speaker_tasks = [(scene, speaker) for scene in scenes for speaker in speakers]
@@ -141,7 +150,7 @@ def run_grid(
                 if l_out is None:
                     continue
                 for cost_c in cost_values:
-                    record = _apply_cost_decision(scene, speaker, listener, utt, l_out, cost_c)
+                    record = _apply_cost_decision(scene, speaker, listener, utt, l_out, cost_c, meta)
                     records.append(record)
 
     if verbose:
@@ -198,6 +207,7 @@ def _apply_cost_decision(
     utt:      Utterance,
     l_out:    ListenerOutput,
     cost_c:   float,
+    run_meta: dict,
 ) -> EvalRecord:
     """Apply EU threshold to a cached ListenerOutput and produce an EvalRecord."""
     ca = CostAwareListener(base_listener=listener, cost_c=cost_c)
@@ -207,8 +217,23 @@ def _apply_cost_decision(
     predicted_idx = l_out.predicted_idx
     correct       = predicted_idx == scene.target_idx
 
-    ann = scene.entropy_annotation
-    meta = l_out.listener_meta or {}
+    ann            = scene.entropy_annotation
+    listener_meta  = l_out.listener_meta or {}
+
+    target          = scene.target
+    target_grid     = LOCATION_TO_GRID.get(target.location)
+    target_region   = GRID_TO_REGION.get(target_grid) if target_grid else None
+
+    pred_grid       = None
+    manhattan_error = None
+    if 0 <= predicted_idx < len(scene.objects):
+        pred_obj   = scene.objects[predicted_idx]
+        pred_grid  = LOCATION_TO_GRID.get(pred_obj.location)
+        if target_grid and pred_grid:
+            tx, ty = GRID_TO_COORDS[target_grid]
+            px, py = GRID_TO_COORDS[pred_grid]
+            manhattan_error = abs(tx - px) + abs(ty - py)
+
     return EvalRecord(
         scene_id=scene.id,
         speaker_type=speaker.name,
@@ -225,8 +250,17 @@ def _apply_cost_decision(
         brier_score=brier_score(l_out.posterior, scene.target_idx),
         min_desc_length=ann.min_desc_length if ann else None,
         ambiguity_tier=ann.ambiguity_tier if ann else None,
-        pred_x=meta.get("pred_x"),
-        pred_y=meta.get("pred_y"),
+        pred_x=listener_meta.get("pred_x"),
+        pred_y=listener_meta.get("pred_y"),
+        scene_size=run_meta.get("scene_size"),
+        condition=run_meta.get("condition"),
+        target_x=target.x_loc,
+        target_y=target.y_loc,
+        target_grid=target_grid,
+        target_region=target_region,
+        predicted_grid=pred_grid,
+        manhattan_error=manhattan_error,
+        utterance_word_count=len(utt.text.split()) if utt.text else 0,
     )
 
 

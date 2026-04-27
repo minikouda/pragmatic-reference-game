@@ -54,16 +54,29 @@ python scripts/run_eval.py --list_vllm_models --smoke
 
 Output files (in --out directory)
 ----------------------------------
-  {prefix}_records.jsonl   one JSON record per (scene × speaker × listener × cost_c)
-  {prefix}_summary.json    aggregated metrics grouped by (speaker, listener, cost_c)
-  {prefix}_by_tier.json    same but further broken down by ambiguity_tier
+  experiment_records.jsonl   one JSON object per (scene × speaker × listener × cost_c),
+                             across every dataset in this run. Includes scene_size
+                             and condition columns so downstream slicing is trivial.
+  experiment_summary.json    one rich aggregation grouped by (speaker, listener,
+                             cost_c, scene_size, condition) with by_tier and
+                             by_region breakdowns plus the advanced confidence,
+                             error and utterance metrics.
+
+Per-dataset metadata
+--------------------
+When --jsonl lists multiple files you must pass parallel lists for
+--scene_sizes and --conditions of the same length, e.g.
+
+  --jsonl       data/scenes_6_none.jsonl data/scenes_6_force.jsonl
+  --scene_sizes 6                        6
+  --conditions  none                     force
 
 Fields in each record
 ---------------------
   scene_id, speaker_type, listener_type, cost_c
-  utterance          : the speaker's natural language expression
+  utterance, utterance_word_count
   action             : "commit" or "ask"
-  predicted_idx      : listener's argmax prediction
+  predicted_idx      : listener's argmax prediction (top-1)
   target_idx         : ground-truth target index
   correct            : bool
   eu_commit          : max posterior probability (E[U|commit])
@@ -72,6 +85,13 @@ Fields in each record
   brier_score        : (p_target - 1)^2 + sum of p_distractor^2
   min_desc_length    : scene-level ambiguity annotation
   ambiguity_tier     : "low" | "medium" | "high"
+  scene_size         : n_objects from the dataset config
+  condition          : per-dataset tag (e.g. "none" / "force" overlap)
+  target_x, target_y : raw [0,100] coords of the target
+  target_grid        : "TL".."BR" 3x3 cell label
+  target_region      : "corner" | "edge" | "center"
+  predicted_grid     : 3x3 cell of the listener's top-1 pick
+  manhattan_error    : |Δcol| + |Δrow| on the 3x3 grid (0 when correct)
 """
 
 import argparse
@@ -96,7 +116,10 @@ from src.refgame.listeners.literal import LiteralListener
 from src.refgame.listeners.rsa import RSAListener
 from src.refgame.listeners.vllm import VLLMListener
 from src.refgame.eval.harness import run_grid
-from src.refgame.eval.reporter import save_results, summarize
+from src.refgame.eval.reporter import (
+    DEFAULT_RECORDS_FILE, DEFAULT_SUMMARY_FILE,
+    append_records, compute_summary, reset_records_file, write_summary,
+)
 
 
 # ── Model presets ─────────────────────────────────────────────────────────────
@@ -147,12 +170,20 @@ def parse_args():
     # Dataset source
     src = p.add_mutually_exclusive_group()
     src.add_argument("--jsonl", type=str, nargs="+",
-                     help="One or more JSONL scene files. Each is evaluated separately and results saved with the file stem as prefix.")
+                     help="One or more JSONL scene files. All trials across all files "
+                          "are written into a single experiment_records.jsonl, tagged "
+                          "with scene_size and condition.")
     src.add_argument("--smoke", action="store_true",
                      help="Generate 5 fresh scenes inline for a quick smoke test")
 
     p.add_argument("--split", action="store_true",
                    help="If using --jsonl, evaluate on the test split only (70/15/15)")
+
+    # Per-dataset metadata (required with --jsonl). Parallel lists matching --jsonl.
+    p.add_argument("--scene_sizes", type=int, nargs="+",
+                   help="Required with --jsonl. Number of objects per scene, parallel to --jsonl.")
+    p.add_argument("--conditions", type=str, nargs="+",
+                   help="Required with --jsonl. Per-dataset condition tag (e.g. 'none' or 'force'), parallel to --jsonl.")
 
     # Models
     p.add_argument("--vllm_model", type=str, default=None,
@@ -204,6 +235,20 @@ def main():
         jsonl_paths = None  # handled inline below
     elif args.jsonl:
         jsonl_paths = args.jsonl
+        # Per-dataset metadata is required and must be parallel to --jsonl.
+        if args.scene_sizes is None or args.conditions is None:
+            logging.error(
+                "When using --jsonl you must also pass --scene_sizes and "
+                "--conditions (parallel lists matching --jsonl in length)."
+            )
+            sys.exit(1)
+        if not (len(jsonl_paths) == len(args.scene_sizes) == len(args.conditions)):
+            logging.error(
+                f"--jsonl ({len(jsonl_paths)}), --scene_sizes "
+                f"({len(args.scene_sizes)}) and --conditions "
+                f"({len(args.conditions)}) must all be the same length."
+            )
+            sys.exit(1)
     else:
         logging.error("Provide --jsonl <path> [<path> ...] or --smoke")
         sys.exit(1)
@@ -241,20 +286,28 @@ def main():
         sys.exit(1)
 
     # ── Collect dataset scenes ────────────────────────────────────────────────
+    # dataset_list entries are (stem, scenes, meta_dict). meta_dict is the
+    # per-dataset tag attached to every EvalRecord this run produces.
     if args.smoke:
-        dataset_list = [("smoke", smoke_scenes)]
+        dataset_list = [("smoke", smoke_scenes,
+                         {"scene_size": 4, "condition": "smoke"})]
     else:
         dataset_list = []
-        for path in jsonl_paths:
+        for path, size, condition in zip(jsonl_paths, args.scene_sizes, args.conditions):
             scenes = load_jsonl(path)
-            logging.info(f"Loaded {len(scenes)} scenes from {path}")
+            logging.info(
+                f"Loaded {len(scenes)} scenes from {path} "
+                f"(scene_size={size}, condition={condition})"
+            )
             if args.split:
                 _, _, scenes = split_dataset(scenes)
                 logging.info(f"Using test split: {len(scenes)} scenes")
             stem = Path(path).stem
-            dataset_list.append((stem, scenes))
+            dataset_list.append(
+                (stem, scenes, {"scene_size": size, "condition": condition})
+            )
 
-    total_scenes = sum(len(s) for _, s in dataset_list)
+    total_scenes = sum(len(s) for _, s, _ in dataset_list)
 
     # ── Cost / dry-run estimate ───────────────────────────────────────────────
     n_vllm_spk = sum(1 for s in speakers if "vllm" in s.name)
@@ -267,14 +320,21 @@ def main():
         print(f"Speakers  : {[s.name for s in speakers]}")
         print(f"Listeners : {[l.name for l in listeners]}")
         print(f"Costs     : {args.costs}")
-        print(f"Datasets  : {[stem for stem, _ in dataset_list]}")
+        print(f"Datasets  : {[stem for stem, _, _ in dataset_list]}")
         print(f"Scenes    : {total_scenes} total ({len(dataset_list)} datasets)")
         return
 
-    # ── Run grid over each dataset ────────────────────────────────────────────
+    # ── Run grid over each dataset, streaming into one JSONL ──────────────────
+    out_dir      = Path(args.out)
+    records_path = out_dir / DEFAULT_RECORDS_FILE
+    reset_records_file(records_path)   # fresh run → overwrite
+
     all_records = []
-    for stem, scenes in dataset_list:
-        logging.info(f"Running grid on dataset '{stem}' ({len(scenes)} scenes)")
+    for stem, scenes, meta in dataset_list:
+        logging.info(
+            f"Running grid on dataset '{stem}' "
+            f"({len(scenes)} scenes, meta={meta})"
+        )
         records = run_grid(
             scenes=scenes,
             speakers=speakers,
@@ -282,26 +342,37 @@ def main():
             cost_values=args.costs,
             n_workers=args.workers,
             verbose=True,
+            meta=meta,
         )
         logging.info(f"  → {len(records)} records for '{stem}'")
+        append_records(records, records_path)
         all_records.extend(records)
-        save_results(records, out_dir=args.out, prefix=stem)
 
     logging.info(f"All datasets done — {len(all_records)} records total")
 
+    summary_path = write_summary(all_records, out_dir=out_dir)
+    logging.info(f"Wrote {records_path} and {summary_path}")
+
     # ── Print combined summary ────────────────────────────────────────────────
-    summary = summarize(all_records)
-    print(f"\n{'─'*88}")
-    print(f"{'Speaker':<32} {'Listener':<28} {'cost':>5}  {'CPA':>6}  {'Acc':>6}  {'Ask%':>6}  n")
-    print(f"{'─'*88}")
+    summary = compute_summary(all_records)
+    print(f"\n{'─'*108}")
+    print(f"{'Speaker':<28} {'Listener':<22} {'size':>4} {'cond':>5} "
+          f"{'cost':>5}  {'CPA':>6}  {'Acc':>6}  {'Ask%':>6}  {'HiConf%':>7}  n")
+    print(f"{'─'*108}")
     for row in summary:
         print(
-            f"{row.get('speaker_type',''):<32} {row.get('listener_type',''):<28} "
-            f"{row.get('cost_c', 0):>5.2f}  {row.get('cpa', 0):>6.3f}  "
-            f"{row.get('accuracy', 0):>6.3f}  {row.get('clarification_rate', 0):>6.1%}  "
+            f"{str(row.get('speaker_type','')):<28} "
+            f"{str(row.get('listener_type','')):<22} "
+            f"{str(row.get('scene_size','')):>4} "
+            f"{str(row.get('condition','')):>5} "
+            f"{row.get('cost_c', 0):>5.2f}  "
+            f"{row.get('cpa', 0):>6.3f}  "
+            f"{row.get('accuracy', 0):>6.3f}  "
+            f"{row.get('clarification_rate', 0):>6.1%}  "
+            f"{row.get('pct_high_conf', 0):>7.1%}  "
             f"{row.get('n', 0)}"
         )
-    print(f"{'─'*88}\n")
+    print(f"{'─'*108}\n")
 
 
 if __name__ == "__main__":

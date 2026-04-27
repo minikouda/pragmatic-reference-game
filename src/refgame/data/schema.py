@@ -38,6 +38,29 @@ FEATURE_VOCAB: dict[str, tuple[str, ...]] = {
 FEATURE_KEYS = tuple(FEATURE_VOCAB.keys())
 
 
+# ── Spatial grid mapping (used by reporting for region/Manhattan analysis) ──
+# Maps the categorical location labels above onto a 3x3 grid. Visual
+# convention: TL = visual top-left, BR = visual bottom-right.
+
+LOCATION_TO_GRID: dict[str, str] = {
+    "top-left":     "TL", "top":    "TC", "top-right":    "TR",
+    "left":         "ML", "center": "MC", "right":        "MR",
+    "bottom-left":  "BL", "bottom": "BC", "bottom-right": "BR",
+}
+
+GRID_TO_COORDS: dict[str, tuple[int, int]] = {
+    "TL": (0, 0), "TC": (1, 0), "TR": (2, 0),
+    "ML": (0, 1), "MC": (1, 1), "MR": (2, 1),
+    "BL": (0, 2), "BC": (1, 2), "BR": (2, 2),
+}
+
+GRID_TO_REGION: dict[str, str] = {
+    "TL": "corner", "TR": "corner", "BL": "corner", "BR": "corner",
+    "TC": "edge",   "BC": "edge",   "ML": "edge",   "MR": "edge",
+    "MC": "center",
+}
+
+
 def loc_label(x: float, y: float, canvas: int = 100) -> str:
     """Map pixel (x, y) on a [0, canvas]² grid to a coarse spatial label."""
     xn, yn = x / canvas, y / canvas
@@ -262,3 +285,18 @@ class EvalRecord:
     ambiguity_tier:  str | None
     pred_x:          float | None = None   # predicted x in bottom-left origin
     pred_y:          float | None = None   # predicted y in bottom-left origin
+
+    # Configuration tags (set by the runner via run_grid(meta=...))
+    scene_size:      int | None = None     # n_objects in the source dataset
+    condition:       str | None = None     # e.g. "none" | "force" overlap
+
+    # Spatial annotation for the target and the listener's argmax pick
+    target_x:            int | None = None
+    target_y:            int | None = None
+    target_grid:         str | None = None   # "TL".."BR" on a 3x3 grid
+    target_region:       str | None = None   # "corner" | "edge" | "center"
+    predicted_grid:      str | None = None
+    manhattan_error:     int | None = None   # 3x3 grid Manhattan distance
+
+    # Speaker verbosity
+    utterance_word_count: int | None = None
