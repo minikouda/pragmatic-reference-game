@@ -1,0 +1,13 @@
+{
+  "n": 25,
+  "hallucination_rate": 0.0,
+  "per_feature_hallucination_rate": {
+    "color": 0.0,
+    "shape": 0.0,
+    "size": 0.0,
+    "location": 0.0
+  },
+  "top_hallucinated_tokens": [],
+  "mean_tokens_per_utterance": 2.2,
+  "mean_hallucinated_per_utterance": 0.0
+}

@@ -1,0 +1,200 @@
+[
+  {
+    "speaker_type": "literal",
+    "listener_type": "literal",
+    "cost_c": 0.1,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.0,
+    "mean_brier": 0.0,
+    "n": 30
+  },
+  {
+    "speaker_type": "literal",
+    "listener_type": "literal",
+    "cost_c": 0.5,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.0,
+    "mean_brier": 0.0,
+    "n": 30
+  },
+  {
+    "speaker_type": "literal",
+    "listener_type": "literal",
+    "cost_c": 0.25,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.0,
+    "mean_brier": 0.0,
+    "n": 30
+  },
+  {
+    "speaker_type": "literal",
+    "listener_type": "vllm-listener(llama-4-maverick)",
+    "cost_c": 0.25,
+    "cpa": 0.1833,
+    "accuracy": 0.2,
+    "clarification_rate": 0.0667,
+    "mean_entropy": 0.1113,
+    "mean_brier": 0.3813,
+    "n": 30
+  },
+  {
+    "speaker_type": "literal",
+    "listener_type": "vllm-listener(llama-4-maverick)",
+    "cost_c": 0.5,
+    "cpa": 0.1833,
+    "accuracy": 0.2,
+    "clarification_rate": 0.0333,
+    "mean_entropy": 0.0868,
+    "mean_brier": 0.3845,
+    "n": 30
+  },
+  {
+    "speaker_type": "vllm-pragmatic(llama-4-maverick)",
+    "listener_type": "vllm-listener(llama-4-maverick)",
+    "cost_c": 0.25,
+    "cpa": 0.1667,
+    "accuracy": 0.2667,
+    "clarification_rate": 0.1333,
+    "mean_entropy": 0.2066,
+    "mean_brier": 0.3578,
+    "n": 30
+  },
+  {
+    "speaker_type": "vllm-naive(llama-4-maverick)",
+    "listener_type": "literal",
+    "cost_c": 0.1,
+    "cpa": 0.16,
+    "accuracy": 0.4333,
+    "clarification_rate": 0.4,
+    "mean_entropy": 0.4525,
+    "mean_brier": 0.266,
+    "n": 30
+  },
+  {
+    "speaker_type": "vllm-naive(llama-4-maverick)",
+    "listener_type": "literal",
+    "cost_c": 0.5,
+    "cpa": 0.15,
+    "accuracy": 0.4333,
+    "clarification_rate": 0.3,
+    "mean_entropy": 0.4756,
+    "mean_brier": 0.2681,
+    "n": 30
+  },
+  {
+    "speaker_type": "vllm-pragmatic(llama-4-maverick)",
+    "listener_type": "vllm-listener(llama-4-maverick)",
+    "cost_c": 0.5,
+    "cpa": 0.15,
+    "accuracy": 0.3,
+    "clarification_rate": 0.1667,
+    "mean_entropy": 0.2721,
+    "mean_brier": 0.3318,
+    "n": 30
+  },
+  {
+    "speaker_type": "vllm-pragmatic(llama-4-maverick)",
+    "listener_type": "vllm-listener(llama-4-maverick)",
+    "cost_c": 0.1,
+    "cpa": 0.1467,
+    "accuracy": 0.2667,
+    "clarification_rate": 0.2,
+    "mean_entropy": 0.2815,
+    "mean_brier": 0.354,
+    "n": 30
+  },
+  {
+    "speaker_type": "literal",
+    "listener_type": "vllm-listener(llama-4-maverick)",
+    "cost_c": 0.1,
+    "cpa": 0.1167,
+    "accuracy": 0.1667,
+    "clarification_rate": 0.1667,
+    "mean_entropy": 0.1344,
+    "mean_brier": 0.3945,
+    "n": 30
+  },
+  {
+    "speaker_type": "vllm-naive(llama-4-maverick)",
+    "listener_type": "literal",
+    "cost_c": 0.25,
+    "cpa": 0.1,
+    "accuracy": 0.4333,
+    "clarification_rate": 0.4,
+    "mean_entropy": 0.4525,
+    "mean_brier": 0.266,
+    "n": 30
+  },
+  {
+    "speaker_type": "vllm-naive(llama-4-maverick)",
+    "listener_type": "vllm-listener(llama-4-maverick)",
+    "cost_c": 0.5,
+    "cpa": 0.1,
+    "accuracy": 0.3333,
+    "clarification_rate": 0.2667,
+    "mean_entropy": 0.4203,
+    "mean_brier": 0.2969,
+    "n": 30
+  },
+  {
+    "speaker_type": "vllm-naive(llama-4-maverick)",
+    "listener_type": "vllm-listener(llama-4-maverick)",
+    "cost_c": 0.1,
+    "cpa": 0.0967,
+    "accuracy": 0.3,
+    "clarification_rate": 0.3667,
+    "mean_entropy": 0.3742,
+    "mean_brier": 0.3093,
+    "n": 30
+  },
+  {
+    "speaker_type": "vllm-naive(llama-4-maverick)",
+    "listener_type": "vllm-listener(llama-4-maverick)",
+    "cost_c": 0.25,
+    "cpa": 0.0917,
+    "accuracy": 0.3,
+    "clarification_rate": 0.3,
+    "mean_entropy": 0.4536,
+    "mean_brier": 0.3196,
+    "n": 30
+  },
+  {
+    "speaker_type": "vllm-pragmatic(llama-4-maverick)",
+    "listener_type": "literal",
+    "cost_c": 0.1,
+    "cpa": 0.07,
+    "accuracy": 0.4333,
+    "clarification_rate": 0.6333,
+    "mean_entropy": 0.8087,
+    "mean_brier": 0.2375,
+    "n": 30
+  },
+  {
+    "speaker_type": "vllm-pragmatic(llama-4-maverick)",
+    "listener_type": "literal",
+    "cost_c": 0.5,
+    "cpa": -0.05,
+    "accuracy": 0.3667,
+    "clarification_rate": 0.4333,
+    "mean_entropy": 0.7163,
+    "mean_brier": 0.2771,
+    "n": 30
+  },
+  {
+    "speaker_type": "vllm-pragmatic(llama-4-maverick)",
+    "listener_type": "literal",
+    "cost_c": 0.25,
+    "cpa": -0.0833,
+    "accuracy": 0.3333,
+    "clarification_rate": 0.6,
+    "mean_entropy": 0.7625,
+    "mean_brier": 0.2812,
+    "n": 30
+  }
+]
