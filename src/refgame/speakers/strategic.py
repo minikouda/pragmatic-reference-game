@@ -61,6 +61,39 @@ from .base import BaseSpeaker
 
 _PROMPTS: dict[str, str] = {
 
+    "scene_first": """\
+You are a speaker in a visual reference game.
+
+The TARGET object is marked with a MAGENTA bounding box in the image.
+
+Think step by step:
+1. INVENTORY — list every object you see in the image (color, shape, approximate size).
+2. IDENTIFY — which one has the magenta box? Confirm its properties.
+3. DISCRIMINATE — what single property or combination makes it uniquely identifiable
+   compared to every other object you listed?
+4. EXPRESSION — write the shortest natural phrase using only that property.
+
+Output format (follow exactly):
+INVENTORY: <comma-separated list of objects>
+TARGET: <properties of the marked object>
+DISCRIMINATING: <what makes it unique>
+EXPRESSION: <the referring expression>""",
+
+    "listener_aware": """\
+You are a speaker in a visual reference game.
+
+The TARGET object is marked with a MAGENTA bounding box in the image.
+
+Your listener will see the SAME image, read your description, and assign a
+probability to each object being the one you mean.  Your goal is to write
+a description that gives the listener maximum confidence in the correct object.
+
+Think: what description would make every OTHER object clearly wrong, and this
+object clearly right?  Prefer descriptions using visually obvious properties
+(color, shape, relative position) over subtle ones.
+
+Output ONLY the referring expression (short, under 12 words). No other text.""",
+
     "natural": """\
 You are a speaker in a visual reference game.
 

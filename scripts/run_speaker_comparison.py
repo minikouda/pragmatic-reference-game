@@ -61,7 +61,7 @@ from src.refgame.speakers.contrastive import ContrastiveSpeaker
 from src.refgame.speakers.feature_canonical import FeatureCanonicalSpeaker
 from src.refgame.listeners.vllm import VLLMListener
 from src.refgame.listeners.feature_match import FeatureMatchListener
-from src.refgame.listeners.direct_rank import DirectRankListener
+from src.refgame.listeners.direct_rank import DirectRankListener, CoTRankListener, EliminationListener
 from src.refgame.eval.harness import run_grid
 from src.refgame.eval.reporter import save_results, summarize
 from src.refgame.utils.llm_client import openrouter
@@ -87,7 +87,7 @@ def main():
     p.add_argument("--no_rule",  action="store_true", help="Skip rule-based speakers")
     p.add_argument("--listeners", type=str, nargs="+",
                    default=["vllm"],
-                   choices=["vllm", "feature_match", "direct_rank"],
+                   choices=["vllm", "feature_match", "direct_rank", "cot_rank", "elimination"],
                    help="Which listener variants to include")
     args = p.parse_args()
 
@@ -126,6 +126,10 @@ def main():
         listeners.append(FeatureMatchListener(client=client))
     if "direct_rank" in args.listeners:
         listeners.append(DirectRankListener(client=client))
+    if "cot_rank" in args.listeners:
+        listeners.append(CoTRankListener(client=client))
+    if "elimination" in args.listeners:
+        listeners.append(EliminationListener(client=client))
 
     n_vllm_spk   = len(vllm_speakers)
     n_rule_spk   = len(rule_speakers)
