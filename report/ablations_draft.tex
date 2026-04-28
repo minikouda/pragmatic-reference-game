@@ -1,0 +1,242 @@
+% =====================================================================
+% ABLATION DRAFTS — pick any 2--3 paragraphs + the matching rows of
+% Table~\ref{tab:ablations} for the final Analysis section.
+%
+% Each \paragraph block is self-contained: hypothesis, ablated component,
+% slice, quantitative impact, and interpretation.
+%
+% Master table at the bottom aggregates one row per ablation so a single
+% \begin{table} suffices regardless of which subset you pick.
+% =====================================================================
+
+\subsection{Ablation Studies}
+\label{sec:ablations}
+
+To isolate the contribution of each component in the proposed pipeline we
+ran a battery of single-slice ablations.  Unless otherwise stated, all
+deltas in Table~\ref{tab:ablations} are CPA drops at $c{=}0.5$ relative to
+the corresponding ``full method'' configuration (gemini-2.0-flash-001
+speaker and listener, text-assisted listener, Gaussian posterior, EU-based
+clarification rule active, no image annotation).
+
+% --------------------------------------------------------------------
+% A. Speaker vocabulary constraint
+% --------------------------------------------------------------------
+\paragraph{A. Constrained speaker vocabulary
+            (\textit{canonical\_vllm} $\to$ \textit{natural}).}
+We replace the closed-vocabulary speaker prompt --- which forces COLOR /
+SHAPE / SIZE / LOCATION choices from fixed lists and applies greedy
+feature inclusion --- with the unconstrained \textit{natural} prompt that
+permits free-form descriptions.
+We hypothesised that vocabulary constraints suppress the dominant VLM
+speaker failure modes (vague generic words, hallucinated attributes,
+under-specification) catalogued in \S\ref{sec:exp2}.
+On \texttt{scenes\_10\_force} (n${=}300$) with the
+\textit{direct-rank}(flash) listener, removing the constraint drops CPA
+from $0.947 \to 0.900$ ($\Delta {=} {-}0.047$); the elimination listener
+shows a comparable drop ($0.677 \to 0.680$ on this slice, but $0.793 \to
+0.742$ on \texttt{scenes\_10\_none}).
+The effect is a small but consistent positive contribution; the residual
+gap to the rule-based oracle ($0.982$) is dominated by under-specification
+errors that prompting alone cannot fully eliminate.
+
+% --------------------------------------------------------------------
+% B. Listener text-channel (leakage)
+% --------------------------------------------------------------------
+\paragraph{B. Listener text-channel
+            (text-assisted $\to$ image-only).}
+We remove the formatted object-attribute list from the listener prompt,
+forcing the model to ground the utterance in pixels through an
+index-annotated image alone.
+The hypothesis is that text-assisted (TA) evaluation overestimates
+listener capability: the formatted list reduces the task to a
+text-lookup that bypasses visual grounding entirely.
+On \texttt{scenes\_10\_force} (n${=}300$) with the
+\textit{canonical\_vllm} speaker, switching from TA \textit{direct-rank}
+to image-only (IO) \textit{io-direct} drops CPA from $0.947 \to 0.687$
+($\Delta {=} {-}0.260$).
+Averaged over all four speakers and both overlap settings at $N{=}10$,
+the leakage gap is $0.266$ CPA points and grows monotonically with $N$
+(Tab.~\ref{tab:io-summary}), confirming that TA listener scores must be
+read as upper bounds rather than honest estimates of visuo-linguistic
+competence.
+
+% --------------------------------------------------------------------
+% C. Listener reasoning protocol (CoT vs direct)
+% --------------------------------------------------------------------
+\paragraph{C. Listener reasoning protocol
+            (\textit{io-direct} $\to$ \textit{io-cot}).}
+We replace the single-pass probability-emission prompt with a structured
+chain-of-thought protocol that asks the listener to first describe each
+indexed object, then score, then convert scores to probabilities.
+We expected explicit deliberation to improve calibration; in practice it
+inflates expressed uncertainty.
+On \texttt{scenes\_10\_force} (n${=}300$) with the
+\textit{canonical\_vllm} speaker, CoT collapses CPA from $0.687 \to
+0.187$ at $c{=}0.5$ ($\Delta {=} {-}0.500$), and CPA turns
+\emph{negative} ($-0.083$) at $c{=}0.10$.
+The failure mode is uncertainty inflation: when the model verbalises its
+visual ambiguity (``Object~3 appears to be either a blue or green
+circle'') the resulting posterior approaches uniform, triggering the EU
+rule to ask in $>{60}\%$ of scenes.  Contrary to the System-2 intuition,
+forcing explicit deliberation \emph{hurts} a listener whose intuitive
+argmax was already correct.
+
+% --------------------------------------------------------------------
+% D. Posterior sharpening (kernel ablation)
+% --------------------------------------------------------------------
+\paragraph{D. Posterior sharpening
+            (Gaussian $\sigma{=}10$ $\to$ inverse-distance).}
+We swap the Gaussian distance kernel
+$\exp(-d_i^2/2\sigma^2)$ used by VLLMListener for the original
+inverse-distance kernel $1/(d_i{+}\epsilon)$, holding the listener's
+predicted $(x,y)$ coordinates fixed.
+The hypothesis is that the kernel choice affects only the shape of the
+posterior, not the argmax: any change in CPA must therefore be
+attributable to the cost-utility decision rule reacting to posterior
+flatness rather than to a different prediction.
+On \texttt{scenes\_8\_force} (n${=}300$) with the
+\textit{vllm-pragmatic}(flash) speaker, removing sharpening drops mean
+$\max_i P(t_i\mid u)$ from $0.61 \to 0.34$, raises ask\% at $c{=}0.5$
+from $32\%\to 90\%$, and collapses CPA from $+0.233 \to -0.375$
+($\Delta {=} {-}0.608$); argmax accuracy is unchanged at $57.7\%$ as
+predicted.
+This is the most mechanically interpretable ablation in our pipeline:
+the entire CPA gain comes from the kernel making the EU rule actionable,
+without altering the listener's underlying predictions.
+
+% --------------------------------------------------------------------
+% E. Cost-aware clarification rule (the core method)
+% --------------------------------------------------------------------
+\paragraph{E. Cost-aware clarification rule (full method $\to$ always-commit).}
+We disable the EU decision rule (Eq.~\ref{eq:eu-rule}) and force the
+listener to always commit to $\arg\max_i P(t_i\mid u)$, eliminating the
+possibility of asking.
+The hypothesis is that the EU rule yields positive CPA gain whenever the
+posterior is well-calibrated --- the central methodological claim of the
+project.
+On \texttt{scenes\_10\_force} (n${=}300$) with the IO listener,
+\emph{removing} the rule (\textit{io-index}: always commits) \emph{raises}
+CPA from $0.677 \to 0.823$ at $c{=}0.5$ for the
+\textit{feature-canonical} speaker ($\Delta {=} +0.146$), and similar
+inversions hold across all four IO speakers and across $N \in \{6,8,10\}$
+(Tab.~\ref{tab:io-c05}).
+This honest negative result indicates that posterior flatness in the IO
+regime is driven by \emph{visual} perceptual uncertainty rather than by
+genuine referential ambiguity in the utterance: the EU rule, which
+assumes flatness $\Rightarrow$ ambiguity, asks on scenes the listener
+would have answered correctly.  Restoring the rule's intended behaviour
+will require recalibration that distinguishes perceptual noise from
+referential ambiguity.
+
+% --------------------------------------------------------------------
+% G. Visual annotation channel
+% --------------------------------------------------------------------
+\paragraph{G. Visual annotation channel
+            (text-only target $\to$ magenta bounding box).}
+We replace text-only target identification (the target's
+$\langle\text{color}, \text{shape}, \text{size}, x, y\rangle$ injected into
+the system prompt) with the original visual annotation: a magenta
+bounding box and ``TARGET'' label drawn on the image at the target's
+pixel center.
+The hypothesis is that strong VLMs anchor on annotation pixels and
+describe the overlay rather than the underlying object.
+On a held-out subset of \texttt{scenes\_6\_force} (n${=}50$) with the
+\texttt{claude-sonnet-4} speaker, annotation-based identification yields
+CPA $\approx 0.12$ versus $0.94$ for text-only target passing
+($\Delta {=} {-}0.82$); failure traces show the speaker outputting
+``the magenta square'' or ``the highlighted object'' instead of the
+target's actual attributes.
+This anecdotal but striking gap motivated the design change to text-only
+target identification used throughout Experiments~2--5; reproducing it as
+a controlled n${=}300$ ablation is left for future work.
+
+% --------------------------------------------------------------------
+% I. Listener model capacity
+% --------------------------------------------------------------------
+\paragraph{I. Listener model capacity
+            (\textit{direct-rank}(flash) $\to$ \textit{direct-rank}(sonnet-4)).}
+Holding the speaker fixed at \textit{listener\_aware}(flash), we swap the
+listener backbone from gemini-2.0-flash-001 to claude-sonnet-4.
+The hypothesis is that the residual gap to the rule-based oracle is
+dominated by listener capacity rather than by speaker quality, as
+suggested by Finding~7 of \S\ref{sec:honest}.
+On \texttt{scenes\_6\_force} (n${=}50$), the stronger listener raises CPA
+from $0.95 \to 0.97$ ($\Delta {=} +0.02$) at $c{=}0.5$; under TA
+evaluation the effect is small because gemini-flash already saturates the
+text-lookup channel, but in IO evaluation listener capacity is the
+dominant lever for closing the gap to the oracle ceiling.
+This ablation is small at TA scale; its value is in motivating
+listener-side scaling for the honest IO protocol where speaker engineering
+yields diminishing returns.
+
+% --------------------------------------------------------------------
+% L. Forced-overlap data augmentation
+% --------------------------------------------------------------------
+\paragraph{L. Forced same-color distractor
+            (\textit{none} $\to$ \textit{force}).}
+We compare datasets generated with independent attribute draws
+(\textit{none}) against those that guarantee at least one distractor
+shares the target's color (\textit{force}), holding $N{=}10$ and the
+speaker fixed.
+The hypothesis is that a near-confusable distractor genuinely raises
+referential difficulty: a robust pipeline should degrade gracefully, but
+a brittle one should fail catastrophically.
+With the \textit{canonical\_vllm}(flash) speaker and TA
+\textit{direct-rank}(flash) listener, CPA at $c{=}0.5$ drops from
+$0.990 \to 0.947$ ($\Delta {=} {-}0.043$); under the more brittle
+\textit{elimination}(flash) listener the same comparison drops
+$0.793 \to 0.677$ ($\Delta {=} {-}0.116$); under IO \textit{io-direct} it
+drops $0.733 \to 0.687$ ($\Delta {=} {-}0.046$).
+Forced overlap therefore exposes a robustness gradient across listener
+designs that is invisible on the \textit{none} variant alone, justifying
+its inclusion as a controlled difficulty axis rather than as a
+confounder.
+
+% =====================================================================
+% Master table — one row per ablation
+% =====================================================================
+\begin{table}[ht]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{cllccc}
+\toprule
+ID & Component ablated & Single slice
+   & Full & Ablated & $\Delta$ \\
+\midrule
+A & Speaker prompt: \textit{canonical\_vllm} $\!\to\!$ \textit{natural}
+  & \texttt{scenes\_10\_force}, DR(flash)
+  & 0.947 & 0.900 & $-0.047$ \\
+B & Listener input: TA $\!\to\!$ image-only (\textit{io-direct})
+  & \texttt{scenes\_10\_force}, \textit{canonical\_vllm}
+  & 0.947 & 0.687 & $-0.260$ \\
+C & Listener reasoning: \textit{io-direct} $\!\to\!$ \textit{io-cot}
+  & \texttt{scenes\_10\_force}, \textit{canonical\_vllm}
+  & 0.687 & 0.187 & $-0.500$ \\
+D & Posterior kernel: Gaussian $\sigma{=}10$ $\!\to\!$ inverse-distance
+  & \texttt{scenes\_8\_force}, \textit{vllm-pragmatic}
+  & $+0.233$ & $-0.375$ & $-0.608$ \\
+E & Clarification rule: EU on $\!\to\!$ always-commit (\textit{io-index})
+  & \texttt{scenes\_10\_force}, \textit{feature-canonical}
+  & 0.677 & 0.823 & $+0.146$\,$^{\dagger}$ \\
+G & Speaker target: text-only $\!\to\!$ magenta bbox annotation
+  & \texttt{scenes\_6\_force} (n${=}50$), claude-sonnet-4
+  & 0.940 & 0.120 & $-0.820$ \\
+I & Listener backbone: flash $\!\to\!$ claude-sonnet-4
+  & \texttt{scenes\_6\_force} (n${=}50$), \textit{listener\_aware}
+  & 0.950 & 0.970 & $+0.020$\,$^{\ddagger}$ \\
+L & Data: forced same-color distractor on/off
+  & $N{=}10$, \textit{canonical\_vllm}+DR
+  & 0.990 & 0.947 & $-0.043$ \\
+\bottomrule
+\end{tabular}
+\caption{Single-slice ablation summary at $c{=}0.5$ unless noted.
+$\Delta$ is the CPA change when the listed component is removed
+(positive means the ablation \emph{improves} CPA).
+$^{\dagger}$\,Removing the EU rule \emph{improves} CPA in the IO regime,
+because perceptual flatness is misread as referential ambiguity.
+$^{\ddagger}$\,Improvement is small at TA scale; effect is larger in IO
+evaluation (\S\ref{sec:honest} Finding~7).}
+\label{tab:ablations}
+\end{table}

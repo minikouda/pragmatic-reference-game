@@ -1,0 +1,3137 @@
+[
+  {
+    "speaker_type": "strategic-natural(gemini-2.0-flash-001)",
+    "listener_type": "feature-match(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.231,
+    "mean_brier": 0.0006,
+    "eu_commit_mean": 0.956,
+    "eu_commit_median": 0.9578,
+    "eu_commit_std": 0.0319,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 4.33,
+    "utt_word_count_median": 3,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-natural(gemini-2.0-flash-001)",
+    "listener_type": "direct-rank(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.0,
+    "mean_brier": 0.0,
+    "eu_commit_mean": 1.0,
+    "eu_commit_median": 1.0,
+    "eu_commit_std": 0.0,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 4.33,
+    "utt_word_count_median": 3,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-natural(gemini-2.0-flash-001)",
+    "listener_type": "cot-rank(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.0,
+    "mean_brier": 0.0,
+    "eu_commit_mean": 1.0,
+    "eu_commit_median": 1.0,
+    "eu_commit_std": 0.0,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 4.33,
+    "utt_word_count_median": 3,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-natural(gemini-2.0-flash-001)",
+    "listener_type": "elimination(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.0,
+    "mean_brier": 0.0,
+    "eu_commit_mean": 1.0,
+    "eu_commit_median": 1.0,
+    "eu_commit_std": 0.0,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 4.33,
+    "utt_word_count_median": 3,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-contrastive(gemini-2.0-flash-001)",
+    "listener_type": "feature-match(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.0815,
+    "mean_brier": 0.0001,
+    "eu_commit_mean": 0.9869,
+    "eu_commit_median": 0.992,
+    "eu_commit_std": 0.0087,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 7.33,
+    "utt_word_count_median": 6,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-contrastive(gemini-2.0-flash-001)",
+    "listener_type": "direct-rank(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.0,
+    "mean_brier": 0.0,
+    "eu_commit_mean": 1.0,
+    "eu_commit_median": 1.0,
+    "eu_commit_std": 0.0,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 7.33,
+    "utt_word_count_median": 6,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-contrastive(gemini-2.0-flash-001)",
+    "listener_type": "cot-rank(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.2256,
+    "mean_brier": 0.0187,
+    "eu_commit_mean": 0.8633,
+    "eu_commit_median": 1.0,
+    "eu_commit_std": 0.1933,
+    "pct_high_conf": 0.6667,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.3333,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 7.33,
+    "utt_word_count_median": 6,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-contrastive(gemini-2.0-flash-001)",
+    "listener_type": "elimination(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.0,
+    "mean_brier": 0.0,
+    "eu_commit_mean": 1.0,
+    "eu_commit_median": 1.0,
+    "eu_commit_std": 0.0,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 7.33,
+    "utt_word_count_median": 6,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-landmark(gemini-2.0-flash-001)",
+    "listener_type": "feature-match(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.2357,
+    "mean_brier": 0.0006,
+    "eu_commit_mean": 0.9553,
+    "eu_commit_median": 0.9578,
+    "eu_commit_std": 0.031,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 8.0,
+    "utt_word_count_median": 7,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-landmark(gemini-2.0-flash-001)",
+    "listener_type": "cot-rank(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.8061,
+    "mean_brier": 0.0699,
+    "eu_commit_mean": 0.5208,
+    "eu_commit_median": 0.5,
+    "eu_commit_std": 0.0295,
+    "pct_high_conf": 0.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 1.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 8.0,
+    "utt_word_count_median": 7,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-superlative(gemini-2.0-flash-001)",
+    "listener_type": "feature-match(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.1091,
+    "mean_brier": 0.0001,
+    "eu_commit_mean": 0.9813,
+    "eu_commit_median": 0.992,
+    "eu_commit_std": 0.0166,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 3.67,
+    "utt_word_count_median": 4,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-superlative(gemini-2.0-flash-001)",
+    "listener_type": "direct-rank(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.1084,
+    "mean_brier": 0.0011,
+    "eu_commit_mean": 0.9667,
+    "eu_commit_median": 1.0,
+    "eu_commit_std": 0.0471,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 3.67,
+    "utt_word_count_median": 4,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-superlative(gemini-2.0-flash-001)",
+    "listener_type": "cot-rank(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.0,
+    "mean_brier": 0.0,
+    "eu_commit_mean": 1.0,
+    "eu_commit_median": 1.0,
+    "eu_commit_std": 0.0,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 3.67,
+    "utt_word_count_median": 4,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-superlative(gemini-2.0-flash-001)",
+    "listener_type": "elimination(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.0,
+    "mean_brier": 0.0,
+    "eu_commit_mean": 1.0,
+    "eu_commit_median": 1.0,
+    "eu_commit_std": 0.0,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 3.67,
+    "utt_word_count_median": 4,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-pragmatic(gemini-2.0-flash-001)",
+    "listener_type": "feature-match(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.1091,
+    "mean_brier": 0.0001,
+    "eu_commit_mean": 0.9813,
+    "eu_commit_median": 0.992,
+    "eu_commit_std": 0.0166,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 2.0,
+    "utt_word_count_median": 2,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-pragmatic(gemini-2.0-flash-001)",
+    "listener_type": "direct-rank(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.0,
+    "mean_brier": 0.0,
+    "eu_commit_mean": 1.0,
+    "eu_commit_median": 1.0,
+    "eu_commit_std": 0.0,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 2.0,
+    "utt_word_count_median": 2,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-scene_first(gemini-2.0-flash-001)",
+    "listener_type": "feature-match(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.17,
+    "mean_brier": 0.0003,
+    "eu_commit_mean": 0.9692,
+    "eu_commit_median": 0.9578,
+    "eu_commit_std": 0.0161,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 4.33,
+    "utt_word_count_median": 3,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-scene_first(gemini-2.0-flash-001)",
+    "listener_type": "direct-rank(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.1084,
+    "mean_brier": 0.0011,
+    "eu_commit_mean": 0.9667,
+    "eu_commit_median": 1.0,
+    "eu_commit_std": 0.0471,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 4.33,
+    "utt_word_count_median": 3,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-scene_first(gemini-2.0-flash-001)",
+    "listener_type": "cot-rank(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.2639,
+    "mean_brier": 0.0067,
+    "eu_commit_mean": 0.9057,
+    "eu_commit_median": 1.0,
+    "eu_commit_std": 0.1333,
+    "pct_high_conf": 0.6667,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.3333,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 4.33,
+    "utt_word_count_median": 3,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-scene_first(gemini-2.0-flash-001)",
+    "listener_type": "elimination(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.0,
+    "mean_brier": 0.0,
+    "eu_commit_mean": 1.0,
+    "eu_commit_median": 1.0,
+    "eu_commit_std": 0.0,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 4.33,
+    "utt_word_count_median": 3,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-listener_aware(gemini-2.0-flash-001)",
+    "listener_type": "feature-match(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.1316,
+    "mean_brier": 0.0002,
+    "eu_commit_mean": 0.9765,
+    "eu_commit_median": 0.992,
+    "eu_commit_std": 0.0234,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 6.67,
+    "utt_word_count_median": 8,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-listener_aware(gemini-2.0-flash-001)",
+    "listener_type": "direct-rank(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.0,
+    "mean_brier": 0.0,
+    "eu_commit_mean": 1.0,
+    "eu_commit_median": 1.0,
+    "eu_commit_std": 0.0,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 6.67,
+    "utt_word_count_median": 8,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-listener_aware(gemini-2.0-flash-001)",
+    "listener_type": "cot-rank(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.0,
+    "mean_brier": 0.0,
+    "eu_commit_mean": 1.0,
+    "eu_commit_median": 1.0,
+    "eu_commit_std": 0.0,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 6.67,
+    "utt_word_count_median": 8,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-listener_aware(gemini-2.0-flash-001)",
+    "listener_type": "elimination(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.0,
+    "mean_brier": 0.0,
+    "eu_commit_mean": 1.0,
+    "eu_commit_median": 1.0,
+    "eu_commit_std": 0.0,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 6.67,
+    "utt_word_count_median": 8,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "ordinal",
+    "listener_type": "feature-match(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.0815,
+    "mean_brier": 0.0001,
+    "eu_commit_mean": 0.9869,
+    "eu_commit_median": 0.992,
+    "eu_commit_std": 0.0087,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 3.0,
+    "utt_word_count_median": 3,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "ordinal",
+    "listener_type": "direct-rank(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.0662,
+    "mean_brier": 0.0003,
+    "eu_commit_mean": 0.9833,
+    "eu_commit_median": 1.0,
+    "eu_commit_std": 0.0236,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 3.0,
+    "utt_word_count_median": 3,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "ordinal",
+    "listener_type": "cot-rank(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.0,
+    "mean_brier": 0.0,
+    "eu_commit_mean": 1.0,
+    "eu_commit_median": 1.0,
+    "eu_commit_std": 0.0,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 3.0,
+    "utt_word_count_median": 3,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "ordinal",
+    "listener_type": "elimination(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.0,
+    "mean_brier": 0.0,
+    "eu_commit_mean": 1.0,
+    "eu_commit_median": 1.0,
+    "eu_commit_std": 0.0,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 3.0,
+    "utt_word_count_median": 3,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "landmark",
+    "listener_type": "feature-match(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.431,
+    "mean_brier": 0.0048,
+    "eu_commit_mean": 0.8908,
+    "eu_commit_median": 0.9435,
+    "eu_commit_std": 0.0973,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 10.33,
+    "utt_word_count_median": 12,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "landmark",
+    "listener_type": "direct-rank(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.1084,
+    "mean_brier": 0.0011,
+    "eu_commit_mean": 0.9667,
+    "eu_commit_median": 1.0,
+    "eu_commit_std": 0.0471,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 10.33,
+    "utt_word_count_median": 12,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "landmark",
+    "listener_type": "elimination(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.0449,
+    "mean_brier": 0.0001,
+    "eu_commit_mean": 0.99,
+    "eu_commit_median": 1.0,
+    "eu_commit_std": 0.0141,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 10.33,
+    "utt_word_count_median": 12,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "contrastive",
+    "listener_type": "feature-match(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.1091,
+    "mean_brier": 0.0001,
+    "eu_commit_mean": 0.9813,
+    "eu_commit_median": 0.992,
+    "eu_commit_std": 0.0166,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 3.67,
+    "utt_word_count_median": 4,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "contrastive",
+    "listener_type": "direct-rank(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.1084,
+    "mean_brier": 0.0011,
+    "eu_commit_mean": 0.9667,
+    "eu_commit_median": 1.0,
+    "eu_commit_std": 0.0471,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 3.67,
+    "utt_word_count_median": 4,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "contrastive",
+    "listener_type": "cot-rank(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.1504,
+    "mean_brier": 0.0031,
+    "eu_commit_mean": 0.9443,
+    "eu_commit_median": 1.0,
+    "eu_commit_std": 0.0787,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 3.67,
+    "utt_word_count_median": 4,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "contrastive",
+    "listener_type": "elimination(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.0,
+    "mean_brier": 0.0,
+    "eu_commit_mean": 1.0,
+    "eu_commit_median": 1.0,
+    "eu_commit_std": 0.0,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 3.67,
+    "utt_word_count_median": 4,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "feature-canonical",
+    "listener_type": "feature-match(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.17,
+    "mean_brier": 0.0003,
+    "eu_commit_mean": 0.9692,
+    "eu_commit_median": 0.9578,
+    "eu_commit_std": 0.0161,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 2.0,
+    "utt_word_count_median": 2,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "feature-canonical",
+    "listener_type": "direct-rank(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.0187,
+    "mean_brier": 0.0,
+    "eu_commit_mean": 0.9967,
+    "eu_commit_median": 1.0,
+    "eu_commit_std": 0.0047,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 2.0,
+    "utt_word_count_median": 2,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "feature-canonical",
+    "listener_type": "cot-rank(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.0,
+    "mean_brier": 0.0,
+    "eu_commit_mean": 1.0,
+    "eu_commit_median": 1.0,
+    "eu_commit_std": 0.0,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 2.0,
+    "utt_word_count_median": 2,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "feature-canonical",
+    "listener_type": "elimination(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 1.0,
+    "accuracy": 1.0,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.0,
+    "mean_brier": 0.0,
+    "eu_commit_mean": 1.0,
+    "eu_commit_median": 1.0,
+    "eu_commit_std": 0.0,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 2.0,
+    "utt_word_count_median": 2,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-landmark(gemini-2.0-flash-001)",
+    "listener_type": "direct-rank(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 0.6667,
+    "accuracy": 0.6667,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.0,
+    "mean_brier": 0.1111,
+    "eu_commit_mean": 1.0,
+    "eu_commit_median": 1.0,
+    "eu_commit_std": 0.0,
+    "pct_high_conf": 1.0,
+    "premature_commit_rate": 0.3333,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": 1.0,
+    "n_wrong_with_dist": 1,
+    "utt_word_count_mean": 8.0,
+    "utt_word_count_median": 7,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 0.6667,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 0.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-natural(gemini-2.0-flash-001)",
+    "listener_type": "vllm-listener(gemini-2.0-flash-001,\u03c3=10.0)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 0.5,
+    "accuracy": 1.0,
+    "clarification_rate": 0.3333,
+    "mean_entropy": 0.883,
+    "mean_brier": 0.0329,
+    "eu_commit_mean": 0.6693,
+    "eu_commit_median": 0.6898,
+    "eu_commit_std": 0.1698,
+    "pct_high_conf": 0.3333,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.6667,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 4.33,
+    "utt_word_count_median": 3,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.3333
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 1.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-contrastive(gemini-2.0-flash-001)",
+    "listener_type": "vllm-listener(gemini-2.0-flash-001,\u03c3=10.0)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 0.5,
+    "accuracy": 1.0,
+    "clarification_rate": 0.3333,
+    "mean_entropy": 0.8584,
+    "mean_brier": 0.0296,
+    "eu_commit_mean": 0.6954,
+    "eu_commit_median": 0.8078,
+    "eu_commit_std": 0.2017,
+    "pct_high_conf": 0.6667,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.3333,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 7.33,
+    "utt_word_count_median": 6,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.3333
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 1.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-landmark(gemini-2.0-flash-001)",
+    "listener_type": "vllm-listener(gemini-2.0-flash-001,\u03c3=10.0)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 0.5,
+    "accuracy": 1.0,
+    "clarification_rate": 0.3333,
+    "mean_entropy": 0.9103,
+    "mean_brier": 0.0404,
+    "eu_commit_mean": 0.6406,
+    "eu_commit_median": 0.6898,
+    "eu_commit_std": 0.2073,
+    "pct_high_conf": 0.3333,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.6667,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 8.0,
+    "utt_word_count_median": 7,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.3333
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 1.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-superlative(gemini-2.0-flash-001)",
+    "listener_type": "vllm-listener(gemini-2.0-flash-001,\u03c3=10.0)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 0.5,
+    "accuracy": 1.0,
+    "clarification_rate": 0.3333,
+    "mean_entropy": 0.8554,
+    "mean_brier": 0.0352,
+    "eu_commit_mean": 0.6726,
+    "eu_commit_median": 0.6898,
+    "eu_commit_std": 0.2115,
+    "pct_high_conf": 0.3333,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.6667,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 3.67,
+    "utt_word_count_median": 4,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.3333
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 1.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-pragmatic(gemini-2.0-flash-001)",
+    "listener_type": "vllm-listener(gemini-2.0-flash-001,\u03c3=10.0)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 0.5,
+    "accuracy": 1.0,
+    "clarification_rate": 0.3333,
+    "mean_entropy": 0.8939,
+    "mean_brier": 0.0355,
+    "eu_commit_mean": 0.6589,
+    "eu_commit_median": 0.6898,
+    "eu_commit_std": 0.1833,
+    "pct_high_conf": 0.3333,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.6667,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 2.0,
+    "utt_word_count_median": 2,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.3333
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 1.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-pragmatic(gemini-2.0-flash-001)",
+    "listener_type": "cot-rank(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 0.5,
+    "accuracy": 0.6667,
+    "clarification_rate": 0.3333,
+    "mean_entropy": 0.9044,
+    "mean_brier": 0.058,
+    "eu_commit_mean": 0.5972,
+    "eu_commit_median": 0.625,
+    "eu_commit_std": 0.3408,
+    "pct_high_conf": 0.3333,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.3333,
+    "mean_manhattan_error_on_wrong": 2.0,
+    "n_wrong_with_dist": 1,
+    "utt_word_count_mean": 2.0,
+    "utt_word_count_median": 2,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 0.6667,
+        "ask_rate": 0.3333
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 0.5,
+        "ask_rate": 0.5
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-pragmatic(gemini-2.0-flash-001)",
+    "listener_type": "elimination(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 0.5,
+    "accuracy": 0.6667,
+    "clarification_rate": 0.3333,
+    "mean_entropy": 0.5973,
+    "mean_brier": 0.0463,
+    "eu_commit_mean": 0.7222,
+    "eu_commit_median": 1.0,
+    "eu_commit_std": 0.3928,
+    "pct_high_conf": 0.6667,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": 2.0,
+    "n_wrong_with_dist": 1,
+    "utt_word_count_mean": 2.0,
+    "utt_word_count_median": 2,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 0.6667,
+        "ask_rate": 0.3333
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 0.5,
+        "ask_rate": 0.5
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-scene_first(gemini-2.0-flash-001)",
+    "listener_type": "vllm-listener(gemini-2.0-flash-001,\u03c3=10.0)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 0.5,
+    "accuracy": 1.0,
+    "clarification_rate": 0.3333,
+    "mean_entropy": 0.8424,
+    "mean_brier": 0.0281,
+    "eu_commit_mean": 0.7033,
+    "eu_commit_median": 0.8078,
+    "eu_commit_std": 0.1906,
+    "pct_high_conf": 0.6667,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.3333,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 4.33,
+    "utt_word_count_median": 3,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.3333
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 1.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-listener_aware(gemini-2.0-flash-001)",
+    "listener_type": "vllm-listener(gemini-2.0-flash-001,\u03c3=10.0)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 0.5,
+    "accuracy": 1.0,
+    "clarification_rate": 0.3333,
+    "mean_entropy": 0.8339,
+    "mean_brier": 0.0331,
+    "eu_commit_mean": 0.6833,
+    "eu_commit_median": 0.6898,
+    "eu_commit_std": 0.2005,
+    "pct_high_conf": 0.3333,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.6667,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 6.67,
+    "utt_word_count_median": 8,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.3333
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 1.0
+      }
+    }
+  },
+  {
+    "speaker_type": "ordinal",
+    "listener_type": "vllm-listener(gemini-2.0-flash-001,\u03c3=10.0)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 0.5,
+    "accuracy": 1.0,
+    "clarification_rate": 0.3333,
+    "mean_entropy": 0.8949,
+    "mean_brier": 0.0349,
+    "eu_commit_mean": 0.6609,
+    "eu_commit_median": 0.6898,
+    "eu_commit_std": 0.1807,
+    "pct_high_conf": 0.3333,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.6667,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 3.0,
+    "utt_word_count_median": 3,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.3333
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 1.0
+      }
+    }
+  },
+  {
+    "speaker_type": "contrastive",
+    "listener_type": "vllm-listener(gemini-2.0-flash-001,\u03c3=10.0)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 0.5,
+    "accuracy": 1.0,
+    "clarification_rate": 0.3333,
+    "mean_entropy": 0.8899,
+    "mean_brier": 0.0335,
+    "eu_commit_mean": 0.6662,
+    "eu_commit_median": 0.6898,
+    "eu_commit_std": 0.1738,
+    "pct_high_conf": 0.3333,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.6667,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 3.67,
+    "utt_word_count_median": 4,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.3333
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 1.0
+      }
+    }
+  },
+  {
+    "speaker_type": "feature-canonical",
+    "listener_type": "vllm-listener(gemini-2.0-flash-001,\u03c3=10.0)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 0.5,
+    "accuracy": 1.0,
+    "clarification_rate": 0.3333,
+    "mean_entropy": 0.8974,
+    "mean_brier": 0.0356,
+    "eu_commit_mean": 0.6581,
+    "eu_commit_median": 0.6898,
+    "eu_commit_std": 0.1843,
+    "pct_high_conf": 0.3333,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.6667,
+    "mean_manhattan_error_on_wrong": null,
+    "n_wrong_with_dist": 0,
+    "utt_word_count_mean": 2.0,
+    "utt_word_count_median": 2,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 1.0,
+        "ask_rate": 0.3333
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 1.0,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 1.0
+      }
+    }
+  },
+  {
+    "speaker_type": "strategic-landmark(gemini-2.0-flash-001)",
+    "listener_type": "elimination(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 0.3333,
+    "accuracy": 0.3333,
+    "clarification_rate": 0.0,
+    "mean_entropy": 0.4174,
+    "mean_brier": 0.1739,
+    "eu_commit_mean": 0.787,
+    "eu_commit_median": 0.694,
+    "eu_commit_std": 0.151,
+    "pct_high_conf": 0.3333,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": 0.5,
+    "n_wrong_with_dist": 2,
+    "utt_word_count_mean": 8.0,
+    "utt_word_count_median": 7,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 0.3333,
+        "ask_rate": 0.0
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 0.5,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 0.0,
+        "ask_rate": 0.0
+      }
+    }
+  },
+  {
+    "speaker_type": "landmark",
+    "listener_type": "vllm-listener(gemini-2.0-flash-001,\u03c3=10.0)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 0.1667,
+    "accuracy": 0.6667,
+    "clarification_rate": 0.3333,
+    "mean_entropy": 0.9775,
+    "mean_brier": 0.0754,
+    "eu_commit_mean": 0.5966,
+    "eu_commit_median": 0.6361,
+    "eu_commit_std": 0.1185,
+    "pct_high_conf": 0.0,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.6667,
+    "mean_manhattan_error_on_wrong": 1.0,
+    "n_wrong_with_dist": 1,
+    "utt_word_count_mean": 10.33,
+    "utt_word_count_median": 12,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 0.6667,
+        "ask_rate": 0.3333
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 0.5,
+        "ask_rate": 0.0
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 1.0,
+        "ask_rate": 1.0
+      }
+    }
+  },
+  {
+    "speaker_type": "landmark",
+    "listener_type": "cot-rank(gemini-2.0-flash-001)",
+    "cost_c": 0.5,
+    "scene_size": 6,
+    "condition": "force",
+    "n": 3,
+    "cpa": 0.1667,
+    "accuracy": 0.3333,
+    "clarification_rate": 0.3333,
+    "mean_entropy": 0.8283,
+    "mean_brier": 0.0741,
+    "eu_commit_mean": 0.5556,
+    "eu_commit_median": 0.5,
+    "eu_commit_std": 0.3425,
+    "pct_high_conf": 0.3333,
+    "premature_commit_rate": 0.0,
+    "over_caution_rate": 0.0,
+    "mean_manhattan_error_on_wrong": 2.0,
+    "n_wrong_with_dist": 2,
+    "utt_word_count_mean": 10.33,
+    "utt_word_count_median": 12,
+    "by_tier": {
+      "low": {
+        "n": 3,
+        "accuracy": 0.3333,
+        "ask_rate": 0.3333
+      },
+      "medium": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "high": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      }
+    },
+    "by_region": {
+      "corner": {
+        "n": 2,
+        "accuracy": 0.5,
+        "ask_rate": 0.5
+      },
+      "edge": {
+        "n": 0,
+        "accuracy": null,
+        "ask_rate": null
+      },
+      "center": {
+        "n": 1,
+        "accuracy": 0.0,
+        "ask_rate": 0.0
+      }
+    }
+  }
+]

@@ -1,0 +1,74 @@
+% =====================================================================
+% Re-run results on scenes_6_none at c = 0.5
+% Source: results_rerun_c05_safe/scenes_6_none/experiment_summary.json
+% Format follows tab:fullscale (Speaker x Listener CPA grid).
+% =====================================================================
+
+\begin{table}[ht]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lccccc}
+\toprule
+Speaker & DR & EL & CoT & FM & VL \\
+\midrule
+\multicolumn{6}{l}{\textit{Rule-based speakers}} \\
+feature-canonical          & .982 & .905 & .896 & .913 & .930 \\
+contrastive                & .955 & .878 & .898 & .883 & .890 \\
+landmark                   & .868 & .790 & .781 & .803 & .678 \\
+ordinal                    & .745 & .633 & .652 & .702 & .793 \\
+\midrule
+\multicolumn{6}{l}{\textit{VLM speakers (gemini-2.0-flash-001)}} \\
+strategic-natural          & .982 & .913 & .900 & .958 & .950 \\
+strategic-listener\_aware  & .982 & .928 & .967 & \textbf{.987} & .945 \\
+strategic-scene\_first     & .968 & .890 & .952 & .925 & .938 \\
+strategic-pragmatic        & .943 & .838 & .897 & .890 & .910 \\
+strategic-contrastive      & .910 & .878 & .878 & .903 & .917 \\
+strategic-superlative      & .893 & .758 & .833 & .822 & .887 \\
+strategic-landmark         & .850 & .520 & .723 & .662 & .847 \\
+\bottomrule
+\end{tabular}
+\caption{CPA at $c{=}0.5$ for the re-run on \texttt{scenes\_6\_none}
+         ($n{=}300$). Listener shorthands:
+         DR = \textit{direct-rank(gemini-flash)},
+         EL = \textit{elimination(gemini-flash)},
+         CoT = \textit{cot-rank(gemini-flash)},
+         FM = \textit{feature-match(gemini-flash)},
+         VL = \textit{vllm-listener(gemini-flash, $\sigma{=}10$)}.
+         Best overall combination in bold.
+         All entries text-assisted (TA) protocol.}
+\label{tab:rerun_c05_scenes6none}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{llccc}
+\toprule
+Speaker & Listener & Acc & Ask\% & CPA \\
+\midrule
+\multicolumn{5}{l}{\textit{Top-5 (all listeners)}} \\
+strategic-listener\_aware & FM  & 99.3\% & 0.7\%  & \textbf{0.987} \\
+strategic-listener\_aware & DR  & 99.0\% & 1.0\%  & 0.982 \\
+strategic-natural         & DR  & 98.7\% & 0.3\%  & 0.982 \\
+feature-canonical         & DR  & 99.0\% & 1.0\%  & 0.982 \\
+strategic-scene\_first    & DR  & 97.3\% & 1.0\%  & 0.968 \\
+\midrule
+\multicolumn{5}{l}{\textit{Best CoT-listener pairings}} \\
+strategic-listener\_aware & CoT & 98.7\% & 2.0\%  & 0.967 \\
+strategic-scene\_first    & CoT & 97.7\% & 3.0\%  & 0.952 \\
+strategic-natural         & CoT & 96.7\% & 6.0\%  & 0.900 \\
+contrastive               & CoT & 97.0\% & 6.3\%  & 0.898 \\
+strategic-pragmatic       & CoT & 95.3\% & 5.3\%  & 0.897 \\
+\bottomrule
+\end{tabular}
+\caption{Top-5 combinations overall vs.\ top-5 with the
+         \textit{cot-rank} listener on \texttt{scenes\_6\_none},
+         $c{=}0.5$, $n{=}300$.  The best CoT pairing
+         (\textit{listener\_aware}+CoT, CPA $0.967$) trails the best
+         overall combination (\textit{listener\_aware}+FM, CPA $0.987$)
+         by $\Delta{=}0.020$, driven entirely by a 3$\times$ higher ask
+         rate ($2.0\%$ vs.\ $0.7\%$) at near-identical accuracy.}
+\label{tab:rerun_top5_vs_cot}
+\end{table}
