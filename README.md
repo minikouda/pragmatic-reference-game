@@ -173,21 +173,46 @@ The PNG files must remain at that path relative to the working directory when ru
 
 ### Speakers
 
-| Name | Description |
-|------|-------------|
-| `literal` | Rule-based. Emits the shortest feature subset that uniquely identifies the target. No API. |
-| `rsa(α,c)` | RSA S1 speaker. Ranks utterances by `α·log L0(t\|u) − cost·len`, takes argmax. |
-| `vllm-naive(model)` | VLM sees the annotated scene image (target highlighted with red box), produces a brief expression. |
-| `vllm-pragmatic(model)` | VLM with chain-of-thought prompt: reason about distinguishing features, then produce minimal expression. |
+All image-based speakers receive the raw (unannotated) scene image plus target properties as text.
+
+| Name | Class | API | Description |
+|------|-------|-----|-------------|
+| `literal` | `LiteralSpeaker` | none | Rule-based. Emits the shortest feature subset that uniquely identifies the target among distractors. |
+| `feature-canonical` | `FeatureCanonicalSpeaker` | none | Rule-based. Lists all target features in canonical order (color, shape, size, location). |
+| `rsa(α,c)` | `RSASpeaker` | none | RSA S1 speaker. Ranks utterances by `α·log L0(t\|u) − cost·len`, takes argmax. |
+| `ordinal` | `OrdinalSpeaker` | none | Rule-based. Uses superlatives and uniqueness (e.g. "the largest", "the only circle"). |
+| `contrastive` | `ContrastiveSpeaker` | none | Rule-based. Picks a foil and describes the contrasting feature(s) between target and foil. |
+| `landmark` | `LandmarkSpeaker` | none | Rule-based. Picks a visually salient landmark object and describes the target's relation to it. |
+| `vllm-naive(model)` | `VLLMSpeaker` | VLM | VLM given target properties as text + scene image; produces a brief referring expression. |
+| `vllm-pragmatic(model)` | `VLLMSpeaker` | VLM | VLM with RSA-style chain-of-thought: reason about distinguishing features, produce minimal expression. |
+| ~~`llm-naive(model)`~~ | `LLMSpeaker` | VLM | *(excluded)* Same as `vllm-naive` but text-only (no image). |
+| ~~`llm-pragmatic(model)`~~ | `LLMSpeaker` | VLM | *(excluded)* Same as `vllm-pragmatic` but text-only (no image). |
+| `scene-aware(model)` | `SceneAwareSpeaker` | VLM | VLM receives full distractor list; picks minimal distinguishing features. |
+| `contrastive-vllm(model)` | `ContrastiveVLLMSpeaker` | VLM | VLM identifies the most confusable foil, then describes the contrasting feature. |
+| `landmark-vllm(model)` | `LandmarkVLLMSpeaker` | VLM | VLM selects a landmark and spatial relation from the distractor list. |
+| `feature-canonical-vllm(model)` | `FeatureCanonicalVLLMSpeaker` | VLM | VLM selects the minimal canonical feature set via structured prompt. |
+| `strategic-{strategy}(model)` | `StrategicVLLMSpeaker` | VLM | VLM with explicit game-theoretic reasoning; `strategy` ∈ {`cooperative`, `pragmatic`, …}. |
 
 ### Listeners
 
-| Name | Description |
-|------|-------------|
-| `literal` | L0. Uniform posterior over objects whose feature set contains every content token in the utterance. |
-| `rsa(α,c)` | L1. Inverts S1 via exact enumeration: P(t\|u) ∝ S1(u\|t). |
-| `vllm-listener(model)` | VLM sees the image with all objects labeled 0–N−1, outputs a JSON confidence dict; softmax gives the posterior. |
-| `cost_aware(base, c)` | Wraps any listener with the EU clarification decision. Applied automatically by the harness. |
+All image-based listeners receive the scene image **annotated with index numbers** (0, 1, 2, …) at each object's center. The annotation is applied at inference time via `annotate_indices()` in `listeners/base.py`.
+
+| Name | Class | API | Description |
+|------|-------|-----|-------------|
+| `literal` | `LiteralListener` | none | L0. Uniform posterior over objects whose feature set is consistent with every token in the utterance. |
+| `rsa(α,c)` | `RSAListener` | none | L1. Inverts S1 via exact enumeration: P(t\|u) ∝ S1(u\|t). |
+| `vllm-listener(model,σ)` | `VLLMListener` | VLM | VLM predicts (x,y) coords; snapped to nearest object. Posterior via Gaussian kernel (σ=10 default). |
+| `feature-match(model)` | `FeatureMatchListener` | VLM | VLM extracts feature description from utterance; objects scored by feature overlap. Uses annotated image. |
+| ~~`feature-match-text(model)`~~ | `FeatureMatchTextListener` | VLM | *(excluded)* Same as above but text-only (no image). |
+| `direct-rank(model)` | `DirectRankListener` | VLM | VLM given full object feature list as text + annotated image; outputs probability array directly. |
+| `cot-rank(model)` | `CoTRankListener` | VLM | Like `direct-rank` with chain-of-thought: score 0–10 per object, then convert to probabilities. |
+| `elimination(model)` | `EliminationListener` | VLM | Like `direct-rank` with elimination strategy: rule out objects, distribute over remainder. |
+| `io-direct(model)` | `ImageOnlyDirectRankListener` | VLM | Image-only (no feature text). Direct probability array from annotated image + utterance. |
+| `io-cot(model)` | `ImageOnlyCoTRankListener` | VLM | Image-only. Observe → score 0–10 → assign probabilities. |
+| `io-elimination(model)` | `ImageOnlyEliminationListener` | VLM | Image-only. Visually rule out objects, then distribute probability over candidates. |
+| `io-index(model)` | `ImageOnlyIndexListener` | VLM | Image-only. Outputs a single integer index (hard commit, posterior = 1 on chosen object). |
+| `dialogue(l,s,c,r)` | `DialogueListener` | VLM | Multi-turn: asks up to `r` clarifying questions via speaker `s`, then commits. |
+| `cost_aware(base, c)` | `CostAwareListener` | — | Wrapper. Applies EU clarification policy (ask if max posterior < 1−c) to any base listener. |
 
 ---
 

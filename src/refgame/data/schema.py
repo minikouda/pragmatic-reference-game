@@ -300,3 +300,11 @@ class EvalRecord:
 
     # Speaker verbosity
     utterance_word_count: int | None = None
+
+    # Verbose trace — raw model outputs for error analysis
+    speaker_reasoning:   str | None = None   # CoT reasoning from speaker (if any)
+    listener_raw:        str | None = None   # raw VLM response from listener
+    posterior:           list[float] | None = None  # full posterior over objects
+    listener_parse_ok:   bool | None = None  # whether listener output parsed cleanly
+    clarification_question: str | None = None        # question generated when action=ask
+    qa_history:          list | None = None           # [(q, a), ...] from DialogueListener

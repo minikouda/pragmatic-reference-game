@@ -31,8 +31,8 @@ from __future__ import annotations
 from ..data.schema import ListenerOutput, Scene, Utterance
 from ..utils.llm_client import ChatMessage, LLMClient
 from ..speakers.base import BaseSpeaker
-from .base import BaseListener
-from .direct_rank import _annotate_indices, _parse_probs, _normalize
+from .base import BaseListener, annotate_indices
+from .direct_rank import _parse_probs, _normalize
 
 
 # ── Prompts ───────────────────────────────────────────────────────────────────
@@ -128,12 +128,12 @@ class DialogueListener(BaseListener):
         tag = f"dialogue(l={lm},s={self.speaker.name},c={self.cost_c},r={self.max_rounds})"
         return tag
 
-    def listen(self, scene: Scene, utterance: Utterance) -> ListenerOutput:
+    def listen(self, scene: Scene, utterance: Utterance, cost_c: float = 0.25) -> ListenerOutput:
         if scene.image_path is None:
             raise ValueError(f"Scene {scene.id} has no image_path.")
 
         n          = len(scene.objects)
-        annotated  = _annotate_indices(scene.image_path, scene.objects)
+        annotated  = annotate_indices(scene.image_path, scene.objects)
         qa_history: list[tuple[str, str]] = []
 
         # ── Round 0: initial posterior ────────────────────────────────────────

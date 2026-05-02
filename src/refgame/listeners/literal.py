@@ -40,7 +40,7 @@ class LiteralListener(BaseListener):
     def name(self) -> str:
         return "literal"
 
-    def listen(self, scene: Scene, utterance: Utterance) -> ListenerOutput:
+    def listen(self, scene: Scene, utterance: Utterance, cost_c: float = 0.25) -> ListenerOutput:
         query_tokens = _content_tokens(utterance.text)
 
         compatible: list[int] = []

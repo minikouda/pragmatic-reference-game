@@ -38,7 +38,7 @@ import re
 
 from ..data.schema import ListenerOutput, Object, Scene, Utterance
 from ..utils.llm_client import ChatMessage, LLMClient
-from .base import BaseListener
+from .base import BaseListener, annotate_indices
 
 
 # ── Prompt template ───────────────────────────────────────────────────────────
@@ -47,10 +47,15 @@ _SYSTEM_LISTENER = """\
 You are a listener in a visual reference game.
 
 You see a scene with several colored shapes on a white canvas.
+The objects are labelled with index numbers in the image.
 
 The speaker said: "{utterance}"
 
-Your task: predict the (x, y) position of the object the speaker is referring to.
+Clarification cost: c = {cost_c:.2f}. This means you should only commit to an
+answer if you are at least {threshold:.0%} confident — otherwise it is better to ask.
+
+Your task: predict the (x, y) position of the object the speaker is referring to,
+reflecting your true confidence given the cost above.
 
 Coordinate system: bottom-left is (0, 0), top-right is (100, 100).
 x increases to the right, y increases upward.
@@ -89,21 +94,26 @@ class VLLMListener(BaseListener):
         kernel = f",σ={self.sigma}" if self.sigma is not None else ""
         return f"vllm-listener({model}{kernel})"
 
-    def listen(self, scene: Scene, utterance: Utterance) -> ListenerOutput:
+    def listen(self, scene: Scene, utterance: Utterance, cost_c: float = 0.25) -> ListenerOutput:
         if scene.image_path is None:
             raise ValueError(
                 f"Scene {scene.id} has no image_path. "
                 "VLLMListener requires image-backed scenes."
             )
 
-        prompt = _SYSTEM_LISTENER.format(utterance=utterance.text)
+        prompt = _SYSTEM_LISTENER.format(
+            utterance=utterance.text,
+            cost_c=cost_c,
+            threshold=1.0 - cost_c,
+        )
+        annotated = annotate_indices(scene.image_path, scene.objects)
 
         raw = self.client.complete(
             messages=[
                 ChatMessage(role="system", content=prompt),
                 ChatMessage(role="user",   content="Where is the object the speaker referred to?"),
             ],
-            image_path=scene.image_path,
+            image_path=annotated,
         )
 
         pred_x, pred_y = _parse_coords(raw)

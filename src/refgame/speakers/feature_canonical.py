@@ -65,11 +65,27 @@ def _build_canonical(scene: Scene, target_idx: int) -> str:
     return f"the {base}"
 
 
+_SYSTEM_ANSWER_QUESTION = """\
+You are a speaker in a visual reference game. The listener is trying to identify
+the TARGET object and has asked a clarifying question.
+
+The TARGET object is: {target_desc}
+
+The listener asked: "{question}"
+
+Answer in one short phrase that helps the listener identify the target.
+Output ONLY the answer (e.g. "the left one", "it's a circle", "the larger one").
+No other text."""
+
+
 class FeatureCanonicalSpeaker(BaseSpeaker):
     """
     Rule-based speaker using a minimal canonical feature description.
-    Designed to pair well with FeatureMatchListener.
+    Accepts an optional LLM client to answer clarification questions.
     """
+
+    def __init__(self, client: LLMClient | None = None) -> None:
+        self.client = client
 
     @property
     def name(self) -> str:
@@ -83,6 +99,25 @@ class FeatureCanonicalSpeaker(BaseSpeaker):
             speaker_type=self.name,
             speaker_meta={"discriminating_features": chosen},
         )
+
+    def answer_question(self, scene: Scene, target_idx: int, question: str) -> str:
+        if self.client is None:
+            raise NotImplementedError(
+                "FeatureCanonicalSpeaker requires a client to answer questions. "
+                "Pass client= at construction time."
+            )
+        target = scene.objects[target_idx]
+        f = target.features()
+        target_desc = f"{f['size']} {f['color']} {f['shape']} at {f['location']}"
+        prompt = _SYSTEM_ANSWER_QUESTION.format(target_desc=target_desc, question=question)
+        raw = self.client.complete(
+            messages=[
+                ChatMessage(role="system", content=prompt),
+                ChatMessage(role="user", content="Answer the listener's question."),
+            ],
+            image_path=scene.image_path,
+        )
+        return raw.strip().strip('"').strip("'")
 
 
 _SYSTEM_FEATURE_CANONICAL_VLLM = """\

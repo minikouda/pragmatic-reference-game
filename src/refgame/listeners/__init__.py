@@ -2,9 +2,6 @@ from .direct_rank import (
     DirectRankListener,
     CoTRankListener,
     EliminationListener,
-    ImageOnlyDirectRankListener,
-    ImageOnlyCoTRankListener,
-    ImageOnlyEliminationListener,
-    ImageOnlyIndexListener,
+    IndexListener,
 )
 from .dialogue import DialogueListener

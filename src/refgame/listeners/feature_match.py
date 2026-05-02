@@ -37,7 +37,7 @@ import re
 
 from ..data.schema import FEATURE_KEYS, ListenerOutput, Object, Scene, Utterance
 from ..utils.llm_client import ChatMessage, LLMClient
-from .base import BaseListener
+from .base import BaseListener, annotate_indices
 
 
 # ── Prompts ───────────────────────────────────────────────────────────────────
@@ -45,9 +45,12 @@ from .base import BaseListener
 _SYSTEM_FEATURE_MATCH = """\
 You are a listener in a visual reference game.
 
-You see a scene with several colored shapes.
+You see a scene with several colored shapes. The objects are labelled with index numbers.
 
 The speaker said: "{utterance}"
+
+Clarification cost: c = {cost_c:.2f}. Only commit confidently to features you are
+at least {threshold:.0%} sure about — output null for features you are uncertain on.
 
 Your task: identify the properties of the object the speaker is referring to.
 
@@ -150,18 +153,21 @@ class FeatureMatchListener(BaseListener):
         model = self.client.model.split("/")[-1]
         return f"feature-match({model})"
 
-    def listen(self, scene: Scene, utterance: Utterance) -> ListenerOutput:
+    def listen(self, scene: Scene, utterance: Utterance, cost_c: float = 0.25) -> ListenerOutput:
         if scene.image_path is None:
             raise ValueError(f"Scene {scene.id} has no image_path.")
 
-        prompt = _SYSTEM_FEATURE_MATCH.format(utterance=utterance.text)
+        prompt = _SYSTEM_FEATURE_MATCH.format(
+            utterance=utterance.text, cost_c=cost_c, threshold=1.0 - cost_c,
+        )
 
+        annotated = annotate_indices(scene.image_path, scene.objects)
         raw = self.client.complete(
             messages=[
                 ChatMessage(role="system", content=prompt),
                 ChatMessage(role="user", content="What are the properties of the referred object?"),
             ],
-            image_path=scene.image_path,
+            image_path=annotated,
         )
 
         desc = _parse_features(raw)
@@ -199,7 +205,7 @@ class FeatureMatchTextListener(BaseListener):
         model = self.client.model.split("/")[-1]
         return f"feature-match-text({model})"
 
-    def listen(self, scene: Scene, utterance: Utterance) -> ListenerOutput:
+    def listen(self, scene: Scene, utterance: Utterance, cost_c: float = 0.25) -> ListenerOutput:
         scene_desc = "\n".join(
             f"  [{i}] {o.features()['size']} {o.features()['color']} "
             f"{o.features()['shape']} at {o.features()['location']}"

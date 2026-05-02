@@ -80,7 +80,7 @@ class CostAwareListener(BaseListener):
     def name(self) -> str:
         return f"cost_aware({self.base_listener.name},c={self.cost_c})"
 
-    def listen(self, scene: Scene, utterance: Utterance) -> ListenerOutput:
+    def listen(self, scene: Scene, utterance: Utterance, cost_c: float = 0.25) -> ListenerOutput:
         """
         Run the base listener and attach a clarification decision.
 

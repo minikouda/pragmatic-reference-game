@@ -43,7 +43,7 @@ class RSAListener(BaseListener):
     def name(self) -> str:
         return f"rsa(α={self.alpha},c={self.cost_weight})"
 
-    def listen(self, scene: Scene, utterance: Utterance) -> ListenerOutput:
+    def listen(self, scene: Scene, utterance: Utterance, cost_c: float = 0.25) -> ListenerOutput:
         utt_text = utterance.text
         obj_scores: list[float] = []
 

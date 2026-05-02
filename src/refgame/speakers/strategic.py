@@ -3,17 +3,12 @@ StrategicVLLMSpeaker: visually-grounded speakers using prompt-engineered strateg
 
 Design principle
 ----------------
-Earlier VLLM speakers (VLLMSpeaker, SceneAwareSpeaker, LandmarkVLLMSpeaker,
-ContrastiveVLLMSpeaker) all pre-parsed the scene into structured feature lists
-and injected them into the prompt.  The model was effectively a text formatter —
-it never needed to look at the image or reason about what it saw.
+The target's properties are passed as text in the prompt (color, shape, size,
+location, and scene coordinates).  The raw unannotated scene image is included
+so the model can visually reason about distractors without any bounding-box
+annotation — avoiding hallucinations that arise from overlaid markers.
 
-This module takes the opposite approach:
-  1. Annotate the image to mark the target (magenta box + "TARGET" label).
-  2. Give the model ONLY a strategy instruction — no pre-computed features.
-  3. Let the model's own visual reasoning produce natural language.
-
-The result is descriptions generated from genuine visual understanding:
+The result is descriptions grounded in both text properties and visual context:
   "the round shape near the triangle in the corner"
   "unlike the other blue shape, this one is the large one on the right"
   "the circle directly above the yellow square"
@@ -236,12 +231,11 @@ def _extract_expression(raw: str) -> str:
 
 class StrategicVLLMSpeaker(BaseSpeaker):
     """
-    A visually-grounded VLM speaker that uses annotated images and
-    strategy-only prompts — no pre-parsed feature lists.
+    A visually-grounded VLM speaker that passes target properties as text
+    alongside the raw (unannotated) scene image — no bounding-box overlay.
 
-    The target is marked in the image with a magenta bounding box.
-    The model must use its own visual perception to produce a description
-    consistent with the requested strategy.
+    The model uses the text description to locate the target and visual
+    context to reason about distractors, consistent with the requested strategy.
 
     Parameters
     ----------

@@ -111,25 +111,27 @@ def run_grid(
     _run_parallel(speaker_tasks, _speak, utterance_cache, n_workers, verbose,
                   total=len(speaker_tasks), label="speaker")
 
-    # ── Phase 2: cache listener posteriors ───────────────────────────────────
+    # ── Phase 2: cache listener posteriors (keyed by cost_c) ─────────────────
     listener_tasks = [
-        (scene, speaker, listener)
+        (scene, speaker, listener, cost_c)
         for scene in scenes
         for speaker in speakers
         for listener in listeners
+        for cost_c in cost_values
     ]
-    posterior_cache: dict[tuple[str, str, str], ListenerOutput] = {}
+    posterior_cache: dict[tuple[str, str, str, float], ListenerOutput] = {}
 
     if verbose:
         logger.info(
             f"Phase 2/3 — listening: {len(listener_tasks)} calls "
-            f"({len(scenes)} scenes × {len(speakers)} speakers × {len(listeners)} listeners)"
+            f"({len(scenes)} scenes × {len(speakers)} speakers × "
+            f"{len(listeners)} listeners × {len(cost_values)} costs)"
         )
 
     def _listen(args):
-        scene, speaker, listener = args
+        scene, speaker, listener, cost_c = args
         utt = utterance_cache[(scene.id, speaker.name)]
-        return (scene.id, speaker.name, listener.name), listener.listen(scene, utt)
+        return (scene.id, speaker.name, listener.name, cost_c), listener.listen(scene, utt, cost_c)
 
     _run_parallel(listener_tasks, _listen, posterior_cache, n_workers, verbose,
                   total=len(listener_tasks), label="listener")
@@ -146,10 +148,10 @@ def run_grid(
             if utt is None:
                 continue
             for listener in listeners:
-                l_out = posterior_cache.get((scene.id, speaker.name, listener.name))
-                if l_out is None:
-                    continue
                 for cost_c in cost_values:
+                    l_out = posterior_cache.get((scene.id, speaker.name, listener.name, cost_c))
+                    if l_out is None:
+                        continue
                     record = _apply_cost_decision(scene, speaker, listener, utt, l_out, cost_c, meta)
                     records.append(record)
 
@@ -219,6 +221,7 @@ def _apply_cost_decision(
 
     ann            = scene.entropy_annotation
     listener_meta  = l_out.listener_meta or {}
+    speaker_meta   = utt.speaker_meta or {}
 
     target          = scene.target
     target_grid     = LOCATION_TO_GRID.get(target.location)
@@ -261,6 +264,12 @@ def _apply_cost_decision(
         predicted_grid=pred_grid,
         manhattan_error=manhattan_error,
         utterance_word_count=len(utt.text.split()) if utt.text else 0,
+        speaker_reasoning=speaker_meta.get("reasoning") or speaker_meta.get("REASONING"),
+        listener_raw=listener_meta.get("raw_response"),
+        posterior=l_out.posterior,
+        listener_parse_ok=listener_meta.get("parse_ok"),
+        clarification_question=decision.question,
+        qa_history=listener_meta.get("qa_history"),
     )
 
 
